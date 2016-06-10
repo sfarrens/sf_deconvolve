@@ -12,16 +12,12 @@ Contents
 <a name="intro_anchor"></a>
 ## Introduction
 
----
-
 This repository contains Python codes and scripts designed for PSF analysis.
 
 The directory **PSF** contains all of the primary functions and classes used for optimisation and analysis. **PSF_SCRIPTS** contains the user scripts that call these functions and classes. **Functions** contains some additional generic functions and tools.
 
 <a name="depend_anchor"></a>
 ## Dependencies
-
----
 
 In order to run the scripts in this library the following packages must be installed:
 
@@ -41,8 +37,6 @@ The low-rank approximation analysis can be run purely in Python.
 
 <a name="execute_anchor"></a>
 ## Execution
-
----
 
 The primary script is **reconstruction_script.py** which is designed to take an observed (*i.e.* with PSF effects and noise) stack of galaxy images and a known PSF, and attempt to reconstruct the original images. The input format are Numpy binary files (.npy).
 
