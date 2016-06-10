@@ -5,37 +5,35 @@ PSF Tools
 
 Contents
 ------------
-1. [Introduction](#intro_anchor)
-2. [Dependenies](#depend_anchor)
-3. [Execution](#execute_anchor)
+1. [Introduction](#Introduction)
+2. [Dependencies](#Dependencies)
+3. [Execution](#Execution)
+ * [Example](#Example)
+ * [Code Options](#Code-Options)
 
-<a name="intro_anchor"></a>
 ## Introduction
 
 This repository contains Python codes and scripts designed for PSF analysis.
 
 The directory **PSF** contains all of the primary functions and classes used for optimisation and analysis. **PSF_SCRIPTS** contains the user scripts that call these functions and classes. **Functions** contains some additional generic functions and tools.
 
-<a name="depend_anchor"></a>
 ## Dependencies
 
 In order to run the scripts in this library the following packages must be installed:
 
-* **<a href="https://www.python.org/download/releases/2.7/" target="_blank">Python 2.7</a>**
+* **[Python 2.7](https://www.python.org/download/releases/2.7/)</a>**
 [Tested with v 2.7.11]
 
-* **<a href="http://www.numpy.org/" target="_blank">NumPy</a>**
-[Tested with v 1.9.2]
+* **[Numpy](http://www.numpy.org/)** [Tested with v 1.9.2]
 
-* **<a href="http://www.scipy.org/" target="_blank">SciPy</a>** [Tested with v 0.15.1]
+* **[Scipy](http://www.scipy.org/)** [Tested with v 0.15.1]
 
-* **<a href="http://matplotlib.org/" target="_blank">Matplotlib</a>** [Tested with v 1.4.3]
+* **[Matplotlib](http://matplotlib.org/)** [Tested with v 1.4.3]
 
-* The current implementation of wavelet transformations additionally requires the **mr_transform.cc** C++ script from the Sparse2D library in the **<a href="http://www.cosmostat.org/software/isap/" target="_blank">iSap</a>** package [Tested with v 3.1].
+* The current implementation of wavelet transformations additionally requires the **mr_transform.cc** C++ script from the Sparse2D library in the **[iSap](http://www.cosmostat.org/software/isap/)** package [Tested with v 3.1].
 
 The low-rank approximation analysis can be run purely in Python.
 
-<a name="execute_anchor"></a>
 ## Execution
 
 The primary script is **reconstruction_script.py** which is designed to take an observed (*i.e.* with PSF effects and noise) stack of galaxy images and a known PSF, and attempt to reconstruct the original images. The input format are Numpy binary files (.npy).
@@ -45,6 +43,16 @@ The script can be run as follows:
 > reconstruction_script -i INPUT_IMAGES.npy -p PSF.npy -o OUTPUT_NAME
 
 Where *INPUT_IMAGES.npy* denotes the Numpy binary file containing the stack of observed galaxy images, *PSF.npy* denotes the PSF corresponding to each galaxy image and *OUTPUT_NAME* specifies the output file name.
+
+### Example
+
+The following example can be run on the sample data provided [here](https://www.dropbox.com/sh/qh6rt76nd5a1ve5/AAD1semtINAwUn6bI5D42Urma?dl=0).
+
+This example takes a sample of 100 galaxy images with PSF effects and added noise and the corresponding PSFs and recovers the original images using low-rank approximation and Condat-Vu optimisation.
+
+> reconstruction_script.py -i example_image_stack.npy -p example_psf.npy -o example_output --mode lowr
+
+The result will be two Numpy binary files called *example_output_primal.npy* and *example_output_dual.npy* corresponding to the primal and dual variables in the splitting algorithm. The reconstructed images will be in the *example_output_primal.npy* file.
 
 ### Code Options
 
