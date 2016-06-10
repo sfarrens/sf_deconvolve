@@ -5,18 +5,20 @@ PSF Tools
 
 Contents
 ------------
-1. [Introduction](#Introduction)
-2. [Dependencies](#Dependencies)
+1. [Introduction](#intro_anchor)
+2. [Dependencies](#depend_anchor)
 3. [Execution](#exe_anchor)
- * [Example](#Example)
- * [Code Options](#Code-Options)
+ * [Example](#eg_anchor)
+ * [Code Options](#opt_anchor)
 
+<a name="intro_anchor"></a>
 ## Introduction
 
 This repository contains Python codes and scripts designed for PSF analysis.
 
 The directory **PSF** contains all of the primary functions and classes used for optimisation and analysis. **PSF_SCRIPTS** contains the user scripts that call these functions and classes. **Functions** contains some additional generic functions and tools.
 
+<a name="depend_anchor"></a>
 ## Dependencies
 
 In order to run the scripts in this library the following packages must be installed:
@@ -45,6 +47,7 @@ The script can be run as follows:
 
 Where *INPUT_IMAGES.npy* denotes the Numpy binary file containing the stack of observed galaxy images, *PSF.npy* denotes the PSF corresponding to each galaxy image and *OUTPUT_NAME* specifies the output file name.
 
+<a name="eg_anchor"></a>
 ### Example
 
 The following example can be run on the sample data provided [here](https://www.dropbox.com/sh/qh6rt76nd5a1ve5/AAD1semtINAwUn6bI5D42Urma?dl=0).
@@ -55,6 +58,7 @@ This example takes a sample of 100 galaxy images with PSF effects and added nois
 
 The result will be two Numpy binary files called *example_output_primal.npy* and *example_output_dual.npy* corresponding to the primal and dual variables in the splitting algorithm. The reconstructed images will be in the *example_output_primal.npy* file.
 
+<a name="opt_anchor"></a>
 ### Code Options
 
 * **-h, --help:** Show the help message and exit.
