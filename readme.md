@@ -48,26 +48,48 @@ Where *INPUT_IMAGES.npy* denotes the Numpy binary file containing the stack of o
 
 ### Code Options
 
-* **-h, --help:** show this help message and exit
-* **-v, --version:** show program's version number and exit
-* **-i INPUT, --input INPUT:** Input noisy data file name. (default: None)
-* **-p PSF, --psf PSF:** PSF file name. (default: None)
-* **--psf_type {fixed,obj_var,pix_var}:** PSF fortmat type. [fixed, obj_var or pix_var] (default: obj_var)
-* **--psf_pcs PSF_PCS:** PSF principal components file name. (default: None)
-* **--psf_coef PSF_COEF:** PSF coefficients file name. (default: None)
-* **--noise_est NOISE_EST:** Initial noise estimate. (default: None)
+* **-h, --help:** Show the help message and exit.
+
+* **-v, --version:** Show the program's version number and exit.
+
+* **-i INPUT, --input INPUT:** Input data file name. File should be a Numpy binary containing a stack of noisy galaxy images with PSF effects. (default: None)
+
+* **-p PSF, --psf PSF:** PSF file name. File should be a Numpy binary containing either: (a) a single PSF (fixed format), (b) a stack of PSFs corresponding to each of the galaxy images (obj_var format), (c) a stack of PSFs corresponding to each of the pixels in each of the galaxy images (pix_var format). (default: None)
+
+* **--psf_type {fixed,obj_var,pix_var}:** PSF format type [fixed, obj_var or pix_var]. This option is used to specify the type of PSF being used. *fixed* corresponds to a single PSF for all galaxy images, *obj_var* corresponds to a unique PSF for each galaxy image and *pix_var* corresponds to a unique PSF for each pixel in each galaxy image. (default: obj_var)
+
+* **--psf_pcs PSF_PCS:** PSF principal components file name. File should be a Numpy binary containing the principal components of a stack of pixel variant PSFs. Only use for *psf_type = pix_var*. (default: None)
+
+* **--psf_coef PSF_COEF:** PSF coefficients file name. File should be a Numpy binary containing the coefficients of a stack of pixel variant PSFs. Only use for *psf_type = pix_var*. (default: None)
+
+* **--noise_est NOISE_EST:** Initial estimate of the noisy in the observed galaxy images. If not specified this quantity is automatically calculated using the median absolute deviation. (default: None)
+
 * **-o OUTPUT, --output OUTPUT:** Output file name. (default: None)
-* **-l LAYOUT LAYOUT, --layout LAYOUT LAYOUT:** Map layout. [Map format only] (default: None)
-* **-m {all,wave,lowr,grad}, --mode {all,wave,lowr,grad}:** Option to specify the optimisation mode. [all, wave, lowr or grad] (default: all)
-* **--opt_type {condat,fwbw,gfwbw}:** Option to specify the optimisation method to beimplemented. [condat or fwbw] (default: condat)
-* **-w WAVELET_LEVELS, --wavelet_levels WAVELET_LEVELS:** Number of wavelet levels. (default: 3)
-* **--wavelet_type WAVELET_TYPE:** Wavelet type. (default: 1)
+
+* **-l LAYOUT LAYOUT, --layout LAYOUT LAYOUT:** Image layout for images in *map* format.  Only use for *data_format = map*. (default: None)
+
+* **-m {all,wave,lowr,grad}, --mode {all,wave,lowr,grad}:** Option to specify the optimisation mode [all, wave, lowr or grad]. *all* performs optimisation using both low-rank approximation and wavelets, *wave* using only wavelets, *lowr* uses only low-rank and *grad* uses only gradient descent. (default: all)
+
+* **--opt_type {condat,fwbw,gfwbw}:** Option to specify the optimisation method to be implemented [condat or fwbw]. *condat* implements the Condat-Vu proximal splitting method, *fwbw* implements Forward-Backward splitting with FISTA speed-up and *gfwbw* implements the generalised Forward-Backward splitting method. (default: condat)
+
+* **-w WAVELET_LEVELS, --wavelet_levels WAVELET_LEVELS:** Number of wavelet levels to be used (see [iSap Documentation](http://www.cosmostat.org/wp-content/uploads/2014/12/doc_iSAP.pdf)). (default: 3)
+
+* **--wavelet_type WAVELET_TYPE:** Type of Wavelet to be used (see [iSap Documentation](http://www.cosmostat.org/wp-content/uploads/2014/12/doc_iSAP.pdf)). (default: 1)
+
 * **--wave_thresh_factor WAVE_TF [WAVE_TF ...]:** Wavelet threshold factor. (default: [3.0, 3.0, 4.0])
+
 * **--lowr_thresh_factor LOWR_TF:** Low rank threshold factor. (default: 1)
-* **--lowr_thresh_type LOWR_THRESH_TYPE:** Low rank threshold type. [soft or hard] (default: soft)
+
+* **--lowr_thresh_type LOWR_THRESH_TYPE:** Low rank threshold type [soft or hard]. (default: soft)
+
 * **--n_reweights N_REWEIGHTS:** Number of reweightings. (default: 1)
+
 * **--n_iter N_ITER:** Number of iterations. (default: 150)
-* **--relax RELAX:** Relaxation parameter (rho_n). (default: 0.5)
-* **--data_format DATA_FORMAT:** Data format. (default: cube)
-* **--no_pos:** Option to turn off postivity constraint. (default: True)
-* **--no_grad:** Option to turn off gradinet calculation. (default: True)
+
+* **--relax RELAX:** Relaxation parameter (rho_n in Condat-Vu method). (default: 0.5)
+
+* **--data_format DATA_FORMAT:** Data format [map or cube]. This specified if the input data is a stack of galaxy images or a single map of all of the images. (default: cube)
+
+* **--no_pos:** Option to turn off positivity constraint.
+
+* **--no_grad:** Option to turn off gradient calculation.
