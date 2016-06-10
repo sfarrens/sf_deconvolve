@@ -7,7 +7,7 @@ Contents
 ------------
 1. [Introduction](#Introduction)
 2. [Dependencies](#Dependencies)
-3. [Execution](#Execution)
+3. [Execution](#exe_anchor)
  * [Example](#Example)
  * [Code Options](#Code-Options)
 
@@ -34,6 +34,7 @@ In order to run the scripts in this library the following packages must be insta
 
 The low-rank approximation analysis can be run purely in Python.
 
+<a name="exe_anchor"></a>
 ## Execution
 
 The primary script is **reconstruction_script.py** which is designed to take an observed (*i.e.* with PSF effects and noise) stack of galaxy images and a known PSF, and attempt to reconstruct the original images. The input format are Numpy binary files (.npy).
