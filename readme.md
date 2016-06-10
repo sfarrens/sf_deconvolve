@@ -32,7 +32,7 @@ In order to run the scripts in this library the following packages must be insta
 
 * **[Matplotlib](http://matplotlib.org/)** [Tested with v 1.4.3]
 
-* The current implementation of wavelet transformations additionally requires the **mr_transform.cc** C++ script from the Sparse2D library in the **[iSap](http://www.cosmostat.org/software/isap/)** package [Tested with v 3.1].
+* The current implementation of wavelet transformations additionally requires the **mr_transform.cc** C++ script from the Sparse2D library in the **[iSap](http://www.cosmostat.org/software/isap/)** package [Tested with v 3.1]. These C++ scripts will be need to be compiled in order to run (see [iSap Documentation](http://www.cosmostat.org/wp-content/uploads/2014/12/doc_iSAP.pdf) for details).
 
 The low-rank approximation analysis can be run purely in Python.
 
