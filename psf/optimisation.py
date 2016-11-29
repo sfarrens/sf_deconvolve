@@ -151,7 +151,7 @@ class ForwardBackward(FISTA):
     #
     def iterate(self, max_iter=150):
 
-        for i in range(max_iter):
+        for i in xrange(max_iter):
             self.update()
 
             if self.converge:
@@ -202,7 +202,7 @@ class GenForwardBackward():
                              'Current sum of weights = ' +
                              str(np.sum(self.weights)))
 
-        self.z = np.array([self.x_old for i in range(self.prox_list.size)])
+        self.z = np.array([self.x_old for i in xrange(self.prox_list.size)])
 
         self.indent = ' ' * indent_level
         self.plot = plot
@@ -221,7 +221,7 @@ class GenForwardBackward():
         self.grad.get_grad(self.x_old)
 
         # Update z values.
-        for i in range(self.prox_list.size):
+        for i in xrange(self.prox_list.size):
             z_temp = (2 * self.x_old - self.z[i] - self.grad.inv_spec_rad *
                       self.grad.grad)
             z_prox = self.prox_list[i].op(z_temp,
@@ -230,8 +230,8 @@ class GenForwardBackward():
             self.z[i] += self.lambda_init * (z_prox - self.x_old)
 
         # Update current reconstruction.
-        self.x_new = np.sum([z_i * w_i for z_i, w_i in
-                            zip(self.z, self.weights)], axis=0)
+        self.x_new = np.sum((z_i * w_i for z_i, w_i in
+                            zip(self.z, self.weights)), axis=0)
 
         # Update old values for next iteration.
         np.copyto(self.x_old, self.x_new)
@@ -252,7 +252,7 @@ class GenForwardBackward():
     #
     def iterate(self, max_iter=150):
 
-        for i in range(max_iter):
+        for i in xrange(max_iter):
             self.update()
 
             if self.converge:
@@ -368,7 +368,7 @@ class Condat():
     #
     def iterate(self, max_iter=150):
 
-        for i in range(max_iter):
+        for i in xrange(max_iter):
             self.update()
 
             if self.converge:

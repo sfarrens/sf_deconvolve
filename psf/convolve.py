@@ -10,6 +10,7 @@
 #
 
 import numpy as np
+from scipy.signal import fftconvolve
 from astropy.convolution import convolve_fft
 from functions.np_adjust import *
 from functions.image import FetchWindows
@@ -27,6 +28,7 @@ from functions.image import FetchWindows
 def convolve(data, kernel):
 
     return convolve_fft(data, kernel, boundary='wrap', crop=True)
+    # return fftconvolve(data, kernel, mode='same')
 
 
 ##
@@ -66,7 +68,6 @@ def psf_convolve(data, psf, psf_rot=False, psf_type='fixed',
 
     # Convolve the PSF with the data.
     if data_format == 'map':
-
         return convolve(data, psf)
 
     elif psf_type == 'fixed':
@@ -109,12 +110,12 @@ def psf_var_convolve(image, psf):
 def pca_convolve(data, psf_pcs, psf_coef, pcs_rot=False):
 
     if pcs_rot:
-        return sum([convolve(data * b, rotate(a)) for a, b in
-                   zip(psf_pcs, psf_coef)])
+        return sum((convolve(data * b, rotate(a)) for a, b in
+                   zip(psf_pcs, psf_coef)))
 
     else:
-        return sum([(convolve(data, a) * b) for a, b in
-                   zip(psf_pcs, psf_coef)])
+        return sum(((convolve(data, a) * b) for a, b in
+                   zip(psf_pcs, psf_coef)))
 
 
 ##

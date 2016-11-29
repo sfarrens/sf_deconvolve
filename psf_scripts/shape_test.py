@@ -5,7 +5,7 @@ import argparse as ap
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from functions.astro import rad2deg
-from functions.shape import Ellipticity
+from creepy.image.shape import Ellipticity
 
 
 def get_opts():
@@ -37,7 +37,7 @@ def get_theta(ellip):
 
     '''Calculate theta from ellipticities'''
 
-    return  0.5 * np.arctan(ellip[1] / ellip[0])
+    return 0.5 * np.arctan(ellip[1] / ellip[0])
 
 
 def get_xy(radius, theta):
@@ -60,8 +60,8 @@ def make_plot():
     data_rec = np.load(opts.rec_data)
 
     # Calculate ellipticities.
-    ellip_clean = np.array([Ellipticity(x, 10).e for x in data_clean]).T
-    ellip_rec = np.array([Ellipticity(x, 10).e for x in data_rec]).T
+    ellip_clean = np.array([Ellipticity(x).e for x in data_clean]).T
+    ellip_rec = np.array([Ellipticity(x).e for x in data_rec]).T
 
     # Calculate angles.
     theta_clean = get_theta(ellip_clean)
@@ -73,7 +73,7 @@ def make_plot():
     # Set plot options.
     fig = plt.figure(figsize=(8, 11))
     cmap = 'Spectral_r'
-    extent=(-20, 20, -20, 20)
+    extent = (-20, 20, -20, 20)
     grid = gridspec.GridSpec(5, 5, wspace=0.2, hspace=0.2)
 
     # Make the plot.

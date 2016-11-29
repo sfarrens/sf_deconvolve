@@ -13,11 +13,12 @@ from psf_gen import single_psf
 from transform import cube2matrix
 
 
-def rec(data, noise_est, layout, psf=None, psf_type='fixed', psf_pcs=None,
-        psf_coef=None, wavelet_levels=1, wavelet_opt=None,
+def rec(data, noise_est, layout, primal=None, psf=None, psf_type='fixed',
+        psf_pcs=None, psf_coef=None, wavelet_levels=1, wavelet_opt=None,
         wave_thresh_factor=1, lowr_thresh_factor=1, lowr_thresh_type='soft',
-        n_reweights=0, n_iter=150, relax=0.5, mode='all', grad=True, pos=True,
-        data_format='cube', opt_type='condat', log=None):
+        lowr_type='standard', n_reweights=0, n_iter=150, relax=0.5, mode='all',
+        grad=True, pos=True, data_format='cube', opt_type='condat', log=None,
+        liveplot=False):
 
     ######
     # SET THE GRADIENT OPERATOR
@@ -83,7 +84,7 @@ def rec(data, noise_est, layout, psf=None, psf_type='fixed', psf_pcs=None,
 
                 if data_format == 'cube':
                     filter_norm = np.array([filter_norm for i in
-                                            range(data.shape[0])])
+                                            xrange(data.shape[0])])
 
             else:
 
@@ -146,7 +147,8 @@ def rec(data, noise_est, layout, psf=None, psf_type='fixed', psf_pcs=None,
     # INITALISE THE PRIMAL AND DUAL VALUES
 
     # 1 Primal Operator (Positivity or Identity)
-    primal = np.ones(data.shape)
+    if isinstance(primal, type(None)):
+        primal = np.ones(data.shape)
 
     if mode == 'all':
 
@@ -199,19 +201,23 @@ def rec(data, noise_est, layout, psf=None, psf_type='fixed', psf_pcs=None,
         prox_dual_op = ProximityCombo([Threshold(rw.weights / sigma,
                                       positivity=use_pos), LowRankMatrix(lamb,
                                       data_format=data_format,
-                                      threshold_type=lowr_thresh_type,
-                                      layout=layout, operator=grad_op.MtX)])
+                                      thresh_type=lowr_thresh_type,
+                                      lowr_type=lowr_type, layout=layout,
+                                      operator=grad_op.MtX)])
 
         cost_op = costFunction(data, grad=grad_op,
                                wavelet=linear_op.operators[0],
                                weights=rw.weights,
                                lambda_reg=lamb,
-                               mode=mode, data_format=data_format)
+                               mode=mode, data_format=data_format,
+                               positivity=pos, live_plotting=liveplot,
+                               window=cost_test_window, total_it=total_n_iter)
 
     elif mode == 'lowr':
 
         prox_dual_op = LowRankMatrix(lamb, data_format=data_format,
-                                     threshold_type=lowr_thresh_type,
+                                     thresh_type=lowr_thresh_type,
+                                     lowr_type=lowr_type,
                                      layout=layout, operator=grad_op.MtX)
 
         prox_list.append(prox_dual_op)
@@ -219,7 +225,7 @@ def rec(data, noise_est, layout, psf=None, psf_type='fixed', psf_pcs=None,
         cost_op = costFunction(data, grad=grad_op, wavelet=None, weights=None,
                                lambda_reg=lamb, mode=mode,
                                data_format=data_format, positivity=pos,
-                               live_plotting=True, window=cost_test_window,
+                               live_plotting=liveplot, window=cost_test_window,
                                total_it=total_n_iter)
 
     elif mode == 'wave':
@@ -231,7 +237,7 @@ def rec(data, noise_est, layout, psf=None, psf_type='fixed', psf_pcs=None,
                                weights=rw.weights,
                                lambda_reg=None,
                                mode=mode, data_format=data_format,
-                               live_plotting=True, window=cost_test_window,
+                               live_plotting=liveplot, window=cost_test_window,
                                total_it=total_n_iter)
 
     elif mode == 'grad':
@@ -270,7 +276,7 @@ def rec(data, noise_est, layout, psf=None, psf_type='fixed', psf_pcs=None,
 
     if mode in ('all', 'wave'):
 
-        for i in range(n_reweights):
+        for i in xrange(n_reweights):
 
             if not opt.converge:
 

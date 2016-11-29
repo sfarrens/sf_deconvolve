@@ -119,8 +119,8 @@ def find_n_pc(u, factor=0.5):
               for a in u.T]
 
     # Return the required number of principal components.
-    return np.sum([(a[zip(gal_shape / 2)] ** 2 <= factor * np.sum(a ** 2))
-                   for a in u_auto])
+    return np.sum(((a[zip(gal_shape / 2)] ** 2 <= factor * np.sum(a ** 2))
+                   for a in u_auto))
 
 
 ##
@@ -133,7 +133,7 @@ def find_n_pc(u, factor=0.5):
 #
 #  @return Thresholded data.
 #
-def svd_thresh(data, threshold=None, n_pc=None, threshold_type='hard'):
+def svd_thresh(data, threshold=None, n_pc=None, thresh_type='hard'):
 
     # Get SVD of input data.
     u, s, v = np.linalg.svd(data)
@@ -153,7 +153,7 @@ def svd_thresh(data, threshold=None, n_pc=None, threshold_type='hard'):
         threshold = s[n_pc]
 
     # Remove noise from singular values.
-    s_new = denoise(s, threshold, threshold_type)
+    s_new = denoise(s, threshold, thresh_type)
 
     # Resize the singular values to the shape of the input image.
     s_new = np.diag(s_new)
@@ -172,7 +172,7 @@ def svd_thresh(data, threshold=None, n_pc=None, threshold_type='hard'):
 #
 #  @return Thresholded data.
 #
-def svd_thresh_coef(data, operator, threshold, threshold_type='hard'):
+def svd_thresh_coef(data, operator, threshold, thresh_type='hard'):
 
         # Convert data cube to matrix.
         data_matrix = transform.cube2matrix(data)
@@ -190,7 +190,7 @@ def svd_thresh_coef(data, operator, threshold, threshold_type='hard'):
         threshold *= ti
 
         # Remove noise from coefficients.
-        a_new = denoise(a, threshold, threshold_type)
+        a_new = denoise(a, threshold, thresh_type)
 
         # Return the thresholded image.
         return np.dot(u, a_new)

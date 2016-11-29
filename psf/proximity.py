@@ -109,12 +109,14 @@ class LowRankMatrix():
     #  @param[in] layout: Data layout.
     #  @param[in] positivity: Option to impose positivity constraint.
     #
-    def __init__(self, thresh, data_format='cube', threshold_type='soft',
-                 layout=None, positivity=False, operator=None):
+    def __init__(self, thresh, data_format='cube', thresh_type='soft',
+                 lowr_type='standard', layout=None, positivity=False,
+                 operator=None):
 
         self.thresh = thresh
         self.data_format = data_format
-        self.threshold_type = threshold_type
+        self.thresh_type = thresh_type
+        self.lowr_type = lowr_type
         self.layout = layout
         self.postivity = positivity
 
@@ -143,20 +145,21 @@ class LowRankMatrix():
             if isinstance(self.layout, type(None)):
                 raise ValueError('Must specify layout in map mode.')
 
-            data_matrix = svd_threshold(map2matrix(data, self.layout),
-                                        threshold,
-                                        threshold_type=self.threshold_type)
+            data_matrix = svd_thresh(map2matrix(data, self.layout),
+                                     threshold, thresh_type=self.thresh_type)
 
             new_data = matrix2map(data_matrix, data.shape)
 
         elif self.data_format == 'cube':
 
-            # data_matrix = svd_thresh(cube2matrix(data), threshold,
-            #                          threshold_type=self.threshold_type)
+            if self.lowr_type == 'standard':
+                data_matrix = svd_thresh(cube2matrix(data), threshold,
+                                         thresh_type=self.thresh_type)
 
-            data_matrix = svd_thresh_coef(data, self.operator,
-                                          threshold,
-                                          threshold_type=self.threshold_type)
+            elif self.lowr_type == 'ngole':
+                data_matrix = svd_thresh_coef(data, self.operator,
+                                              threshold,
+                                              thresh_type=self.thresh_type)
 
             new_data = matrix2cube(data_matrix, data.shape[1:])
 
@@ -200,7 +203,7 @@ class ProximityCombo():
 
         res = np.empty(len(self.operators), dtype=np.ndarray)
 
-        for i in range(len(self.operators)):
+        for i in xrange(len(self.operators)):
             res[i] = self.operators[i].op(data[i], extra_factor=extra_factor)
 
         return res

@@ -66,13 +66,12 @@ def call_mr_transform(data, opt=None, path='./', remove_files=True):
 #  Function that obatins filters from mr_transform using fake data.
 #
 #  @param[in] data_shape: 2D Array shape.
-#  @param[in] levels: Number of wavelet levels to keep.
 #  @param[in] opt: List of additonal mr_transform options.
-#  @param[in] course: Option to output course scale.
+#  @param[in] coarse: Option to output coarse scale.
 #
 #  @return Wavelet filters
 #
-def get_mr_filters(data_shape, levels=None, opt=None, course=False):
+def get_mr_filters(data_shape, opt=None, coarse=False):
 
     # Adjust the shape of the input data.
     data_shape = np.array(data_shape)
@@ -85,21 +84,11 @@ def get_mr_filters(data_shape, levels=None, opt=None, course=False):
     # Call mr_transform.
     mr_filters = call_mr_transform(fake_data, opt=opt)
 
-    # Choose filter levels to keep.
-    if levels >= mr_filters.shape[0]:
-        levels = mr_filters.shape[0] - 1
-    elif levels <= 0:
-        levels = None
-    if isinstance(levels, type(None)):
-        filters = mr_filters[:-1]
-    else:
-        filters = mr_filters[:levels]
-
     # Return filters
-    if course:
-        return filters, mr_filters[-1]
+    if coarse:
+        return mr_filters
     else:
-        return filters
+        return mr_filters[:-1]
 
 
 ##
@@ -115,8 +104,8 @@ def get_mr_filters(data_shape, levels=None, opt=None, course=False):
 def filter_convolve(data, filters, filter_rot=False):
 
     if filter_rot:
-        return np.sum([convolve(coef, f) for coef, f in
-                      zip(data, rotate_stack(filters))], axis=0)
+        return np.sum((convolve(coef, f) for coef, f in
+                      zip(data, rotate_stack(filters))), axis=0)
 
     else:
         return np.array([convolve(data, f) for f in filters])

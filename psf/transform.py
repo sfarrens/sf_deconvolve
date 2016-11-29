@@ -13,7 +13,7 @@
 
 import numpy as np
 from scipy.ndimage import gaussian_filter
-from itertools import product
+from itertools import islice, product
 from functions.np_adjust import data2np
 
 
@@ -34,7 +34,7 @@ def cube2map(data_cube, layout):
                          'data layers.')
 
     return np.vstack([np.hstack(data_cube[slice(layout[1] * i, layout[1] *
-                      (i + 1))]) for i in range(layout[0])])
+                      (i + 1))]) for i in xrange(layout[0])])
 
 
 ##
@@ -56,8 +56,8 @@ def map2cube(data_map, layout):
     d_shape = np.array(data_map.shape) / np.array(layout)
 
     return np.array([data_map[(slice(i * d_shape[0], (i + 1) * d_shape[0]),
-                     slice(j * d_shape[1] , (j + 1) * d_shape[1]))] for i in
-                     range(layout[0]) for j in range(layout[1])])
+                    slice(j * d_shape[1], (j + 1) * d_shape[1]))] for i in
+                    xrange(layout[0]) for j in xrange(layout[1])])
 
 
 ##

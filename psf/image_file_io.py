@@ -60,8 +60,8 @@ def read_fits_data(file):
 #
 def gen_data_cube(fits_image, fits_data, pixel_rad, n_obj=None, rand=False):
 
-    if (not isinstance(n_obj, type(None)) and
-        (n_obj < 1 or n_obj > len(fits_data))):
+    if ((not isinstance(n_obj, type(None)) and (n_obj < 1 or n_obj >
+         len(fits_data)))):
         raise ValueError('The number of galaxies must be within 1 and the size'
                          'of the fits_data [%d].' % len(fits_data))
 

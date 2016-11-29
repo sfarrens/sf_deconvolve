@@ -55,7 +55,7 @@ class PowerMethod():
         self.set_initial_x()
 
         # Iterate until the L2 norm of x converges.
-        for i in range(max_iter):
+        for i in xrange(max_iter):
 
             self.x_new = self.op(self.x_old) / norm(self.x_old)
 

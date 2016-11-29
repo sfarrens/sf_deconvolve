@@ -18,6 +18,7 @@ from functions.extra_math import mfactor
 from functions.log import set_up_log, close_log
 from functions.errors import catch_error, warn
 from functions.stats import sigma_mad
+from functions.shape import Ellipticity
 
 
 ##
@@ -40,6 +41,16 @@ def get_opts():
 
     parser.add_argument('-i', '--input', dest='input',
                         required=True, help='Input noisy data file name.')
+
+    parser.add_argument('-k', '--current_rec', dest='current_rec',
+                        required=False,
+                        help='Current reconstruction file name.')
+
+    parser.add_argument('-c', '--clean_data', dest='clean_data',
+                        required=False, help='Clean data file name.')
+
+    parser.add_argument('-r', '--random_seed', dest='random_seed',
+                        type=int, required=False, help='Random seed.')
 
     parser.add_argument('-p', '--psf', dest='psf', required=False,
                         help='PSF file name.')
@@ -89,6 +100,10 @@ def get_opts():
                         required=False, default=1,
                         help='Low rank threshold factor.')
 
+    parser.add_argument('--lowr_type', dest='lowr_type',
+                        required=False, default='standard',
+                        help='Low rank type. [standard or ngole]')
+
     parser.add_argument('--lowr_thresh_type', dest='lowr_thresh_type',
                         required=False, default='soft',
                         help='Low rank threshold type. [soft or hard]')
@@ -116,6 +131,14 @@ def get_opts():
                         action='store_false', required=False,
                         help='Option to turn off gradinet calculation.')
 
+    parser.add_argument('--live_plot', dest='liveplot',
+                        action='store_true', required=False,
+                        help='Option to turn on live plotting.')
+
+    parser.add_argument('-s', '--sigma_ellip', dest='sigma_ellip',
+                        type=float, default=1000.0, required=False,
+                        help='Sigma for ellipticities.')
+
     # Define an object to store the arguments.
     opts = parser.parse_args()
 
@@ -134,6 +157,36 @@ def check_data_format(data, opts):
     # If the data is in cube format it must have 3 dimensions.
     elif opts.data_format == 'cube' and data.ndim != 3:
         raise ValueError('Data in cube format must have 3 dimensions.')
+
+
+##
+#  Function to test image reconstruction.
+#
+#  @param[in] rec_data: Reconstruction.
+#  @return Tuple of pixel error and shape error.
+#
+def test_reconstruction(rec_data):
+
+    if not isinstance(opts.random_seed, type(None)):
+        np.random.seed(opts.random_seed)
+        clean_data = np.load(opts.clean_data)
+        clean_data = np.random.permutation(clean_data)[:rec_data.shape[0]]
+    else:
+        clean_data = np.load(opts.clean_data)[:rec_data.shape[0]]
+
+    clean_ellip = np.array([Ellipticity(x, opts.sigma_ellip).e
+                            for x in clean_data])
+
+    rec_ellip = np.array([Ellipticity(x, opts.sigma_ellip).e
+                          for x in rec_data])
+
+    px_err = (np.linalg.norm(clean_data - rec_data) /
+              np.linalg.norm(clean_data))
+
+    ellip_err = (np.linalg.norm(clean_ellip - rec_ellip) /
+                 np.linalg.norm(clean_ellip))
+
+    return (px_err, ellip_err)
 
 
 ##
@@ -179,15 +232,23 @@ def run_script(opts, log=None):
     if opts.mode in ('all', 'lowr'):
         print ' - Low Rank Threshold Factor:', opts.lowr_tf
         print ' - Low Rank Threshold Type:', opts.lowr_thresh_type
+        print ' - Low Rank Type:', opts.lowr_type
         log.info(' - Low Rank Threshold Factor: ' +
                  str(opts.lowr_tf))
         log.info(' - Low Rank Threshold Type: ' + str(opts.lowr_thresh_type))
+        log.info(' - Low Rank Type: ' + str(opts.lowr_type))
 
     print ' - Number of Iterations:', opts.n_iter
     log.info(' - Number of Iterations: ' + str(opts.n_iter))
 
     # Read noisy data file.
     data_noisy = np.load(opts.input)
+
+    # Read current reconstruction file.
+    if not isinstance(opts.current_rec, type(None)):
+        primal = np.load(opts.current_rec)
+    else:
+        primal = None
 
     # Read PSF file(s).
     if not isinstance(opts.psf, type(None)):
@@ -223,7 +284,8 @@ def run_script(opts, log=None):
     print ' ----------------------------------------'
 
     # Perform reconstruction.
-    primal_rec, dual_rec = r4.rec(data_noisy, noise_est, layout, psf=psf,
+    primal_rec, dual_rec = r4.rec(data_noisy, noise_est, layout,
+                                  primal=primal, psf=psf,
                                   psf_type=opts.psf_type, psf_pcs=psf_pcs,
                                   psf_coef=psf_coef,
                                   wavelet_levels=opts.wavelet_levels,
@@ -231,26 +293,39 @@ def run_script(opts, log=None):
                                   wave_thresh_factor=np.array(opts.wave_tf),
                                   lowr_thresh_factor=opts.lowr_tf,
                                   lowr_thresh_type=opts.lowr_thresh_type,
+                                  lowr_type=opts.lowr_type,
                                   n_reweights=opts.n_reweights,
                                   n_iter=opts.n_iter, relax=opts.relax,
                                   mode=opts.mode, pos=opts.no_pos,
                                   grad=opts.no_grad,
                                   data_format=opts.data_format,
-                                  opt_type=opts.opt_type, log=log)
+                                  opt_type=opts.opt_type, log=log,
+                                  liveplot=opts.liveplot)
+
+    # Test the reconstruction.
+    if not isinstance(opts.clean_data, type(None)):
+        image_errors = test_reconstruction(primal_rec)
+        print ' - Pixel Error:', image_errors[0]
+        print ' - Shape Error:', image_errors[1]
+        log.info(' - Pixel Error: ' + str(image_errors[0]))
+        log.info(' - Shape Error: ' + str(image_errors[1]))
 
     # Save outputs to numpy binary files.
     np.save(opts.output + '_primal', primal_rec)
-    print 'Output 1 saved to: ' + opts.output + '_primal' + '.npy'
+    print ' ----------------------------------------'
+    print ' Output 1 saved to: ' + opts.output + '_primal' + '.npy'
     log.info('Output 1 saved to: ' + opts.output + '_primal' + '.npy')
 
     if opts.opt_type == 'condat':
         np.save(opts.output + '_dual', dual_rec)
-        print 'Output 2 saved to: ' + opts.output + '_dual' + '.npy'
+        print ' Output 2 saved to: ' + opts.output + '_dual' + '.npy'
         log.info('Output 2 saved to: ' + opts.output + '_dual' + '.npy')
 
     log.info('Script successfully completed!')
+    log.info('')
 
     close_log(log)
+    print ' ----------------------------------------'
 
 
 ##

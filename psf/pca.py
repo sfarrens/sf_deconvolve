@@ -83,7 +83,7 @@ def psf_pca(psf, threshold, svd='sparse'):
         u, s, v = svd_sparse(psf_column, psf_column.shape[0] - 1)
 
     # Find the index of the last required singular value.
-    last_pc = (np.array([s[:i].sum() for i in range(s.size)]) - threshold *
+    last_pc = (np.array([s[:i].sum() for i in xrange(s.size)]) - threshold *
                s.sum())
     last_pc = np.where(last_pc == min(last_pc[last_pc >= 0.0]))[0][0]
 
