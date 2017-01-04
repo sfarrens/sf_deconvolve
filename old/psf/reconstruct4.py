@@ -54,9 +54,8 @@ def rec(data, noise_est, layout, primal=None, psf=None, psf_type='fixed',
         linear_l1norm = linear_op.l1norm
 
     elif mode == 'wave':
-        linear_op = Wavelet(data, wavelet_levels, wavelet_opt)
-        # linear_op = Wavelet(data, wavelet_levels, wavelet_opt,
-        #                     data_format=data_format)
+        linear_op = Wavelet(data, wavelet_levels, wavelet_opt,
+                            data_format=data_format)
         wavelet_filters = linear_op.filters
         linear_l1norm = linear_op.l1norm
 
@@ -237,7 +236,7 @@ def rec(data, noise_est, layout, primal=None, psf=None, psf_type='fixed',
                                wavelet=linear_op,
                                weights=rw.weights,
                                lambda_reg=None,
-                               mode=mode,
+                               mode=mode, data_format=data_format,
                                live_plotting=liveplot, window=cost_test_window,
                                total_it=total_n_iter)
 

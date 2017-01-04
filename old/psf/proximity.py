@@ -106,15 +106,18 @@ class LowRankMatrix():
     #  @param[in] thresh: Threshold value.
     #  @param[in] data_format: Input data format. (map or cube)
     #  @param[in] treshold_type: Threshold type. (hard or soft)
+    #  @param[in] layout: Data layout.
     #  @param[in] positivity: Option to impose positivity constraint.
     #
     def __init__(self, thresh, data_format='cube', thresh_type='soft',
-                 lowr_type='standard', positivity=False, operator=None):
+                 lowr_type='standard', layout=None, positivity=False,
+                 operator=None):
 
         self.thresh = thresh
         self.data_format = data_format
         self.thresh_type = thresh_type
         self.lowr_type = lowr_type
+        self.layout = layout
         self.postivity = positivity
 
         self.operator = operator
@@ -136,16 +139,33 @@ class LowRankMatrix():
         data_mean = np.mean(data)
         data -= data_mean
 
-        if self.lowr_type == 'standard':
-            data_matrix = svd_thresh(cube2matrix(data), threshold,
-                                     thresh_type=self.thresh_type)
+        # SVD threshold data.
+        if self.data_format == 'map':
 
-        elif self.lowr_type == 'ngole':
-            data_matrix = svd_thresh_coef(data, self.operator,
-                                          threshold,
-                                          thresh_type=self.thresh_type)
+            if isinstance(self.layout, type(None)):
+                raise ValueError('Must specify layout in map mode.')
 
-        new_data = matrix2cube(data_matrix, data.shape[1:])
+            data_matrix = svd_thresh(map2matrix(data, self.layout),
+                                     threshold, thresh_type=self.thresh_type)
+
+            new_data = matrix2map(data_matrix, data.shape)
+
+        elif self.data_format == 'cube':
+
+            if self.lowr_type == 'standard':
+                data_matrix = svd_thresh(cube2matrix(data), threshold,
+                                         thresh_type=self.thresh_type)
+
+            elif self.lowr_type == 'ngole':
+                data_matrix = svd_thresh_coef(data, self.operator,
+                                              threshold,
+                                              thresh_type=self.thresh_type)
+
+            new_data = matrix2cube(data_matrix, data.shape[1:])
+
+        else:
+
+            raise ValueError('Invalide data format: ' + self.data_format)
 
         # Add mean back to updated data.
         new_data += data_mean

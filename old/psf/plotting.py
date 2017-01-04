@@ -59,15 +59,12 @@ def liveCost(cost_list, iteration, total_it):
     plt.draw()
 
 
-def plotCost(cost_list, output=None):
+def plotCost(cost_list):
 
     plt.ioff()
     plt.close()
 
-    if isinstance(output, type(None)):
-        file_name = 'cost_function.png'
-    else:
-        file_name = output + '_cost_function.png'
+    file_name = 'cost_function.pdf'
 
     plt.plot(np.log10(cost_list), 'r-')
     plt.title('Cost Function')
@@ -76,7 +73,7 @@ def plotCost(cost_list, output=None):
     plt.savefig(file_name)
     plt.close()
 
-    print ' - Saving cost function data to:', file_name
+    print 'Saving cost function data to:', file_name
 
 
 def plotTest(test_list, tolerance):
@@ -91,4 +88,4 @@ def plotTest(test_list, tolerance):
     plt.savefig(file_name)
     plt.close()
 
-    print ' - Saving test function data to:', file_name
+    print 'Saving test function data to:', file_name

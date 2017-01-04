@@ -13,7 +13,7 @@
 import numpy as np
 from scipy.linalg import norm
 from algorithms import PowerMethod
-from convolve import psf_convolve
+from convolve import pca_convolve_stack
 from wavelet import *
 
 
@@ -122,3 +122,52 @@ class StandardPSF(GradBasic, PowerMethod):
 class StandardPSFnoGrad(GradZero, StandardPSF):
 
     pass
+
+
+##
+#  Class for defining the operators of a pixel variant PSF.
+#
+class PixelVariantPSF(GradBasic, PowerMethod):
+
+    ##
+    #  Method that initialises the class instance.
+    #
+    #  @param[in] data: 2D Input array. (Noisy image)
+    #  @param[in] psf_pcs: PSF principal components.
+    #  @param[in] psf_coef: PSF coefficients.
+    #
+    #  @exception ValueError for invalid data format.
+    #
+    def __init__(self, data, psf_pcs, psf_coef):
+
+        self.y = data
+        self.psf_pcs = np.array(psf_pcs)
+        self.psf_coef = np.array(psf_coef)
+
+        PowerMethod.__init__(self, self.MtMX, self.psf_coef.shape[1:],
+                             auto_run=False)
+
+    ##
+    #  Method to calculate the action of the matrix M on the data X.
+    #
+    #  @param[in] x: Input data.
+    #
+    #  @return MX.
+    #
+    def MX(self, x):
+
+        return pca_convolve_stack(x, self.psf_pcs, self.psf_coef,
+                                  pcs_rot=False)
+
+    ##
+    #  Method to calculate the action of the transpose of the matrix M on the
+    #  data X.
+    #
+    #  @param[in] x: Input data.
+    #
+    #  @return M.TX.
+    #
+    def MtX(self, x):
+
+        return pca_convolve_stack(x, self.psf_pcs, self.psf_coef,
+                                  pcs_rot=True)

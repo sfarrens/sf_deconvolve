@@ -1,0 +1,12 @@
+./06_reconstruction_script.py -n 25 -p psf_fix_ave -m all --wave_thresh_factor 1 --lowr_thresh_factor 4 -o rec_1.0_4.0
+./06_reconstruction_script.py -n 25 -p psf_fix_ave -m all --wave_thresh_factor 2 --lowr_thresh_factor 4 -o rec_2.0_4.0
+./06_reconstruction_script.py -n 25 -p psf_fix_ave -m all --wave_thresh_factor 3 --lowr_thresh_factor 4 -o rec_3.0_4.0
+./06_reconstruction_script.py -n 25 -p psf_fix_ave -m all --wave_thresh_factor 4 --lowr_thresh_factor 4 -o rec_4.0_4.0
+./06_reconstruction_script.py -n 25 -p psf_fix_ave -m all --wave_thresh_factor 1 --lowr_thresh_factor 5 -o rec_1.0_5.0
+./06_reconstruction_script.py -n 25 -p psf_fix_ave -m all --wave_thresh_factor 2 --lowr_thresh_factor 5 -o rec_2.0_5.0
+./06_reconstruction_script.py -n 25 -p psf_fix_ave -m all --wave_thresh_factor 3 --lowr_thresh_factor 5 -o rec_3.0_5.0
+./06_reconstruction_script.py -n 25 -p psf_fix_ave -m all --wave_thresh_factor 4 --lowr_thresh_factor 5 -o rec_4.0_5.0
+./06_reconstruction_script.py -n 25 -p psf_fix_ave -m all --wave_thresh_factor 1 --lowr_thresh_factor 6 -o rec_1.0_6.0
+./06_reconstruction_script.py -n 25 -p psf_fix_ave -m all --wave_thresh_factor 2 --lowr_thresh_factor 6 -o rec_2.0_6.0
+./06_reconstruction_script.py -n 25 -p psf_fix_ave -m all --wave_thresh_factor 3 --lowr_thresh_factor 6 -o rec_3.0_6.0
+./06_reconstruction_script.py -n 25 -p psf_fix_ave -m all --wave_thresh_factor 4 --lowr_thresh_factor 6 -o rec_4.0_6.0

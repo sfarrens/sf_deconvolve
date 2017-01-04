@@ -10,9 +10,9 @@
 #
 
 import numpy as np
+from psf.transform import *
 from functions.matrix import nuclear_norm
-from psf.transform import cube2matrix
-from plotting import liveCost, plotCost
+from plotting import *
 
 
 ##
@@ -46,15 +46,16 @@ class costFunction():
     #  @param[in] print_cost: Option to print cost function value.
     #
     def __init__(self, y, grad, wavelet=None, weights=None,
-                 lambda_reg=None, mode='lowr',
+                 lambda_reg=None, mode='all', data_format='cube',
                  positivity=True, tolerance=1e-4, print_cost=True,
-                 live_plotting=False, window=5, total_it=None, output=None):
+                 live_plotting=False, window=5, total_it=None):
 
         self.y = y
         self.grad = grad
         self.wavelet = wavelet
         self.lambda_reg = lambda_reg
         self.mode = mode
+        self.data_format = data_format
         self.positivity = positivity
         self.update_weights(weights)
         self.cost = 1e6
@@ -65,7 +66,7 @@ class costFunction():
         self.iteration = 0
         self.liveplot = live_plotting
         self.total_it = total_it
-        self.output = output
+
         self.window = window
         self.test_list = []
 
@@ -115,7 +116,11 @@ class costFunction():
     #
     def nucnorm(self, x):
 
-        x_prime = cube2matrix(x)
+        if self.data_format == 'map':
+            x_prime = map2matrix(x)
+
+        else:
+            x_prime = cube2matrix(x)
 
         nuc_norm = nuclear_norm(x_prime)
 
@@ -154,6 +159,7 @@ class costFunction():
                 print ''
 
             if self.liveplot:
+                # livePlot(x2, x1, self.iteration)
                 liveCost(self.cost_list, self.iteration, self.total_it)
 
             return test <= self.tolerance
@@ -190,7 +196,7 @@ class costFunction():
             self.cost = (0.5 * self.l2norm(x) ** 2 + self.l1norm(x) +
                          self.nucnorm(x))
 
-        elif self.mode == 'sparse':
+        elif self.mode == 'wave':
             self.cost = 0.5 * self.l2norm(x) ** 2 + self.l1norm(x)
 
         elif self.mode == 'lowr':
@@ -210,4 +216,4 @@ class costFunction():
 
     def plot_cost(self):
 
-        plotCost(self.cost_list, self.output)
+        plotCost(self.cost_list)

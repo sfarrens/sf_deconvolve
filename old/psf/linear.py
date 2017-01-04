@@ -10,7 +10,7 @@
 #
 
 import numpy as np
-# from convolve import convolve
+from convolve import convolve
 from wavelet import *
 from functions.matrix import rotate
 from functions.signal import *
@@ -27,15 +27,23 @@ class Directional():
     #  @param[in] data: Input data.
     #  @param[in] angle_num: Number of angles.
     #  @param[in] scale_num: Number of scales.
+    #  @param[in] data_format: Input data format. (map or cube)
     #
     #  @exception ValueError for invalid data format.
     #
-    def __init__(self, data, angle_num, scale_num):
+    def __init__(self, data, angle_num, scale_num, data_format='map'):
 
         self.y = data
+        self.data_format = data_format
 
-        self.data_shape = data.shape[-2:]
-        n = data.shape[0]
+        if self.data_format == 'map':
+            self.data_shape = data.shape
+            n = 1
+        elif self.data_format == 'cube':
+            self.data_shape = data.shape[-2:]
+            n = data.shape[0]
+        else:
+            raise ValueError('Invalid data type. Options are "map" or "cube".')
 
         self.get_filters(angle_num, scale_num)
 
@@ -51,6 +59,9 @@ class Directional():
                                (self.y.shape[0], 1)).T - shift
 
         def func(x, y):
+
+            print Gaussian_filter(rotate(index_matrix, x), y, fourier=True)
+            print mex_hat(rotate(index_matrix, x + np.pi / 2), y)
 
             return (Gaussian_filter(rotate(index_matrix, x), y, fourier=True) *
                     mex_hat(rotate(index_matrix, x + np.pi / 2), y))
@@ -68,6 +79,10 @@ class Directional():
     # #
     # def op(self, data):
     #
+    #     if self.data_format == 'map':
+    #         return filter_convolve(data, self.filters)
+    #
+    #     elif self.data_format == 'cube':
     #         return filter_convolve_stack(data, self.filters)
     #
     # ##
@@ -79,6 +94,10 @@ class Directional():
     # #
     # def adj_op(self, data):
     #
+    #     if self.data_format == 'map':
+    #         return filter_convolve(data, self.filters_rot, filter_rot=True)
+    #
+    #     elif self.data_format == 'cube':
     #         return filter_convolve_stack(data, self.filters, filter_rot=True)
     #
     # ##
@@ -97,7 +116,7 @@ class Directional():
 
 
 ##
-#  Identity operator class.
+#  Wavelet operator class.
 #
 class Identity():
 
@@ -142,14 +161,24 @@ class Wavelet():
     #  @param[in] data: Input data.
     #  @param[in] wavelet_levels: Number of wavelet levels.
     #  @param[in] wavelet_opt: Wavelet type option.
+    #  @param[in] data_format: Input data format. (map or cube)
     #
     #  @exception ValueError for invalid data format.
     #
-    def __init__(self, data, wavelet_levels, wavelet_opt=None):
+    def __init__(self, data, wavelet_levels, wavelet_opt=None,
+                 data_format='map'):
 
         self.y = data
-        self.data_shape = data.shape[-2:]
-        n = data.shape[0]
+        self.data_format = data_format
+
+        if self.data_format == 'map':
+            self.data_shape = data.shape
+            n = 1
+        elif self.data_format == 'cube':
+            self.data_shape = data.shape[-2:]
+            n = data.shape[0]
+        else:
+            raise ValueError('Invalid data type. Options are "map" or "cube".')
 
         self.filters = get_mr_filters(self.data_shape, opt=wavelet_opt)
         self.l1norm = n * np.sqrt(sum((np.sum(np.abs(filter)) ** 2 for
@@ -164,7 +193,11 @@ class Wavelet():
     #
     def op(self, data):
 
-        return filter_convolve_stack(data, self.filters)
+        if self.data_format == 'map':
+            return filter_convolve(data, self.filters)
+
+        elif self.data_format == 'cube':
+            return filter_convolve_stack(data, self.filters)
 
     ##
     #  Class adjoint operator.
@@ -175,7 +208,11 @@ class Wavelet():
     #
     def adj_op(self, data):
 
-        return filter_convolve_stack(data, self.filters, filter_rot=True)
+        if self.data_format == 'map':
+            return filter_convolve(data, self.filters_rot, filter_rot=True)
+
+        elif self.data_format == 'cube':
+            return filter_convolve_stack(data, self.filters, filter_rot=True)
 
     ##
     #  Method to calculate gradient.

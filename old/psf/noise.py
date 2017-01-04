@@ -16,6 +16,8 @@ from convolve import convolve
 from functions import image, np_adjust, stats
 from psf import image_file_io, transform
 
+from scipy.sparse import linalg
+
 
 ##
 #  Function that adds noise to the input data.
