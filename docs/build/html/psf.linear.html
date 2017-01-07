@@ -1,0 +1,445 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>psf.linear module &mdash; PSF 5.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="PSF 5.1 documentation" href="index.html"/>
+        <link rel="up" title="psf package" href="psf.html"/>
+        <link rel="next" title="psf.noise module" href="psf.noise.html"/>
+        <link rel="prev" title="psf.directional module" href="psf.directional.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> PSF
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                5.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">psf</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="functions.html">functions package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="psf.html">psf package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="psf.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="psf.algorithms.html">psf.algorithms module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.convolve.html">psf.convolve module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.cost.html">psf.cost module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.deconvolve.html">psf.deconvolve module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.directional.html">psf.directional module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="">psf.linear module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.noise.html">psf.noise module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.operators.html">psf.operators module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.optimisation.html">psf.optimisation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.plotting.html">psf.plotting module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.proximity.html">psf.proximity module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.reweight.html">psf.reweight module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.svd.html">psf.svd module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.transform.html">psf.transform module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.wavelet.html">psf.wavelet module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="psf.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="psf_scripts.html">psf_scripts package</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">PSF</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="modules.html">psf</a> &raquo;</li>
+      
+          <li><a href="psf.html">psf package</a> &raquo;</li>
+      
+    <li>psf.linear module</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/psf.linear.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-psf.linear">
+<span id="psf-linear-module"></span><h1>psf.linear module<a class="headerlink" href="#module-psf.linear" title="Permalink to this headline">¶</a></h1>
+<p>LINEAR OPERATORS</p>
+<p>This module contains linear operator classes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Samuel Farrens &lt;<a class="reference external" href="mailto:samuel&#46;farrens&#37;&#52;&#48;gmail&#46;com">samuel<span>&#46;</span>farrens<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Version:</th><td class="field-body">1.1</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">04/01/2017</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="psf.linear.Directional">
+<em class="property">class </em><code class="descclassname">psf.linear.</code><code class="descname">Directional</code><span class="sig-paren">(</span><em>data</em>, <em>angle_num</em>, <em>scale_num</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/linear.html#Directional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.Directional" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="psf.linear.Directional.get_filters">
+<code class="descname">get_filters</code><span class="sig-paren">(</span><em>angle_num</em>, <em>scale_num</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/linear.html#Directional.get_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.Directional.get_filters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="psf.linear.Identity">
+<em class="property">class </em><code class="descclassname">psf.linear.</code><code class="descname">Identity</code><a class="reference internal" href="_modules/psf/linear.html#Identity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.Identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identity operator class</p>
+<p>This is a dummy class that can be used in the optimisation classes</p>
+<dl class="method">
+<dt id="psf.linear.Identity.adj_op">
+<code class="descname">adj_op</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/linear.html#Identity.adj_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.Identity.adj_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adjoint operator</p>
+<p>Returns the input data unchanged</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
+<blockquote>
+<div><p>Input data array</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray input data</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="psf.linear.Identity.op">
+<code class="descname">op</code><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/linear.html#Identity.op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.Identity.op" title="Permalink to this definition">¶</a></dt>
+<dd><p>Operator</p>
+<p>Returns the input data unchanged</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
+<blockquote>
+<div><p>Input data array</p>
+</div></blockquote>
+<p><strong>**kwargs</strong></p>
+<blockquote>
+<div><p>Arbitrary keyword arguments</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray input data</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="psf.linear.LinearCombo">
+<em class="property">class </em><code class="descclassname">psf.linear.</code><code class="descname">LinearCombo</code><span class="sig-paren">(</span><em>operators</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/linear.html#LinearCombo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.LinearCombo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Linear combination class</p>
+<p>This class defines a combination of linear transform operators</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>operators</strong> : list</p>
+<blockquote class="last">
+<div><p>List of linear operator class instances</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="psf.linear.LinearCombo.adj_op">
+<code class="descname">adj_op</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/linear.html#LinearCombo.adj_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.LinearCombo.adj_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adjoint operator</p>
+<p>This method returns the sum of the input data operated on by all of the
+adjoint operators</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
+<blockquote>
+<div><p>Input data array, an array of coefficients</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray adjoint operation results</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="psf.linear.LinearCombo.op">
+<code class="descname">op</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/linear.html#LinearCombo.op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.LinearCombo.op" title="Permalink to this definition">¶</a></dt>
+<dd><p>Operator</p>
+<p>This method returns the input data operated on by all of the operators</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
+<blockquote>
+<div><p>Input data array, a 2D image</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray linear operation results</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="psf.linear.Wavelet">
+<em class="property">class </em><code class="descclassname">psf.linear.</code><code class="descname">Wavelet</code><span class="sig-paren">(</span><em>data</em>, <em>wavelet_opt=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/linear.html#Wavelet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.Wavelet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wavelet class</p>
+<p>This class defines the wavelet transform operators</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
+<blockquote>
+<div><p>Input data array, normally an array of 2D images</p>
+</div></blockquote>
+<p><strong>wavelet_opt: str, optional</strong></p>
+<blockquote class="last">
+<div><p>Additional options for <cite>mr_transform</cite></p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="psf.linear.Wavelet.adj_op">
+<code class="descname">adj_op</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/linear.html#Wavelet.adj_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.Wavelet.adj_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adjoint operator</p>
+<p>This method returns the input data convolved with the wavelet filters
+rotated by 180 degrees</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
+<blockquote>
+<div><p>Input data array, a 3D of wavelet coefficients</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray wavelet convolved data</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="psf.linear.Wavelet.op">
+<code class="descname">op</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/linear.html#Wavelet.op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.Wavelet.op" title="Permalink to this definition">¶</a></dt>
+<dd><p>Operator</p>
+<p>This method returns the input data convolved with the wavelet filters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
+<blockquote>
+<div><p>Input data array, a 2D image</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray wavelet convolved data</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="psf.noise.html" class="btn btn-neutral float-right" title="psf.noise module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="psf.directional.html" class="btn btn-neutral" title="psf.directional module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Samuel Farrens.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'5.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

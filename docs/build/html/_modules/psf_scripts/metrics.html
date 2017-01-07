@@ -1,0 +1,467 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>psf_scripts.metrics &mdash; PSF 5.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="PSF 5.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> PSF
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                5.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">psf</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">PSF</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>psf_scripts.metrics</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for psf_scripts.metrics</h1><div class="highlight"><pre>
+<span></span><span class="ch">#! /usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">argparse</span> <span class="kn">as</span> <span class="nn">ap</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">scipy.fftpack</span> <span class="kn">import</span> <span class="n">fftn</span><span class="p">,</span> <span class="n">ifftn</span><span class="p">,</span> <span class="n">fftshift</span><span class="p">,</span> <span class="n">ifftshift</span>
+<span class="kn">from</span> <span class="nn">creepy.image.shape</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">creepy.image.quality</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">functions.string</span> <span class="kn">import</span> <span class="n">extract_num</span>
+<span class="kn">from</span> <span class="nn">functions.stats</span> <span class="kn">import</span> <span class="n">gaussian_kernel</span>
+
+<span class="c1"># from psf.transform import *</span>
+
+
+<div class="viewcode-block" id="get_opts"><a class="viewcode-back" href="../../psf_scripts.metrics.html#psf_scripts.metrics.get_opts">[docs]</a><span class="k">def</span> <span class="nf">get_opts</span><span class="p">():</span>
+
+    <span class="sd">&#39;&#39;&#39;Get script arguments&#39;&#39;&#39;</span>
+
+    <span class="k">global</span> <span class="n">opts</span>
+
+    <span class="n">formatter</span> <span class="o">=</span> <span class="n">ap</span><span class="o">.</span><span class="n">ArgumentDefaultsHelpFormatter</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">ap</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="s1">&#39;SCRIPT OPTIONS:&#39;</span><span class="p">,</span> <span class="n">formatter_class</span><span class="o">=</span><span class="n">formatter</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--input&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;input&#39;</span><span class="p">,</span>
+                        <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Input path.&#39;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="s1">&#39;--clean_data&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;clean_data&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Clean data file name.&#39;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-n&#39;</span><span class="p">,</span> <span class="s1">&#39;--noisy_data&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;noisy_data&#39;</span><span class="p">,</span>
+                        <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Noisy data file name.&#39;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;--psf&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;psf&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;PSF file name.&#39;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-a&#39;</span><span class="p">,</span> <span class="s1">&#39;--average&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;average&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                        <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Averaged results for samples.&#39;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="s1">&#39;--sigma&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;sigma&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                        <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Sigma value for weights.&#39;</span><span class="p">)</span>
+
+    <span class="n">opts</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="read_files"><a class="viewcode-back" href="../../psf_scripts.metrics.html#psf_scripts.metrics.read_files">[docs]</a><span class="k">def</span> <span class="nf">read_files</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+    <span class="n">vals</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;primal.npy&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+                <span class="n">vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="nb">file</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="s1">&#39;rs&#39;</span> <span class="o">+</span> <span class="n">seed</span> <span class="ow">in</span> <span class="nb">file</span><span class="p">:</span>
+                <span class="n">vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="nb">file</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="read_noisy_files"><a class="viewcode-back" href="../../psf_scripts.metrics.html#psf_scripts.metrics.read_noisy_files">[docs]</a><span class="k">def</span> <span class="nf">read_noisy_files</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="n">vals</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+                <span class="n">vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="nb">file</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="s1">&#39;rs&#39;</span> <span class="o">+</span> <span class="n">seed</span> <span class="ow">in</span> <span class="nb">file</span><span class="p">:</span>
+                <span class="n">vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="nb">file</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="add_weights_set"><a class="viewcode-back" href="../../psf_scripts.metrics.html#psf_scripts.metrics.add_weights_set">[docs]</a><span class="k">def</span> <span class="nf">add_weights_set</span><span class="p">(</span><span class="n">data_set</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">add_weights</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span>
+                    <span class="n">data_set</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">data_set</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="add_weights"><a class="viewcode-back" href="../../psf_scripts.metrics.html#psf_scripts.metrics.add_weights">[docs]</a><span class="k">def</span> <span class="nf">add_weights</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span> <span class="o">*</span> <span class="n">weight</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="pseudo_inverse"><a class="viewcode-back" href="../../psf_scripts.metrics.html#psf_scripts.metrics.pseudo_inverse">[docs]</a><span class="k">def</span> <span class="nf">pseudo_inverse</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+        <span class="n">weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="n">y_hat</span> <span class="o">=</span> <span class="n">fftshift</span><span class="p">(</span><span class="n">fftn</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
+    <span class="n">h_hat</span> <span class="o">=</span> <span class="n">fftshift</span><span class="p">(</span><span class="n">fftn</span><span class="p">(</span><span class="n">kernel</span><span class="p">))</span>
+    <span class="n">h_hat_star</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">h_hat</span><span class="p">)</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="p">((</span><span class="n">h_hat_star</span> <span class="o">*</span> <span class="n">y_hat</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">h_hat_star</span> <span class="o">*</span> <span class="n">h_hat</span><span class="p">)</span> <span class="o">*</span> <span class="n">weight</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">fftshift</span><span class="p">(</span><span class="n">ifftn</span><span class="p">(</span><span class="n">ifftshift</span><span class="p">(</span><span class="n">res</span><span class="p">))))</span></div>
+
+
+<div class="viewcode-block" id="get_pi"><a class="viewcode-back" href="../../psf_scripts.metrics.html#psf_scripts.metrics.get_pi">[docs]</a><span class="k">def</span> <span class="nf">get_pi</span><span class="p">(</span><span class="n">noisy_data_set</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">pseudo_inverse</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span> <span class="o">*</span> <span class="n">weights</span> <span class="k">for</span> <span class="n">y</span><span class="p">,</span> <span class="n">h</span> <span class="ow">in</span>
+                    <span class="nb">zip</span><span class="p">(</span><span class="n">noisy_data_set</span><span class="p">,</span> <span class="n">psf</span><span class="p">)])</span></div>
+
+
+<div class="viewcode-block" id="perform_test"><a class="viewcode-back" href="../../psf_scripts.metrics.html#psf_scripts.metrics.perform_test">[docs]</a><span class="k">def</span> <span class="nf">perform_test</span><span class="p">(</span><span class="n">random_seed</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+    <span class="c1"># READ DATA</span>
+
+    <span class="n">lowr_data</span> <span class="o">=</span> <span class="n">read_files</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">input</span> <span class="o">+</span> <span class="s1">&#39;/lowr/&#39;</span><span class="p">,</span> <span class="n">random_seed</span><span class="p">)</span>
+    <span class="n">sparse_data</span> <span class="o">=</span> <span class="n">read_files</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">input</span> <span class="o">+</span> <span class="s1">&#39;/wave/&#39;</span><span class="p">,</span> <span class="n">random_seed</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">random_seed</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">random_seed</span><span class="p">))</span>
+        <span class="n">clean_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">clean_data</span><span class="p">)</span>
+        <span class="n">clean_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">clean_data</span><span class="p">)[:</span><span class="n">lowr_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">clean_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">clean_data</span><span class="p">)[:</span><span class="n">lowr_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+    <span class="c1"># ADD WEIGHTS</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+
+        <span class="n">psf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">psf</span><span class="p">)</span>
+        <span class="n">noisy_data</span> <span class="o">=</span> <span class="n">read_noisy_files</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">noisy_data</span><span class="p">,</span> <span class="n">random_seed</span><span class="p">)</span>
+
+        <span class="n">gk</span> <span class="o">=</span> <span class="n">gaussian_kernel</span><span class="p">(</span><span class="n">clean_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span>
+
+        <span class="n">lowr_data</span> <span class="o">=</span> <span class="n">add_weights_set</span><span class="p">(</span><span class="n">lowr_data</span><span class="p">,</span> <span class="n">gk</span><span class="p">)</span>
+        <span class="n">sparse_data</span> <span class="o">=</span> <span class="n">add_weights_set</span><span class="p">(</span><span class="n">sparse_data</span><span class="p">,</span> <span class="n">gk</span><span class="p">)</span>
+        <span class="n">clean_data</span> <span class="o">=</span> <span class="n">add_weights</span><span class="p">(</span><span class="n">clean_data</span><span class="p">,</span> <span class="n">gk</span><span class="p">)</span>
+
+        <span class="n">pi_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">get_pi</span><span class="p">(</span><span class="n">nd</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">gk</span><span class="p">)</span> <span class="k">for</span> <span class="n">nd</span> <span class="ow">in</span> <span class="n">noisy_data</span><span class="p">])</span>
+
+        <span class="n">c_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ellipticity_atoms</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">clean_data</span><span class="p">])</span>
+
+        <span class="n">crap</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">setn</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+
+            <span class="n">p_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ellipticity_atoms</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pi_data</span><span class="p">[</span><span class="n">setn</span><span class="p">]])</span>
+            <span class="n">err_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">c_test</span><span class="p">,</span>
+                             <span class="n">p_test</span><span class="p">)])</span>
+
+            <span class="n">crap</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">err_p</span><span class="p">)</span>
+
+        <span class="n">crap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">crap</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="k">print</span> <span class="n">crap</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">crap</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">crap</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+        <span class="nb">exit</span><span class="p">()</span>
+
+    <span class="c1"># CALCULATE ERRORS</span>
+
+    <span class="n">lowr_px_err</span> <span class="o">=</span> <span class="p">[</span><span class="n">nmse</span><span class="p">(</span><span class="n">clean_data</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">lowr_data</span><span class="p">]</span>
+    <span class="n">sparse_px_err</span> <span class="o">=</span> <span class="p">[</span><span class="n">nmse</span><span class="p">(</span><span class="n">clean_data</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sparse_data</span><span class="p">]</span>
+
+    <span class="n">lowr_e_err</span> <span class="o">=</span> <span class="p">[</span><span class="n">e_error</span><span class="p">(</span><span class="n">clean_data</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">lowr_data</span><span class="p">]</span>
+    <span class="n">sparse_e_err</span> <span class="o">=</span> <span class="p">[</span><span class="n">e_error</span><span class="p">(</span><span class="n">clean_data</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sparse_data</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+
+        <span class="n">pi_e_err</span> <span class="o">=</span> <span class="p">[</span><span class="n">e_error</span><span class="p">(</span><span class="n">clean_data</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pi_data</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">sparse_px_err</span><span class="p">,</span> <span class="n">lowr_px_err</span><span class="p">,</span> <span class="n">sparse_e_err</span><span class="p">,</span> <span class="n">lowr_e_err</span><span class="p">,</span>
+                        <span class="n">pi_e_err</span><span class="p">])</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">sparse_px_err</span><span class="p">,</span> <span class="n">lowr_px_err</span><span class="p">,</span> <span class="n">sparse_e_err</span><span class="p">,</span> <span class="n">lowr_e_err</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="make_plots"><a class="viewcode-back" href="../../psf_scripts.metrics.html#psf_scripts.metrics.make_plots">[docs]</a><span class="k">def</span> <span class="nf">make_plots</span><span class="p">(</span><span class="n">data1</span><span class="p">,</span> <span class="n">data2</span><span class="p">,</span> <span class="n">data3</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fig_num</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+               <span class="n">err_type</span><span class="o">=</span><span class="s1">&#39;px&#39;</span><span class="p">):</span>
+
+    <span class="n">n_im</span> <span class="o">=</span> <span class="n">extract_num</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="n">sigma</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">]</span>
+
+    <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">18</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">fig_num</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">errors</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">data1</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+                 <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#5AB4D1&#39;</span><span class="p">,</span>
+                 <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Sparsity&#39;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">data2</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span>
+                 <span class="n">markersize</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#C67DEE&#39;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Low Rank&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data3</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">data3</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span>
+                     <span class="n">markersize</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#7EBE7E&#39;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span>
+                     <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Pseudo-Inverse&#39;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">data1</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">errors</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span>
+                     <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">elinewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+                     <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#5AB4D1&#39;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Sparsity&#39;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">data2</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">errors</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span>
+                     <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">elinewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+                     <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#C67DEE&#39;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Low-Rank&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data3</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+
+            <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">data3</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">errors</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span>
+                         <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">elinewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+                         <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#7EBE7E&#39;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span>
+                         <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Pseudo-Inverse&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;$\sigma$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">err_type</span> <span class="o">==</span> <span class="s1">&#39;px&#39;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$P_{err}$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Weighted Pixel Error for &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n_im</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; Galaxy Images&#39;</span><span class="p">)</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;pixel_error_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n_im</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$\epsilon_{err}$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Weighted Ellipticity Error&#39;</span><span class="p">)</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;ellipticity_error_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n_im</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+        <span class="n">file_name</span> <span class="o">+=</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">sigma</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s1">&#39;Plot saved to:&#39;</span><span class="p">,</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span></div>
+
+
+<div class="viewcode-block" id="run_script"><a class="viewcode-back" href="../../psf_scripts.metrics.html#psf_scripts.metrics.run_script">[docs]</a><span class="k">def</span> <span class="nf">run_script</span><span class="p">():</span>
+
+    <span class="n">seeds</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;05&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">,</span> <span class="s1">&#39;15&#39;</span><span class="p">,</span> <span class="s1">&#39;20&#39;</span><span class="p">,</span> <span class="s1">&#39;25&#39;</span><span class="p">,</span> <span class="s1">&#39;30&#39;</span><span class="p">,</span> <span class="s1">&#39;35&#39;</span><span class="p">,</span> <span class="s1">&#39;40&#39;</span><span class="p">,</span> <span class="s1">&#39;45&#39;</span><span class="p">,</span> <span class="s1">&#39;50&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">average</span><span class="p">:</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">perform_test</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span> <span class="k">for</span> <span class="n">seed</span> <span class="ow">in</span> <span class="n">seeds</span><span class="p">])</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">make_plots</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">results</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="n">errors</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="n">make_plots</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">results</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">results</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="n">errors</span><span class="p">[</span><span class="mi">2</span><span class="p">:],</span>
+                       <span class="n">fig_num</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">err_type</span><span class="o">=</span><span class="s1">&#39;e&#39;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">make_plots</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">results</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="n">errors</span><span class="p">[</span><span class="mi">2</span><span class="p">:],</span> <span class="n">fig_num</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                       <span class="n">err_type</span><span class="o">=</span><span class="s1">&#39;e&#39;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="n">perform_test</span><span class="p">()</span>
+
+        <span class="n">make_plots</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">results</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">results</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="n">make_plots</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">results</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">results</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">fig_num</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                       <span class="n">err_type</span><span class="o">=</span><span class="s1">&#39;e&#39;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">make_plots</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">results</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">fig_num</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">err_type</span><span class="o">=</span><span class="s1">&#39;e&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../psf_scripts.metrics.html#psf_scripts.metrics.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+
+    <span class="n">get_opts</span><span class="p">()</span>
+    <span class="n">run_script</span><span class="p">()</span></div>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Samuel Farrens.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'5.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

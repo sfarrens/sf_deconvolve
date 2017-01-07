@@ -51,7 +51,7 @@ def get_opts():
     parser.add_argument('--obj', dest='obj', required=False, default=0,
                         help='Object stack number.')
 
-    parser.add_argument('--vmin', dest='vmin', required=False, default=0.0,
+    parser.add_argument('--vmin', dest='vmin', required=False, default=0.01,
                         type=float, help='Minimum pixel value.')
 
     parser.add_argument('--vmax', dest='vmax', required=False, type=float,
@@ -65,7 +65,7 @@ def get_opts():
                         help='Number of colour levels.')
 
     parser.add_argument('--cmap', dest='cmap', required=False,
-                        default='gist_stern', help='Matplotlib colour map.')
+                        default='autumn', help='Matplotlib colour map.')
 
     parser.add_argument('--interp', dest='interp', required=False,
                         default='nearest', help='Interpolation.')
@@ -95,12 +95,15 @@ def make_plot(data, output_file):
 
     # Set the colour levels.
     if isinstance(opts.levels, type(None)):
-        colourbin = 0.05
+        colourbin = 0.0001
     else:
         colourbin = (opts.vmax - opts.vmin) / opts.levels
 
+    cmap = cm.get_cmap(name=opts.cmap)
+    cmap.set_under('k')
+
     boundaries = np.arange(opts.vmin, opts.vmax, colourbin)
-    norm = BoundaryNorm(boundaries, cm.get_cmap(name=opts.cmap).N)
+    norm = BoundaryNorm(boundaries, cmap.N)
 
     # Make plot.
     fig, axes = plt.subplots(nrows=2, ncols=2, sharex=True, sharey=True)
@@ -154,7 +157,7 @@ def run_script():
 
     # Calculate the residual.
     residual = np.abs(data_noisy - psf_convolve(data_rec, psf,
-                      psf_type='obj_var', data_format='cube'))
+                      psf_type='obj_var'))
 
     # Create a data list.
     data = [data_clean, data_noisy, data_rec, residual]

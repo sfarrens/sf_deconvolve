@@ -1,0 +1,372 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>psf.wavelet module &mdash; PSF 5.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="PSF 5.1 documentation" href="index.html"/>
+        <link rel="up" title="psf package" href="psf.html"/>
+        <link rel="next" title="psf_scripts package" href="psf_scripts.html"/>
+        <link rel="prev" title="psf.transform module" href="psf.transform.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> PSF
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                5.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">psf</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="functions.html">functions package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="psf.html">psf package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="psf.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="psf.algorithms.html">psf.algorithms module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.convolve.html">psf.convolve module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.cost.html">psf.cost module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.deconvolve.html">psf.deconvolve module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.directional.html">psf.directional module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.linear.html">psf.linear module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.noise.html">psf.noise module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.operators.html">psf.operators module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.optimisation.html">psf.optimisation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.plotting.html">psf.plotting module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.proximity.html">psf.proximity module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.reweight.html">psf.reweight module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.svd.html">psf.svd module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="psf.transform.html">psf.transform module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="">psf.wavelet module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="psf.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="psf_scripts.html">psf_scripts package</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">PSF</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="modules.html">psf</a> &raquo;</li>
+      
+          <li><a href="psf.html">psf package</a> &raquo;</li>
+      
+    <li>psf.wavelet module</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/psf.wavelet.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-psf.wavelet">
+<span id="psf-wavelet-module"></span><h1>psf.wavelet module<a class="headerlink" href="#module-psf.wavelet" title="Permalink to this headline">¶</a></h1>
+<p>WAVELET MODULE</p>
+<p>This module contains methods for performing wavelet transformations using iSAP</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Samuel Farrens &lt;<a class="reference external" href="mailto:samuel&#46;farrens&#37;&#52;&#48;gmail&#46;com">samuel<span>&#46;</span>farrens<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Version:</th><td class="field-body">1.1</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">06/01/2017</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="psf.wavelet.call_mr_transform">
+<code class="descclassname">psf.wavelet.</code><code class="descname">call_mr_transform</code><span class="sig-paren">(</span><em>data</em>, <em>opt=None</em>, <em>path='./'</em>, <em>remove_files=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/wavelet.html#call_mr_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.wavelet.call_mr_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call mr_transform</p>
+<p>This method calls the iSAP module mr_transform</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
+<blockquote>
+<div><p>Input data, 2D array</p>
+</div></blockquote>
+<p><strong>opt</strong> : list, optional</p>
+<blockquote>
+<div><p>List of additonal mr_transform options</p>
+</div></blockquote>
+<p><strong>path</strong> : str, optional</p>
+<blockquote>
+<div><p>Path for output files (default is &#8216;./&#8217;)</p>
+</div></blockquote>
+<p><strong>remove_files</strong> : bool, optional</p>
+<blockquote>
+<div><p>Option to remove output files (default is &#8216;True&#8217;)</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray results of transform</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="psf.wavelet.filter_convolve">
+<code class="descclassname">psf.wavelet.</code><code class="descname">filter_convolve</code><span class="sig-paren">(</span><em>data</em>, <em>filters</em>, <em>filter_rot=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/wavelet.html#filter_convolve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.wavelet.filter_convolve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter convolve</p>
+<p>This method convolves the input image with the wavelet filters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
+<blockquote>
+<div><p>Input data, 2D array</p>
+</div></blockquote>
+<p><strong>filters</strong> : np.ndarray</p>
+<blockquote>
+<div><p>Wavelet filters, 3D array</p>
+</div></blockquote>
+<p><strong>filter_rot</strong> : bool, optional</p>
+<blockquote>
+<div><p>Option to rotate wavelet filters (default is &#8216;False&#8217;)</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray convolved data</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="psf.wavelet.filter_convolve_stack">
+<code class="descclassname">psf.wavelet.</code><code class="descname">filter_convolve_stack</code><span class="sig-paren">(</span><em>data</em>, <em>filters</em>, <em>filter_rot=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/wavelet.html#filter_convolve_stack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.wavelet.filter_convolve_stack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter convolve</p>
+<p>This method convolves the a stack of input images with the wavelet filters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
+<blockquote>
+<div><p>Input data, 3D array</p>
+</div></blockquote>
+<p><strong>filters</strong> : np.ndarray</p>
+<blockquote>
+<div><p>Wavelet filters, 3D array</p>
+</div></blockquote>
+<p><strong>filter_rot</strong> : bool, optional</p>
+<blockquote>
+<div><p>Option to rotate wavelet filters (default is &#8216;False&#8217;)</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray convolved data</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="psf.wavelet.get_mr_filters">
+<code class="descclassname">psf.wavelet.</code><code class="descname">get_mr_filters</code><span class="sig-paren">(</span><em>data_shape</em>, <em>opt=None</em>, <em>coarse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/wavelet.html#get_mr_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.wavelet.get_mr_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get mr_transform filters</p>
+<p>This method obtains wavelet filters by calling mr_transform</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data_shape</strong> : tuple</p>
+<blockquote>
+<div><p>2D data shape</p>
+</div></blockquote>
+<p><strong>opt</strong> : list, optional</p>
+<blockquote>
+<div><p>List of additonal mr_transform options</p>
+</div></blockquote>
+<p><strong>coarse</strong> : bool, optional</p>
+<blockquote>
+<div><p>Option to keep coarse scale (default is &#8216;False&#8217;)</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray 3D array of wavelet filters</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="psf_scripts.html" class="btn btn-neutral float-right" title="psf_scripts package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="psf.transform.html" class="btn btn-neutral" title="psf.transform module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Samuel Farrens.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'5.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

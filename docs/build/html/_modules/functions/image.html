@@ -1,0 +1,711 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>functions.image &mdash; PSF 5.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="PSF 5.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> PSF
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                5.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">psf</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">PSF</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>functions.image</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for functions.image</h1><div class="highlight"><pre>
+<span></span><span class="c1">#  @file image.py</span>
+<span class="c1">#</span>
+<span class="c1">#  IMAGE ANALYSIS FUNCTIONS</span>
+<span class="c1">#</span>
+<span class="c1">#  Basic functions for analysing images and/or 2D-arrays.</span>
+<span class="c1">#</span>
+<span class="c1">#  @author Samuel Farrens</span>
+<span class="c1">#  @version 1.0</span>
+<span class="c1">#  @date 2015</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">from</span> <span class="nn">scipy.ndimage.interpolation</span> <span class="kn">import</span> <span class="n">shift</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span><span class="p">,</span> <span class="n">izip</span>
+<span class="kn">from</span> <span class="nn">functions.np_adjust</span> <span class="kn">import</span> <span class="n">data2np</span><span class="p">,</span> <span class="n">pad2d</span>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Function that convolves and image with a kernal using FFT.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] image: 2D image data.</span>
+<span class="c1">#  @param[in] kernel: 2D kernel.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return Convolved image.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="fftconvolve"><a class="viewcode-back" href="../../functions.image.html#functions.image.fftconvolve">[docs]</a><span class="k">def</span> <span class="nf">fftconvolve</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftn</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftn</span><span class="p">(</span><span class="n">kernel</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifftn</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifftshift</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span><span class="p">))))</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Function that deconvolves and image with a kernal using FFT.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] image: 2D image data.</span>
+<span class="c1">#  @param[in] kernel: 2D kernel.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return Deconvolved image.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="fftdeconvolve"><a class="viewcode-back" href="../../functions.image.html#functions.image.fftdeconvolve">[docs]</a><span class="k">def</span> <span class="nf">fftdeconvolve</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftn</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftn</span><span class="p">(</span><span class="n">kernel</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifftn</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifftshift</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">y</span><span class="p">))))</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Function that downsamples (decimates) an image.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] image: 2D image data.</span>
+<span class="c1">#  @param[in] factor: Downsampling factor.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return Downsampled image.</span>
+<span class="c1">#</span>
+<span class="c1">#  @exception ValueError for invalid downsampling factor values.</span>
+<span class="c1">#  @exception ValueError for invalid number of downsampling factors.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="downsample"><a class="viewcode-back" href="../../functions.image.html#functions.image.downsample">[docs]</a><span class="k">def</span> <span class="nf">downsample</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+
+    <span class="n">factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">factor</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The downsampling factor values must be &gt; 0.&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">factor</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">image</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="n">factor</span><span class="p">,</span> <span class="mi">0</span><span class="p">::</span><span class="n">factor</span><span class="p">]</span>
+
+    <span class="k">elif</span> <span class="n">factor</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">image</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="n">factor</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">::</span><span class="n">factor</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The downsampling factor can only contain one or &#39;</span> <span class="o">+</span>
+                         <span class="s1">&#39;two values.&#39;</span><span class="p">)</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Function that returns an image with odd dimensions.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] image: 2D image data.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return Uneven shaped image.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="resize_even_image"><a class="viewcode-back" href="../../functions.image.html#functions.image.resize_even_image">[docs]</a><span class="k">def</span> <span class="nf">resize_even_image</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="n">image</span><span class="p">[[</span><span class="nb">slice</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">+</span>
+                  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]]</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Function that finds the centres of the individual images in a 2D map.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] data_size: Size of 2D data map.</span>
+<span class="c1">#  @param[in] layout: 2D Layout of image map.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return Array of image centres.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="image_centres"><a class="viewcode-back" href="../../functions.image.html#functions.image.image_centres">[docs]</a><span class="k">def</span> <span class="nf">image_centres</span><span class="p">(</span><span class="n">data_size</span><span class="p">,</span> <span class="n">layout</span><span class="p">):</span>
+
+    <span class="n">data_size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_size</span><span class="p">)</span>
+    <span class="n">layout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">data_size</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The the data size must be of size 2.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">layout</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The the layout must be of size 2.&#39;</span><span class="p">)</span>
+
+    <span class="n">ranges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">layout</span><span class="p">]))))</span>
+    <span class="n">image_size</span> <span class="o">=</span> <span class="n">data_size</span> <span class="o">/</span> <span class="n">layout</span>
+    <span class="n">image_centre</span> <span class="o">=</span> <span class="n">image_size</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">image_centre</span> <span class="o">+</span> <span class="n">image_size</span> <span class="o">*</span> <span class="n">ranges</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Function that rolls an array in 2 dimensions.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] data: 2D Input data.</span>
+<span class="c1">#  @param[in] roll_rad: Roll radius in each dimension.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return Rolled array.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="roll_2d"><a class="viewcode-back" href="../../functions.image.html#functions.image.roll_2d">[docs]</a><span class="k">def</span> <span class="nf">roll_2d</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">roll_rad</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">roll_rad</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">roll_rad</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Function that rotates (by 180 deg) and rolls a 2D array.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] data: 2D Input data.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return Rotated and rolled array.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="rot_and_roll"><a class="viewcode-back" href="../../functions.image.html#functions.image.rot_and_roll">[docs]</a><span class="k">def</span> <span class="nf">rot_and_roll</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="n">roll_2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rot90</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="o">-</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Function that generates an image mask.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] kernel_shape: 2D shape of the kernel.</span>
+<span class="c1">#  @param[in] image_shape: 2D shape of the image.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return Boolean mask.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="gen_mask"><a class="viewcode-back" href="../../functions.image.html#functions.image.gen_mask">[docs]</a><span class="k">def</span> <span class="nf">gen_mask</span><span class="p">(</span><span class="n">kernel_shape</span><span class="p">,</span> <span class="n">image_shape</span><span class="p">):</span>
+
+    <span class="n">kernel_shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kernel_shape</span><span class="p">)</span>
+    <span class="n">image_shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image_shape</span><span class="p">)</span>
+
+    <span class="n">shape_diff</span> <span class="o">=</span> <span class="n">image_shape</span> <span class="o">-</span> <span class="n">kernel_shape</span>
+
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">image_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">shape_diff</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">mask</span><span class="p">[</span><span class="o">-</span><span class="n">shape_diff</span><span class="p">[</span><span class="mi">0</span><span class="p">]:]</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="k">if</span> <span class="n">shape_diff</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">mask</span><span class="p">[:,</span> <span class="o">-</span><span class="n">shape_diff</span><span class="p">[</span><span class="mi">1</span><span class="p">]:]</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="k">return</span> <span class="n">roll_2d</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="n">kernel_shape</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Function that generates the roll sequence for a 2D array.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] data_shape: 2D shape of the data.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return List of roll radii.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="roll_sequence"><a class="viewcode-back" href="../../functions.image.html#functions.image.roll_sequence">[docs]</a><span class="k">def</span> <span class="nf">roll_sequence</span><span class="p">(</span><span class="n">data_shape</span><span class="p">):</span>
+
+    <span class="n">data_shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_shape</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">data_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">range</span><span class="p">(</span><span class="n">data_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))))</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Function that generates the kernel pattern. Rather than padding the kernel</span>
+<span class="c1">#  with zeroes to match the image size one simply extracts the series of</span>
+<span class="c1">#  repitions of the base kernel patterns.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] kernel_shape: 2D shape of the kernel.</span>
+<span class="c1">#  @param[in] mask: The image mask.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return List of roll radii.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="kernel_pattern"><a class="viewcode-back" href="../../functions.image.html#functions.image.kernel_pattern">[docs]</a><span class="k">def</span> <span class="nf">kernel_pattern</span><span class="p">(</span><span class="n">kernel_shape</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+
+    <span class="n">kernel_shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kernel_shape</span><span class="p">)</span>
+
+    <span class="n">kernel_buffer</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kernel_shape</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span>
+
+    <span class="n">n_rep_axis1</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">mask</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">n_rep_axis2</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">mask</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="n">pos_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">kernel_buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="n">pos_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">kernel_buffer</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">kernel_shape</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">kernel_shape</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rep_axis1</span><span class="p">):</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">pos_1</span><span class="p">,</span> <span class="n">pattern</span><span class="p">[</span><span class="n">pos_1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rep_axis2</span><span class="p">):</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">pos_2</span><span class="p">,</span> <span class="n">pattern</span><span class="p">[:,</span> <span class="n">pos_2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pattern</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">size</span><span class="p">)</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Function that rearanges the input kernel elements for vector multiplication.</span>
+<span class="c1">#  The input kernel is padded with zeroes to match the image size.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] kernel: 2D Input kernel.</span>
+<span class="c1">#  @param[in] data_shape: 2D data shape.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return Rearanged matrix of kernel elements.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="rearrange_kernel"><a class="viewcode-back" href="../../functions.image.html#functions.image.rearrange_kernel">[docs]</a><span class="k">def</span> <span class="nf">rearrange_kernel</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">data_shape</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+    <span class="c1"># Define kernel shape.</span>
+    <span class="n">kernel_shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kernel</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="c1"># Set data shape if not provided.</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_shape</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+        <span class="n">data_shape</span> <span class="o">=</span> <span class="n">kernel_shape</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data_shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_shape</span><span class="p">)</span>
+
+    <span class="c1"># Set the length of the output matrix rows.</span>
+    <span class="n">vec_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">data_shape</span><span class="p">)</span>
+
+    <span class="c1"># Find the diffrence between the shape of the data and the kernel.</span>
+    <span class="n">shape_diff</span> <span class="o">=</span> <span class="n">data_shape</span> <span class="o">-</span> <span class="n">kernel_shape</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">shape_diff</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Kernel shape must be less than or equal to the &#39;</span>
+                         <span class="s1">&#39;data shape&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Set the kernel radius.</span>
+    <span class="n">kernel_rad</span> <span class="o">=</span> <span class="n">kernel_shape</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="c1"># Rotate, pad and roll the input kernel.</span>
+    <span class="n">kernel_rot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rot90</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">shape_diff</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">shape_diff</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="s1">&#39;constant&#39;</span><span class="p">)</span>
+    <span class="n">kernel_rot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">kernel_rot</span><span class="p">,</span> <span class="o">-</span><span class="n">kernel_rad</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                         <span class="o">-</span><span class="n">kernel_rad</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">kernel_rot</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">j</span><span class="p">,</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">vec_length</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Function that selects a window of a given size from a 2D-array.</span>
+<span class="c1">#</span>
+<span class="c1">#  Note that the image edges are padded with zeros.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] data: 2D Input array.</span>
+<span class="c1">#  @param[in] pos: 2D Position in array where the window is to be centred.</span>
+<span class="c1">#  @param[in] pixel_rad: 1D or 2D pixel radius.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return Windowed selection from input array.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="window"><a class="viewcode-back" href="../../functions.image.html#functions.image.window">[docs]</a><span class="k">def</span> <span class="nf">window</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">pixel_rad</span><span class="p">):</span>
+
+    <span class="c1"># Check that the input array has two dimensions.</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The input array must be 2D.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># If the pixel radius size is one repat the value for the 2nd dimension.</span>
+    <span class="n">pixel_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pixel_rad</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pixel_rad</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">pixel_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">pixel_rad</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pixel_rad</span><span class="o">.</span><span class="n">size</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The pixel radius must have a size of 1 or 2.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Check that the array position has a size of two.</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span> <span class="o">%</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pos</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The array position must have a size of 2.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Check if the pixel radius is within the bounds of the input array.</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">pixel_rad</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span>
+                                        <span class="n">pixel_rad</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The pixel radius values must have a value of at &#39;</span>
+                         <span class="s1">&#39;least 1 and at most half the size of the input &#39;</span>
+                         <span class="s1">&#39;array. Array size: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+    <span class="c1"># Return window selection.</span>
+    <span class="k">return</span> <span class="n">pad2d</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pixel_rad</span><span class="p">)[[</span><span class="nb">slice</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span>
+                                   <span class="nb">zip</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">pixel_rad</span><span class="p">)]]</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Function that returns all of the pixel positions from a 2D-array.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] array_shape: Shape of 2D-array.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return List of pixel positions.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="pixel_pos"><a class="viewcode-back" href="../../functions.image.html#functions.image.pixel_pos">[docs]</a><span class="k">def</span> <span class="nf">pixel_pos</span><span class="p">(</span><span class="n">array_shape</span><span class="p">):</span>
+
+    <span class="n">ranges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">array_shape</span><span class="p">)])</span>
+
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">ranges</span><span class="p">))</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Class that returns window selections of a given pixel radius from an input</span>
+<span class="c1">#  2D-array.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="FetchWindows"><a class="viewcode-back" href="../../functions.image.html#functions.image.FetchWindows">[docs]</a><span class="k">class</span> <span class="nc">FetchWindows</span><span class="p">():</span>
+
+    <span class="c1">##</span>
+    <span class="c1">#  Method that initialises the class instance.</span>
+    <span class="c1">#</span>
+    <span class="c1">#  @param[in] data: 2D Input array.</span>
+    <span class="c1">#  @param[in] pixel_rad: Pixel radius.</span>
+    <span class="c1">#  @param[in] all: Select all pixels.</span>
+    <span class="c1">#</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pixel_rad</span><span class="p">,</span> <span class="nb">all</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pixel_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pixel_rad</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_inputs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pad_data</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_pixels</span><span class="p">()</span>
+
+    <span class="c1">##</span>
+    <span class="c1">#  Method that checks the input values.</span>
+    <span class="c1">#</span>
+    <span class="c1">#  @exception ValueError for invalid number of dimensions of input array.</span>
+    <span class="c1">#  @exception ValueError for invalid size of pixel radius.</span>
+    <span class="c1">#</span>
+    <span class="k">def</span> <span class="nf">_check_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The input array must be 2D.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixel_rad</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pixel_rad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pixel_rad</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixel_rad</span><span class="o">.</span><span class="n">size</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The pixel radius must have a size of 1 or 2.&#39;</span><span class="p">)</span>
+
+    <span class="c1">##</span>
+    <span class="c1">#  Method that pads the input array with zeros.</span>
+    <span class="c1">#</span>
+    <span class="k">def</span> <span class="nf">_pad_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pad_data</span> <span class="o">=</span> <span class="n">pad2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixel_rad</span><span class="p">)</span>
+
+    <span class="c1">##</span>
+    <span class="c1">#  Method that adjusts the pixel positions according to the pixel radius.</span>
+    <span class="c1">#</span>
+    <span class="k">def</span> <span class="nf">_adjust_pixels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixel_rad</span>
+
+    <span class="c1">##</span>
+    <span class="c1">#  Method that gets the desired pixel positions.</span>
+    <span class="c1">#</span>
+    <span class="c1">#  @param[in] pixels: Pixel positions.</span>
+    <span class="c1">#</span>
+    <span class="c1">#  @exception ValueError for invalid number of dimensions of pixel</span>
+    <span class="c1">#  positions.</span>
+    <span class="c1">#  @exception ValueError for invalid size of second dimension of pixel</span>
+    <span class="c1">#  positions.</span>
+    <span class="c1">#</span>
+<div class="viewcode-block" id="FetchWindows.get_pixels"><a class="viewcode-back" href="../../functions.image.html#functions.image.FetchWindows.get_pixels">[docs]</a>    <span class="k">def</span> <span class="nf">get_pixels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pixels</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pixels</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid number of dimensions for pixels&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The second dimension of pixels must have size 2&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_adjust_pixels</span><span class="p">()</span></div>
+
+    <span class="c1">##</span>
+    <span class="c1">#  Method that gets all pixel positions.</span>
+    <span class="c1">#</span>
+    <span class="c1">#  @param[in] n_pixels: Number of pixels to keep. [Default is None]</span>
+    <span class="c1">#  @param[in] random: Shuffle the pixel positions. [Default is False]</span>
+    <span class="c1">#</span>
+    <span class="c1">#  Note: When n_pixels=None all pixels are kept.</span>
+    <span class="c1">#</span>
+<div class="viewcode-block" id="FetchWindows.n_pixels"><a class="viewcode-back" href="../../functions.image.html#functions.image.FetchWindows.n_pixels">[docs]</a>    <span class="k">def</span> <span class="nf">n_pixels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_pixels</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">random</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span> <span class="o">=</span> <span class="n">pixel_pos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">random</span><span class="p">:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="p">[:</span><span class="n">n_pixels</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_adjust_pixels</span><span class="p">()</span></div>
+
+    <span class="c1">##</span>
+    <span class="c1">#  Method that retrieves a window from the padded input data at a given</span>
+    <span class="c1">#  position.</span>
+    <span class="c1">#</span>
+    <span class="c1">#  @param[in] pos: Pixel position in 2D padded array.</span>
+    <span class="c1">#  @param[in] func: Optional function to be applied to window selection.</span>
+    <span class="c1">#</span>
+    <span class="c1">#  @exception ValueError for invalid size of pixel position.</span>
+    <span class="c1">#</span>
+    <span class="k">def</span> <span class="nf">_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">data2np</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pos</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The pixel position must have a size of 2.&#39;</span><span class="p">)</span>
+        <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pad_data</span><span class="p">[[</span><span class="nb">slice</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span>
+                                <span class="n">izip</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pixel_rad</span><span class="p">)]]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">window</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="c1">##</span>
+    <span class="c1">#  Method that scans the 2D padded input array and retrieves the windows</span>
+    <span class="c1">#  at all the desired pixel positions.</span>
+    <span class="c1">#</span>
+    <span class="c1">#  @param[in] func: Optional function to be applied to window selection.</span>
+    <span class="c1">#  @param[in] *args: Function arguments.</span>
+    <span class="c1">#  @param[in] **kwargs: Keyword arguments.</span>
+    <span class="c1">#</span>
+<div class="viewcode-block" id="FetchWindows.scan"><a class="viewcode-back" href="../../functions.image.html#functions.image.FetchWindows.scan">[docs]</a>    <span class="k">def</span> <span class="nf">scan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="s1">&#39;arg_type&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;arg_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;list&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">pos</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span>
+                             <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)])</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">pixels</span><span class="p">])</span></div></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Class that produces a Summed Area Table (SAT) for fast and efficient</span>
+<span class="c1">#  statistics on image patches.</span>
+<span class="c1">#</span>
+<span class="c1">#  Note: Also know as Itegral Image (i in the class features).</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="SAT"><a class="viewcode-back" href="../../functions.image.html#functions.image.SAT">[docs]</a><span class="k">class</span> <span class="nc">SAT</span><span class="p">():</span>
+
+    <span class="c1">##</span>
+    <span class="c1">#  Method that initialises the class instance.</span>
+    <span class="c1">#</span>
+    <span class="c1">#  @param[in] data: 2D Input array.</span>
+    <span class="c1">#</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x2</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i_pad</span> <span class="o">=</span> <span class="n">pad2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i2_pad</span> <span class="o">=</span> <span class="n">pad2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1">##</span>
+    <span class="c1">#  Method calculates the area of a patch.</span>
+    <span class="c1">#</span>
+    <span class="c1">#  @param[in] data: 2D Input array.</span>
+    <span class="c1">#  @param[in] corners: Positions of upper left and bottom right corners.</span>
+    <span class="c1">#</span>
+<div class="viewcode-block" id="SAT.get_area"><a class="viewcode-back" href="../../functions.image.html#functions.image.SAT.get_area">[docs]</a>    <span class="k">def</span> <span class="nf">get_area</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">corners</span><span class="p">):</span>
+
+        <span class="n">corners</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">corners</span><span class="p">)</span>
+        <span class="n">corners</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">a</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="nb">zip</span><span class="p">(</span><span class="n">corners</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">corners</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">corners</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">corners</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">corners</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="nb">zip</span><span class="p">(</span><span class="n">corners</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">d</span> <span class="o">-</span> <span class="n">b</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span></div>
+
+    <span class="c1">##</span>
+    <span class="c1">#  Method calculates the number of pixels in a patch.</span>
+    <span class="c1">#</span>
+    <span class="c1">#  @param[in] corners: Positions of upper left and bottom right corners.</span>
+    <span class="c1">#</span>
+<div class="viewcode-block" id="SAT.get_npx"><a class="viewcode-back" href="../../functions.image.html#functions.image.SAT.get_npx">[docs]</a>    <span class="k">def</span> <span class="nf">get_npx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corners</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">corners</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span></div>
+
+    <span class="c1">##</span>
+    <span class="c1">#  Method calculates the variance and standard deviation of a patch.</span>
+    <span class="c1">#</span>
+<div class="viewcode-block" id="SAT.get_var"><a class="viewcode-back" href="../../functions.image.html#functions.image.SAT.get_var">[docs]</a>    <span class="k">def</span> <span class="nf">get_var</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">area2</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">npx</span><span class="p">))</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">npx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var</span><span class="p">)</span></div>
+
+    <span class="c1">##</span>
+    <span class="c1">#  Method that sets the corner positions of a single patch.</span>
+    <span class="c1">#</span>
+    <span class="c1">#  @param[in] corners: Positions of upper left and bottom right corners.</span>
+    <span class="c1">#</span>
+<div class="viewcode-block" id="SAT.set_patch"><a class="viewcode-back" href="../../functions.image.html#functions.image.SAT.set_patch">[docs]</a>    <span class="k">def</span> <span class="nf">set_patch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corners</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_area</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i_pad</span><span class="p">,</span> <span class="n">corners</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">area2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_area</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i2_pad</span><span class="p">,</span> <span class="n">corners</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">npx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_npx</span><span class="p">(</span><span class="n">corners</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_var</span><span class="p">()</span></div>
+
+    <span class="c1">##</span>
+    <span class="c1">#  Method that sets the corner positions for multiple patches.</span>
+    <span class="c1">#</span>
+    <span class="c1">#  @param[in] corners: List of the positions of upper left and bottom</span>
+    <span class="c1">#  right corners.</span>
+    <span class="c1">#</span>
+<div class="viewcode-block" id="SAT.set_patches"><a class="viewcode-back" href="../../functions.image.html#functions.image.SAT.set_patches">[docs]</a>    <span class="k">def</span> <span class="nf">set_patches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corners</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">get_area</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i_pad</span><span class="p">,</span> <span class="n">corner</span><span class="p">)</span>
+                              <span class="k">for</span> <span class="n">corner</span> <span class="ow">in</span> <span class="n">corners</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">area2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">get_area</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i2_pad</span><span class="p">,</span> <span class="n">corner</span><span class="p">)</span>
+                               <span class="k">for</span> <span class="n">corner</span> <span class="ow">in</span> <span class="n">corners</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">npx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">get_npx</span><span class="p">(</span><span class="n">corner</span><span class="p">)</span> <span class="k">for</span> <span class="n">corner</span> <span class="ow">in</span> <span class="n">corners</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_var</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Samuel Farrens.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'5.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

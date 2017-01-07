@@ -1,32 +1,40 @@
-#  @file algorithms.py
-#
-#  ALGOIRTHM ROUTINES
-#
-#  Classes for defining algorithms for image reconstruction.
-#  Based on work by Yinghao Ge and Fred Ngole.
-#
-#  @author Samuel Farrens
-#  @version 1.0
-#  @date 2015
-#
+# -*- coding: utf-8 -*-
+
+"""ALGORITHM CLASSES
+
+This module contains classes for defining basic algorithms
+
+:Author: Samuel Farrens <samuel.farrens@gmail.com>
+
+:Version: 1.1
+
+:Date: 05/01/2017
+
+"""
+
 
 import numpy as np
 from scipy.linalg import norm
 
 
-##
-#  Class for perfoming power method to calculate the spectral radius.
-#
 class PowerMethod():
+    """Power method class
 
-    ##
-    #  Method that initialises the class instance.
-    #
-    #  @param[in] operator: Input operator.
-    #  @param[in] data_shape: Shape of the data.
-    #  @param[in] auto_run: Option to automatically get the spectral radius on
-    #  initalisaiton.
-    #
+    This method performs implements power method to calculate the spectral
+    radius of the input data
+
+    Parameters
+    ----------
+    operator : class
+        Operator class instance
+    data_shape : tuple
+        Shape of the data array
+    auto_run : bool
+        Option to automatically calcualte the spectral radius upon
+        initialisation
+
+    """
+
     def __init__(self, operator, data_shape, auto_run=True):
 
         self.op = operator
@@ -34,20 +42,28 @@ class PowerMethod():
         if auto_run:
             self.get_spec_rad()
 
-    ##
-    #  Method that sets an initial guess for the values of x.
-    #
     def set_initial_x(self):
+        """Set initial value of x
+
+        This method sets the initial value of x to an arrray of random values
+
+        """
 
         return np.random.random(self.data_shape)
 
-    ##
-    #  Method that initialises the class instance.
-    #
-    #  @param[in] tolerance: Tolerance for convergence.
-    #  @param[in] max_iter: Maximum number of iterations.
-    #
     def get_spec_rad(self, tolerance=1e-6, max_iter=150):
+        """Get spectral radius
+
+        This method calculates the spectral radius
+
+        Parameters
+        ----------
+        tolerance : float, optional
+            Tolerance threshold for convergence (default is "1e-6")
+        max_iter : int, optional
+            Maximum number of iterations
+
+        """
 
         # Set (or reset) values of x.
         x_old = self.set_initial_x()

@@ -1,13 +1,17 @@
-#  @file directional.py
-#
-#  DIRECTIONAL TRANSFORM ROUTINES
-#
-#  Functions for transforming data based on work by Hao Shan and Fred Ngole.
-#
-#  @author Samuel Farrens
-#  @version 1.0
-#  @date 2016
-#
+# -*- coding: utf-8 -*-
+
+"""DIRECTIONAL TRANSFORM ROUTINES
+
+This module contains methods for directional transforms data based on work by
+Hao Shan and Fred Ngole
+
+:Author: Samuel Farrens <samuel.farrens@gmail.com>
+
+:Version: 1.1
+
+:Date: 07/01/2017
+
+"""
 
 import numpy as np
 from convolve import convolve
@@ -15,17 +19,25 @@ from functions.matrix import rotate
 from functions.signal import *
 
 
-##
-#  Function that produces directional filters for the given number of angles
-#  and scales.
-#
-#  @param[in] data: 2D Input array.
-#  @param[in] filters: Wavelet filters.
-#  @param[in] filter_rot: Option to rotate wavelet filters.
-#
-#  @return Convolved data.
-#
 def get_dir_filters(shape, angle_num, sigma):
+    """Get directional filters
+
+    This method returns the directional transform filters
+
+    Parameters
+    ----------
+    shape : tuple
+        Shape of input data
+    angle_num : int
+        Nuber of rotation angles
+    sigma : float
+        Filter width
+
+    Returns
+    -------
+    np.ndarray 3D array of filter coefficients
+
+    """
 
     angles = np.arange(angle_num) * np.pi / angle_num
 
@@ -42,5 +54,21 @@ def get_dir_filters(shape, angle_num, sigma):
 
 
 def convolve_dir_filters(data, filters):
+    """Convolve with directional filters
+
+    This method convolves the input data with the provided filters
+
+    Parameters
+    ----------
+    data : np.ndarray
+        Input data array
+    filters : np.ndarray
+        3D array of filters
+
+    Returns
+    -------
+    np.ndarray of convolved data
+
+    """
 
     return np.array([convolve(data, f) for f in filters])

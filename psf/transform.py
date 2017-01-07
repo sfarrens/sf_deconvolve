@@ -1,15 +1,16 @@
-#  @file transform.py
-#
-#  DATA TRANSFORM ROUTINES
-#
-#  Functions for transforming
-#  data. Based on work by
-#  Yinghao Ge.
-#
-#  @author Samuel Farrens
-#  @version 1.0
-#  @date 2015
-#
+# -*- coding: utf-8 -*-
+
+"""DATA TRANSFORM ROUTINES
+
+This module contains methods for transforming data.
+
+:Author: Samuel Farrens <samuel.farrens@gmail.com>
+
+:Version: 1.1
+
+:Date: 06/01/2017
+
+"""
 
 import numpy as np
 from scipy.ndimage import gaussian_filter
@@ -17,17 +18,29 @@ from itertools import islice, product
 from functions.np_adjust import data2np
 
 
-##
-#  Function that reformats a 3D data cube into a 2D data map.
-#
-#  @param[in] data_cube: 3D Input data cube.
-#  @param[in] layout: 2D Layout of data map.
-#
-#  @return Mapped data.
-#
-#  @exception: ValueError for invalid layout.
-#
 def cube2map(data_cube, layout):
+    """Cube to Map
+
+    This method transforms the input data from a 3D cube to a 2D map with a
+    specified layout
+
+    Parameters
+    ----------
+    data_cube : np.ndarray
+        Input data cube, 3D array of 2D images
+    Layout : tuple
+        2D layout of 2D images
+
+    Returns
+    -------
+    np.ndarray 2D map
+
+    Raises
+    ------
+    ValueError
+        For invalid layout
+
+    """
 
     if data_cube.shape[0] != np.prod(layout):
         raise ValueError('The desired layout must match the number of input '
@@ -37,17 +50,29 @@ def cube2map(data_cube, layout):
                       (i + 1))]) for i in xrange(layout[0])])
 
 
-##
-#  Function that reformats a 2D data map into a 3D data cube.
-#
-#  @param[in] data_map: 2D Input data map.
-#  @param[in] layout: 2D Layout of data map.
-#
-#  @return Mapped data.
-#
-#  @exception: ValueError for invalid layout.
-#
 def map2cube(data_map, layout):
+    """Map to cube
+
+    This method transforms the input data from a 2D map with given layout to
+    a 3D cube
+
+    Parameters
+    ----------
+    data_map : np.ndarray
+        Input data map, 2D array
+    layout : tuple
+        2D layout of 2D images
+
+    Returns
+    -------
+    np.ndarray 3D cube
+
+    Raises
+    ------
+    ValueError
+        For invalid layout
+
+    """
 
     if np.all(np.array(data_map.shape) % np.array(layout)) != 0:
         raise ValueError('The desired layout must be a multiple of the number '
@@ -60,15 +85,28 @@ def map2cube(data_map, layout):
                     xrange(layout[0]) for j in xrange(layout[1])])
 
 
-##
-#  Function that reformats a data map into a matrix.
-#
-#  @param[in] data_map: Input data map.
-#  @param[in] layout: 2D Layout of image map.
-#
-#  @return Data matrix.
-#
 def map2matrix(data_map, layout):
+    """Map to Matrix
+
+    This method transforms a 2D map to a 2D matrix
+
+    Parameters
+    ----------
+    data_map : np.ndarray
+        Input data map, 2D array
+    layout : tuple
+        2D layout of 2D images
+
+    Returns
+    -------
+    np.ndarray 2D matrix
+
+    Raises
+    ------
+    ValueError
+        For invalid layout
+
+    """
 
     layout = data2np(layout)
 
@@ -92,15 +130,28 @@ def map2matrix(data_map, layout):
     return np.array(data_matrix).T
 
 
-##
-#  Function that reformats a data matrix into a map.
-#
-#  @param[in] data_matrix: Input data matrix.
-#  @param[in] map_shape: Shape of the output map.
-#
-#  @return Data cube.
-#
 def matrix2map(data_matrix, map_shape):
+    """Matrix to Map
+
+    This method transforms a 2D matrix to a 2D map
+
+    Parameters
+    ----------
+    data_matrix : np.ndarray
+        Input data matrix, 2D array
+    map_shape : tuple
+        2D shape of the output map
+
+    Returns
+    -------
+    np.ndarray 2D map
+
+    Raises
+    ------
+    ValueError
+        For invalid layout
+
+    """
 
     map_shape = data2np(map_shape)
 
@@ -123,27 +174,42 @@ def matrix2map(data_matrix, map_shape):
     return data_map
 
 
-##
-#  Function that reformats a data cube into a matrix.
-#
-#  @param[in] data_cube: 3D Input data cube.
-#
-#  @return Data matrix.
-#
 def cube2matrix(data_cube):
+    """Cube to Matrix
+
+    This method transforms a 3D cube to a 2D matrix
+
+    Parameters
+    ----------
+    data_cube : np.ndarray
+        Input data cube, 3D array
+
+    Returns
+    -------
+    np.ndarray 2D matrix
+
+    """
 
     return data_cube.reshape([data_cube.shape[0]] +
                              [np.prod(data_cube.shape[1:])]).T
 
 
-##
-#  Function that reformats a data matrix into a cube.
-#
-#  @param[in] data_matrix: Input data matrix.
-#  @param[in] im_shape: Shape of stack element images.
-#
-#  @return Data cube.
-#
 def matrix2cube(data_matrix, im_shape):
+    """Matrix to Cube
+
+    This method transforms a 2D matrix to a 3D cube
+
+    Parameters
+    ----------
+    data_matrix : np.ndarray
+        Input data cube, 2D array
+    im_shape : tuple
+        2D shape of the individual images
+
+    Returns
+    -------
+    np.ndarray 3D cube
+
+    """
 
     return data_matrix.T.reshape([data_matrix.shape[1]] + list(im_shape))

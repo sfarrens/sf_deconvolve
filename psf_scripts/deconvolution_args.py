@@ -44,8 +44,8 @@ def get_opts():
     required.add_argument('-p', '--psf', dest='psf', required=True,
                           help='PSF file name.')
 
-    required.add_argument('-o', '--output', dest='output',
-                          required=True, help='Output file name.')
+    optional.add_argument('-o', '--output', dest='output',
+                          required=False, help='Output file name.')
 
     optional.add_argument('-k', '--current_res', dest='current_res',
                           required=False,
@@ -74,10 +74,6 @@ def get_opts():
                           choices=('condat', 'fwbw', 'gfwbw'), required=False,
                           help='Option to specify the optimisation method to'
                           'be implemented. [condat, fwbw or gfwbw]')
-
-    optional.add_argument('-w', '--wavelet_levels', dest='wavelet_levels',
-                          type=int, required=False, default=3,
-                          help='Number of wavelet levels.')
 
     optional.add_argument('--wavelet_type', dest='wavelet_type',
                           required=False, default='1', help='Wavelet type.')
@@ -110,6 +106,14 @@ def get_opts():
                           type=float, required=False, default=0.8,
                           help='Relaxation parameter (rho_n).')
 
+    optional.add_argument('--condat_sigma', dest='condat_sigma',
+                          type=float, required=False,
+                          help='Condat proximal dual parameter.')
+
+    optional.add_argument('--condat_tau', dest='condat_tau',
+                          type=float, required=False,
+                          help='Condat proximal dual parameter')
+
     optional.add_argument('--kernel', dest='kernel',
                           type=float, required=False,
                           help='Sigma value for Gaussian kernel.')
@@ -121,10 +125,6 @@ def get_opts():
     optional.add_argument('--no_grad', dest='no_grad',
                           action='store_false', required=False,
                           help='Option to turn off gradinet calculation.')
-
-    optional.add_argument('--live_plot', dest='liveplot',
-                          action='store_true', required=False,
-                          help='Option to turn on live plotting.')
 
     # Return the arguments
 

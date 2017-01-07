@@ -8,7 +8,7 @@ observed galaxy images.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 3.0
+:Version: 3.1
 
 :Date: 12/12/2016
 
@@ -21,6 +21,18 @@ from creepy.image.quality import *
 from functions.errors import catch_error, warn
 from functions.log import set_up_log, close_log
 from functions.stats import gaussian_kernel
+
+
+def set_out_string():
+    """Set output string
+
+    This method checks if an output string has been specified and if not
+    creates and ouput string from the input string and the mode
+
+    """
+
+    if isinstance(opts.output, type(None)):
+        opts.output = opts.input + '_' + opts.mode
 
 
 def check_data_format(data):
@@ -138,10 +150,8 @@ def run_script(log):
 
     # Log sparsity options
     if opts.mode in ('all', 'sparse'):
-        print ' - Wavelet Levels:', opts.wavelet_levels
         print ' - Wavelet Type:', opts.wavelet_type
         print ' - Wavelet Threshold Factor:', opts.wave_tf
-        log.info(' - Wavelet Levels: ' + str(opts.wavelet_levels))
         log.info(' - Wavelet Type: ' + str(opts.wavelet_type))
         log.info(' - Wavelet Threshold Factor: ' +
                  str(opts.wave_tf))
@@ -166,7 +176,6 @@ def run_script(log):
                                  noise_est=opts.noise_est,
                                  primal=primal,
                                  psf_type=opts.psf_type,
-                                 wavelet_levels=opts.wavelet_levels,
                                  wavelet_opt=wavelet_opt,
                                  wave_thresh_factor=np.array(opts.wave_tf),
                                  lowr_thresh_factor=opts.lowr_tf,
@@ -175,13 +184,14 @@ def run_script(log):
                                  n_reweights=opts.n_reweights,
                                  n_iter=opts.n_iter,
                                  relax=opts.relax,
+                                 condat_tau=opts.condat_tau,
+                                 condat_sigma=opts.condat_sigma,
                                  mode=opts.mode,
                                  pos=opts.no_pos,
                                  grad=opts.no_grad,
                                  opt_type=opts.opt_type,
                                  log=log,
-                                 output=opts.output,
-                                 liveplot=opts.liveplot)
+                                 output=opts.output)
 
     # Test the deconvolution
     if not isinstance(opts.clean_data, type(None)):
@@ -200,6 +210,7 @@ def run_script(log):
     print h_line
 
     # Save outputs to numpy binary files
+
     np.save(opts.output + '_primal', primal_res)
     print ' Output 1 saved to: ' + opts.output + '_primal' + '.npy'
     log.info('Output 1 saved to: ' + opts.output + '_primal' + '.npy')
@@ -222,6 +233,7 @@ def main():
     try:
         global opts
         opts = get_opts()
+        set_out_string()
         log = set_up_log(opts.output)
         run_script(log)
 

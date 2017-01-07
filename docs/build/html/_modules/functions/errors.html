@@ -1,0 +1,262 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>functions.errors &mdash; PSF 5.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="PSF 5.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> PSF
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                5.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">psf</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">PSF</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>functions.errors</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for functions.errors</h1><div class="highlight"><pre>
+<span></span><span class="c1">#  @file errors.py</span>
+<span class="c1">#</span>
+<span class="c1">#  ERROR FUNCTIONS</span>
+<span class="c1">#</span>
+<span class="c1">#  Custom exceptions.</span>
+<span class="c1">#</span>
+<span class="c1">#  @author Samuel Farrens</span>
+<span class="c1">#  @version 1.0</span>
+<span class="c1">#  @date 2015</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">termcolor</span> <span class="kn">import</span> <span class="n">colored</span>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Function that creates custom warning messages.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] warn_string: Warning message string.</span>
+<span class="c1">#  @param[in] log: Logging structure.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return Error text string.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="warn"><a class="viewcode-back" href="../../functions.errors.html#functions.errors.warn">[docs]</a><span class="k">def</span> <span class="nf">warn</span><span class="p">(</span><span class="n">warn_string</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+    <span class="c1"># Print warning to stdout.</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">colored</span><span class="p">(</span><span class="s1">&#39;WARNING&#39;</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="n">warn_string</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Check if a logging structure is provided.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">warn_string</span><span class="p">)</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Function that catches errors prints them to the terminal and optionally</span>
+<span class="c1">#  saves them to a log.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] exception: Caught exception.</span>
+<span class="c1">#  @param[in] log: Logging structure.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return Error text string.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="catch_error"><a class="viewcode-back" href="../../functions.errors.html#functions.errors.catch_error">[docs]</a><span class="k">def</span> <span class="nf">catch_error</span><span class="p">(</span><span class="n">exception</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+    <span class="c1"># Print exception to stdout.</span>
+    <span class="n">stream_txt</span> <span class="o">=</span> <span class="n">colored</span><span class="p">(</span><span class="s1">&#39;ERROR&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exception</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">stream_txt</span><span class="p">)</span>
+
+    <span class="c1"># Check if a logging structure is provided.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+        <span class="n">log_txt</span> <span class="o">=</span> <span class="s1">&#39;ERROR: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exception</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">log_txt</span><span class="p">)</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  Function that checks if the input file</span>
+<span class="c1">#  name is valid.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] file_name: Input file name.</span>
+<span class="c1">#</span>
+<span class="c1">#  @exception IOError for invalid file name.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="file_name_error"><a class="viewcode-back" href="../../functions.errors.html#functions.errors.file_name_error">[docs]</a><span class="k">def</span> <span class="nf">file_name_error</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">file_name</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">file_name</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Input file name not specified.&#39;</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Input file name [</span><span class="si">%s</span><span class="s1">] not found!&#39;</span> <span class="o">%</span> <span class="n">file_name</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Samuel Farrens.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'5.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,124 +1,177 @@
-#  @file operators.py
-#
-#  OPERATOR CLASSES
-#
-#  Classes for defining algorithm operators and gradients.
-#  Based on work by Yinghao Ge and Fred Ngole.
-#
-#  @author Samuel Farrens
-#  @version 1.0
-#  @date 2015
-#
+# -*- coding: utf-8 -*-
+
+"""OPERATOR CLASSES
+
+This module contains classses for defining algorithm operators and gradients.
+Based on work by Yinghao Ge and Fred Ngole.
+
+:Author: Samuel Farrens <samuel.farrens@gmail.com>
+
+:Version: 1.1
+
+:Date: 04/01/2017
+
+"""
 
 import numpy as np
-from scipy.linalg import norm
 from algorithms import PowerMethod
 from convolve import psf_convolve
-from wavelet import *
 
 
-##
-#  Class for defining the basic methods of a gradient operator.
-#
 class GradBasic():
+    """Basic gradient class
 
-    ##
-    #  Method to calculate the action of the transpose of the matrix M on the
-    #  action of the matrix M on the data X.
-    #
-    #  @param[in] x: Input data.
-    #
-    #  @return M.TMX.
-    #
+    This class defines the basic methods that will be inherited by specific
+    gradient classes
+
+    """
+
     def MtMX(self, x):
+        """M^T M X
+
+        This method calculates the action of the transpose of the matrix M on
+        the action of the matrix M on the data X
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Input data array
+
+        Returns
+        -------
+        np.ndarray result
+
+        Notes
+        -----
+        Calculates  M^T (MX)
+
+        """
 
         return self.MtX(self.MX(x))
 
-    ##
-    #  Method to calculate gradient step.
-    #
-    #  @param[in] x: Input data.
-    #
-    #  Calculates: M.T (MX - Y)
-    #
-    #  @return Gradient step.
-    #
     def get_grad(self, x):
+        """Get the gradient step
+
+        This method calculates the gradient step from the input data
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Input data array
+
+        Returns
+        -------
+        np.ndarray gradient value
+
+        Notes
+        -----
+
+        Calculates M^T (MX - Y)
+
+        """
 
         self.grad = self.MtX(self.MX(x) - self.y)
 
 
-##
-#  Class for defining a gradient of zero.
-#
 class GradZero(GradBasic):
+    """Zero gradient class
 
-    ##
-    #  Method to calculate gradient step.
-    #
-    #  @param[in] x: Input data.
-    #
-    #  Calculates: M.T (MX - Y)
-    #
-    #  @return Gradient step.
-    #
+    This is a dummy class that returns an array of zeroes for the gradient
+
+    """
+
     def get_grad(self, x):
+        """Get the gradient step
+
+        This method returns an array of zeroes
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Input data array
+
+        Returns
+        -------
+        np.zeros array size
+
+        """
 
         self.grad = np.zeros(x.shape)
 
 
-##
-#  Class for defining the operators of a fixed or object variant PSF.
-#
 class StandardPSF(GradBasic, PowerMethod):
+    """Standard PSF class
 
-    ##
-    #  Method that initialises the class instance.
-    #
-    #  @param[in] data: 2D Input array. (Noisy image)
-    #  @param[in] psf: PSF.
-    #  @param[in] psf_type: PSF type. ('fixed' or 'obj_var')
-    #
+    This class defines the operators for a fixed or object variant PSF
+
+    Parameters
+    ----------
+    data : np.ndarray
+        Input data array, an array of 2D observed images (i.e. with noise)
+    psf : np.ndarray
+        PSF, a single 2D PSF or an array of 2D PSFs
+    psf_type : str {'fixed', 'obj_var'}
+        PSF type (defualt is 'fixed')
+
+    Notes
+    -----
+    The properties of `GradBasic` and `PowerMethod` are inherited in this class
+
+    """
+
     def __init__(self, data, psf, psf_type='fixed'):
 
         self.y = data
         self.psf = psf
-
-        if psf_type in ('fixed', 'obj_var'):
-            self.psf_type = psf_type
-        else:
-            raise ValueError('Invalid PSF type. Options are fixed or obj_var')
+        self.psf_type = psf_type
 
         PowerMethod.__init__(self, self.MtMX, self.y.shape, auto_run=False)
 
-    ##
-    #  Method to calculate the action of the matrix M on the data X.
-    #
-    #  @param[in] x: Input data.
-    #
-    #  @return MX.
-    #
     def MX(self, x):
+        """MX
+
+        This method calculates the action of the matrix M on the data X, in
+        this case the convolution of the the input data with the PSF
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Input data array, an array of recovered 2D images
+
+        Returns
+        -------
+        np.ndarray result
+
+        """
 
         return psf_convolve(x, self.psf, psf_rot=False, psf_type=self.psf_type)
 
-    ##
-    #  Method to calculate the action of the transpose of the matrix M on the
-    #  data X.
-    #
-    #  @param[in] x: Input data.
-    #
-    #  @return M.TX.
-    #
     def MtX(self, x):
+        """MX
+
+        This method calculates the action of the transpose of the matrix M on
+        the data X, in this case the convolution of the the input data with the
+        rotated PSF
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Input data array, an array of recovered 2D images
+
+        Returns
+        -------
+        np.ndarray result
+
+        """
 
         return psf_convolve(x, self.psf, psf_rot=True, psf_type=self.psf_type)
 
 
-##
-#  Class for defining the operators of a fixed or object variant PSF with
-#  no gradient.
-#
 class StandardPSFnoGrad(GradZero, StandardPSF):
+    """No gradient class
+
+    This is a dummy class that inherits `GradZero` and `StandardPSF`
+
+    """
 
     pass

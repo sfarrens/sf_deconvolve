@@ -1,0 +1,516 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>functions.cosmo2 &mdash; PSF 5.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="PSF 5.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> PSF
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                5.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">psf</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">PSF</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>functions.cosmo2</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for functions.cosmo2</h1><div class="highlight"><pre>
+<span></span><span class="c1">#  @file cosmo2.py</span>
+<span class="c1">#</span>
+<span class="c1">#  COSMOLOGY FUNCTIONS</span>
+<span class="c1">#</span>
+<span class="c1">#  Cosmology routines for essential distance measures.</span>
+<span class="c1">#</span>
+<span class="c1">#  REFERENCES:</span>
+<span class="c1">#  1) D.Hogg, Distance Measures in Cosmology, 2000. (H2000)</span>
+<span class="c1">#  2) J.Peacock, Cosmological Physics, 1999. (P1999)</span>
+<span class="c1">#</span>
+<span class="c1">#  @author Samuel Farrens</span>
+<span class="c1">#  @version 2.0</span>
+<span class="c1">#  @date 2015</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">library</span> <span class="kn">import</span> <span class="n">const</span>
+<span class="kn">from</span> <span class="nn">functions.extra_math</span> <span class="kn">import</span> <span class="n">integ_2arg</span><span class="p">,</span> <span class="n">vinteg_2arg</span>
+
+
+<span class="c1">##</span>
+<span class="c1">#  This function checks if the cosmological</span>
+<span class="c1">#  parameters are valid.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] z: Redshift.</span>
+<span class="c1">#  @param[in] Omega_M: Matter density parameter.</span>
+<span class="c1">#  @param[in] Omega_L: Dark energy density parameter.</span>
+<span class="c1">#</span>
+<span class="c1">#  @exception ValueError for invalid z, Omega_M or</span>
+<span class="c1">#  Omega_L.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="check_cosmo"><a class="viewcode-back" href="../../functions.cosmo2.html#functions.cosmo2.check_cosmo">[docs]</a><span class="k">def</span> <span class="nf">check_cosmo</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">z</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">Omega_M</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">Omega_L</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">))):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid cosmology!&#39;</span><span class="p">)</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  This function calculates the Hubble</span>
+<span class="c1">#  time T_H in Gyr.</span>
+<span class="c1">#</span>
+<span class="c1">#  Equation 3 from H2000.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] H_0: Hubble constant [km/s/Mpc].</span>
+<span class="c1">#</span>
+<span class="c1">#  @return Hubble time in Gyr.</span>
+<span class="c1">#</span>
+<span class="c1">#  @exception ValueError for invalid H_0.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="t_H"><a class="viewcode-back" href="../../functions.cosmo2.html#functions.cosmo2.t_H">[docs]</a><span class="k">def</span> <span class="nf">t_H</span><span class="p">(</span><span class="n">H_0</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">H_0</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid Hubble constant value!&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">const</span><span class="o">.</span><span class="n">MPC</span> <span class="o">/</span> <span class="p">(</span><span class="n">H_0</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">YEAR</span> <span class="o">*</span> <span class="mf">1e9</span><span class="p">)</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  This function calculates the age of the</span>
+<span class="c1">#  Universe in Gyr down to a given redshift.</span>
+<span class="c1">#</span>
+<span class="c1">#  Equation 5.2 from P1999.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] H_0: Hubble constant [km/s/Mpc].</span>
+<span class="c1">#  @param[in] z: Redshift.</span>
+<span class="c1">#  @param[in] Omega_M: Matter density parameter.</span>
+<span class="c1">#  @param[in] Omega_L: Dark energy density parameter.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return The age of the Universe in Gyr.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="age"><a class="viewcode-back" href="../../functions.cosmo2.html#functions.cosmo2.age">[docs]</a><span class="k">def</span> <span class="nf">age</span><span class="p">(</span><span class="n">H_0</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">):</span>
+
+    <span class="n">check_cosmo</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">):</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">Omega_M</span> <span class="o">*</span> <span class="n">z</span><span class="p">)</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="n">z</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="n">Omega_L</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">B</span> <span class="o">-</span> <span class="n">C</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">integ_2arg</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">)</span> <span class="o">*</span> <span class="n">t_H</span><span class="p">(</span><span class="n">H_0</span><span class="p">)</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  This function calculates the Hubble distance D_H</span>
+<span class="c1">#  in Mpc.</span>
+<span class="c1">#</span>
+<span class="c1">#  Equation 4 from H2000.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] H_0: Hubble constant [km/s/Mpc].</span>
+<span class="c1">#</span>
+<span class="c1">#  @return The Hubble distance in Mpc.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="d_H"><a class="viewcode-back" href="../../functions.cosmo2.html#functions.cosmo2.d_H">[docs]</a><span class="k">def</span> <span class="nf">d_H</span><span class="p">(</span><span class="n">H_0</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="n">const</span><span class="o">.</span><span class="n">C</span> <span class="o">/</span> <span class="n">H_0</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  This function calculates E(z), the Hubble</span>
+<span class="c1">#  parameter.</span>
+<span class="c1">#</span>
+<span class="c1">#  Equation 14 from H2000.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] z: Redshift.</span>
+<span class="c1">#  @param[in] Omega_M: Matter density parameter.</span>
+<span class="c1">#  @param[in] Omega_L: Dark energy density parameter.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return E(z) [H0 = c = 1.0].</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="E"><a class="viewcode-back" href="../../functions.cosmo2.html#functions.cosmo2.E">[docs]</a><span class="k">def</span> <span class="nf">E</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">):</span>
+
+    <span class="n">check_cosmo</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">)</span>
+
+    <span class="n">Omega_K</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">Omega_M</span> <span class="o">-</span> <span class="n">Omega_L</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Omega_M</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">Omega_K</span> <span class="o">*</span>
+                   <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">Omega_L</span><span class="p">)</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  This function calculates 1.0/E(z).</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] z: Redshift.</span>
+<span class="c1">#  @param[in] Omega_M: Matter density parameter.</span>
+<span class="c1">#  @param[in] Omega_L: Dark energy density parameter.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return 1.0 / E(z) [H0 = c = 1.0].</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="E_inv"><a class="viewcode-back" href="../../functions.cosmo2.html#functions.cosmo2.E_inv">[docs]</a><span class="k">def</span> <span class="nf">E_inv</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">E</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">)</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  This function calculates the line-of-sight comoving</span>
+<span class="c1">#  distance D_C.</span>
+<span class="c1">#</span>
+<span class="c1">#  Equation 15 from H2000.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] z: Redshift.</span>
+<span class="c1">#  @param[in] Omega_M: Matter density parameter.</span>
+<span class="c1">#  @param[in] Omega_L: Dark energy density parameter.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return D_C [H0 = c = 1.0].</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="d_comov"><a class="viewcode-back" href="../../functions.cosmo2.html#functions.cosmo2.d_comov">[docs]</a><span class="k">def</span> <span class="nf">d_comov</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">):</span>
+
+    <span class="n">check_cosmo</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">vinteg_2arg</span><span class="p">(</span><span class="n">E_inv</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">integ_2arg</span><span class="p">(</span><span class="n">E_inv</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">)</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  This function calculates the proper motion distance</span>
+<span class="c1">#  D_M (transverse comoving distance).</span>
+<span class="c1">#</span>
+<span class="c1">#  Equation 16 from H2000.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] z: Redshift.</span>
+<span class="c1">#  @param[in] Omega_M: Matter density parameter.</span>
+<span class="c1">#  @param[in] Omega_L: Dark energy density parameter.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return D_M [H0 = c = 1.0].</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="d_prop"><a class="viewcode-back" href="../../functions.cosmo2.html#functions.cosmo2.d_prop">[docs]</a><span class="k">def</span> <span class="nf">d_prop</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">):</span>
+
+    <span class="n">D_M</span> <span class="o">=</span> <span class="n">d_comov</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">)</span>
+
+    <span class="n">Omega_K</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">Omega_M</span> <span class="o">-</span> <span class="n">Omega_L</span>
+
+    <span class="k">if</span> <span class="n">Omega_K</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">D_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sinh</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Omega_K</span><span class="p">))</span> <span class="o">*</span> <span class="n">D_M</span><span class="p">)</span> <span class="o">/</span> \
+          <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Omega_K</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">Omega_K</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">D_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Omega_K</span><span class="p">))</span> <span class="o">*</span> <span class="n">D_M</span><span class="p">)</span> <span class="o">/</span> \
+          <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Omega_K</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">D_M</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  This function calculates the angular diameter</span>
+<span class="c1">#  distance D_A.</span>
+<span class="c1">#</span>
+<span class="c1">#  Equation 18 from H2000.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] z: Redshift.</span>
+<span class="c1">#  @param[in] Omega_M: Matter density parameter.</span>
+<span class="c1">#  @param[in] Omega_L: Dark energy density parameter.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return D_A [H0 = c = 1.0].</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="d_angdi"><a class="viewcode-back" href="../../functions.cosmo2.html#functions.cosmo2.d_angdi">[docs]</a><span class="k">def</span> <span class="nf">d_angdi</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="n">d_prop</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  This function calculates the luminosity distance</span>
+<span class="c1">#  D_L.</span>
+<span class="c1">#</span>
+<span class="c1">#  Equation 21 from H2000.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] z: Redshift.</span>
+<span class="c1">#  @param[in] Omega_M: Matter density parameter.</span>
+<span class="c1">#  @param[in] Omega_L: Dark energy density parameter.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return D_L [H0 = c = 1.0].</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="d_lum"><a class="viewcode-back" href="../../functions.cosmo2.html#functions.cosmo2.d_lum">[docs]</a><span class="k">def</span> <span class="nf">d_lum</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="n">d_prop</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  This function calculates the derivative of the proper</span>
+<span class="c1">#  motion distance with respect to redshift dD_M/dz.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] z: Redshift.</span>
+<span class="c1">#  @param[in] Omega_M: Matter density parameter.</span>
+<span class="c1">#  @param[in] Omega_L: Dark energy density parameter.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return dD_M/dz [H0 = c = 1.0].</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="dD_prop_dz"><a class="viewcode-back" href="../../functions.cosmo2.html#functions.cosmo2.dD_prop_dz">[docs]</a><span class="k">def</span> <span class="nf">dD_prop_dz</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">):</span>
+
+    <span class="n">Omega_K</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">Omega_M</span> <span class="o">-</span> <span class="n">Omega_L</span>
+
+    <span class="n">dD_Mdz</span> <span class="o">=</span> <span class="n">E_inv</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">Omega_K</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">D_M</span> <span class="o">=</span> <span class="n">d_prop</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">)</span>
+        <span class="n">ddMdz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">Omega_K</span> <span class="o">*</span> <span class="n">D_M</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">dD_Mdz</span>
+
+    <span class="k">elif</span> <span class="n">Omega_K</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">D_M</span> <span class="o">=</span> <span class="n">d_prop</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">)</span>
+        <span class="n">ddMdz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">Omega_K</span> <span class="o">*</span> <span class="n">D_M</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">dD_Mdz</span>
+
+    <span class="k">return</span> <span class="n">dD_Mdz</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  This function calculates the one-steradian</span>
+<span class="c1">#  differential comoving volume dV_C/dz.</span>
+<span class="c1">#</span>
+<span class="c1">#  Equation 28 from H2000.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] z: Redshift.</span>
+<span class="c1">#  @param[in] Omega_M: Matter density parameter.</span>
+<span class="c1">#  @param[in] Omega_L: Dark energy density parameter.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return dV_C/dz [H0 = c = 1.0].</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="dV_comov_dz"><a class="viewcode-back" href="../../functions.cosmo2.html#functions.cosmo2.dV_comov_dz">[docs]</a><span class="k">def</span> <span class="nf">dV_comov_dz</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">):</span>
+
+    <span class="n">Omega_K</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">Omega_M</span> <span class="o">-</span> <span class="n">Omega_L</span>
+
+    <span class="n">D_M</span> <span class="o">=</span> <span class="n">d_prop</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">)</span>
+
+    <span class="n">dD_Mdz</span> <span class="o">=</span> <span class="n">dd_prop_dz</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">D_M</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">dD_Mdz</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">Omega_K</span> <span class="o">*</span> <span class="n">D_M</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  This function calculates the full comoving volume</span>
+<span class="c1">#  V_C.</span>
+<span class="c1">#</span>
+<span class="c1">#  Equation 29 from H2000.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] z: Redshift.</span>
+<span class="c1">#  @param[in] Omega_M: Matter density parameter.</span>
+<span class="c1">#  @param[in] Omega_L: Dark energy density parameter.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return V_C [H0 = c = 1.0].</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="v_comov"><a class="viewcode-back" href="../../functions.cosmo2.html#functions.cosmo2.v_comov">[docs]</a><span class="k">def</span> <span class="nf">v_comov</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">):</span>
+
+    <span class="n">Omega_K</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">Omega_M</span> <span class="o">-</span> <span class="n">Omega_L</span>
+
+    <span class="n">D_M</span> <span class="o">=</span> <span class="n">d_prop</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">)</span>
+
+    <span class="n">V_C</span> <span class="o">=</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">D_M</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.0</span>
+
+    <span class="k">if</span> <span class="n">Omega_K</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">Omega_K</span><span class="p">)</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">D_M</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">Omega_K</span> <span class="o">*</span> <span class="n">D_M</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Omega_K</span><span class="p">))</span> <span class="o">*</span> <span class="n">D_M</span><span class="p">)</span> <span class="o">/</span>
+             <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Omega_K</span><span class="p">)))</span>
+        <span class="n">V_C</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="p">(</span><span class="n">B</span> <span class="o">-</span> <span class="n">C</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">Omega_K</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">Omega_K</span><span class="p">)</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">D_M</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">Omega_K</span> <span class="o">*</span> <span class="n">D_M</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arcsinh</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Omega_K</span><span class="p">))</span> <span class="o">*</span> <span class="n">D_M</span><span class="p">)</span> <span class="o">/</span>
+             <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Omega_K</span><span class="p">)))</span>
+        <span class="n">V_C</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="p">(</span><span class="n">B</span> <span class="o">-</span> <span class="n">C</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">V_C</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">#  This function calculates the critical</span>
+<span class="c1">#  density rho_c.</span>
+<span class="c1">#</span>
+<span class="c1">#  Equation 3.25 from P1999.</span>
+<span class="c1">#</span>
+<span class="c1">#  @param[in] H_0: Hubble constant [km/s/Mpc].</span>
+<span class="c1">#  @param[in] z: Redshift.</span>
+<span class="c1">#  @param[in] Omega_M: Matter density parameter.</span>
+<span class="c1">#  @param[in] Omega_L: Dark energy density parameter.</span>
+<span class="c1">#</span>
+<span class="c1">#  @return The critical density in kg/m^3.</span>
+<span class="c1">#</span>
+<div class="viewcode-block" id="rho_crit"><a class="viewcode-back" href="../../functions.cosmo2.html#functions.cosmo2.rho_crit">[docs]</a><span class="k">def</span> <span class="nf">rho_crit</span><span class="p">(</span><span class="n">H_0</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">):</span>
+
+    <span class="n">H2</span> <span class="o">=</span> <span class="p">((</span><span class="n">H_0</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">MPC</span><span class="p">)</span> <span class="o">*</span> <span class="n">E</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_M</span><span class="p">,</span> <span class="n">Omega_L</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">H2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">8.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">G</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Samuel Farrens.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'5.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

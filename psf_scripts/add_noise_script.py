@@ -1,4 +1,5 @@
-#!/Users/sfarrens/Documents/Library/anaconda/bin/python
+#! /usr/bin/env Python
+# -*- coding: utf-8 -*-
 
 # This script does the following:
 # - Reads in the data and PSF.
@@ -8,7 +9,8 @@
 
 import numpy as np
 import argparse as ap
-from psf import *
+from psf.noise import add_noise
+from psf.convolve import psf_convolve
 from functions.stats import sigma_from_snr
 
 
@@ -36,9 +38,6 @@ def get_opts():
     parser.add_argument('-o', '--output', dest='output',
                         required=True, help='Output file name.')
 
-    parser.add_argument('-n', '--n_obj', dest='n_obj', type=int,
-                        required=False, help='Number of objects.')
-
     parser.add_argument('-r', '--random_seed', dest='random_seed',
                         type=int, required=False, help='Random seed.')
 
@@ -48,24 +47,7 @@ def get_opts():
     parser.add_argument('--snr', dest='snr', type=float,
                         required=False, help='Signal-to-noise ratio.')
 
-    parser.add_argument('-l', '--layout', dest='layout', type=int, nargs=2,
-                        required=False, help='Map layout. [Map format only]')
-
-    parser.add_argument('--data_format', dest='data_format', default='cube',
-                        required=False, help='Data format.')
-
     opts = parser.parse_args()
-
-
-def check_data_format(data):
-
-    '''Check that data format matches the input data shape.'''
-
-    if opts.data_format == 'map' and data.ndim != 2:
-        raise ValueError('Data in map format must have 2 dimensions.')
-
-    elif opts.data_format == 'cube' and data.ndim != 3:
-        raise ValueError('Data in cube format must have 3 dimensions.')
 
 
 def get_sigma(data):
@@ -75,16 +57,6 @@ def get_sigma(data):
     if not isinstance(opts.snr, type(None)):
 
         print ' - Using SNR =', opts.snr
-
-        if opts.data_format == 'map':
-
-            if isinstance(opts.layout, type(None)):
-                raise ValueError('Layout must be specified for map format')
-
-            y = transform.map2cube(data, opts.layout)
-
-        else:
-            y = data
 
         opts.sigma = sigma_from_snr(data, opts.snr)
 
@@ -96,9 +68,8 @@ def add_noise_conv(data, psf):
     print 'Convolving PSF with image and adding noise...'
     print ' - Using sigma =', opts.sigma
 
-    data_noisy = noise.add_noise(convolve.psf_convolve(data, psf,
-                                 psf_type=opts.psf_type,
-                                 data_format=opts.data_format), opts.sigma)
+    data_noisy = add_noise(psf_convolve(data, psf, psf_type=opts.psf_type),
+                           opts.sigma)
 
     return data_noisy
 
@@ -110,19 +81,17 @@ def run_script():
     print 'Running Add Noise Script...'
 
     # Read input files.
+    psf = np.load(opts.psf)
+    n_obj = psf.shape[0]
     if not isinstance(opts.random_seed, type(None)):
         np.random.seed(opts.random_seed)
-        data = np.random.permutation(np.load(opts.input))[:opts.n_obj]
+        data = np.random.permutation(np.load(opts.input))[:n_obj]
     else:
-        data = np.load(opts.input)[:opts.n_obj]
-    psf = np.load(opts.psf)
+        data = np.load(opts.input)[:n_obj]
 
-    if opts.psf_type == 'obj_var' and opts.n_obj != psf.shape[0]:
+    if opts.psf_type == 'obj_var' and n_obj != psf.shape[0]:
         raise RuntimeError('The number of PSFs does not match the number ' +
                            'of galaxies selected.')
-
-    # Check format.
-    check_data_format(data)
 
     # Estimate sigma from SNR.
     get_sigma(data)

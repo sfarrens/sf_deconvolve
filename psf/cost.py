@@ -1,24 +1,36 @@
-#  @file cost.py
-#
-#  COST FUNCTIONS
-#
-#  Classes of cost functions for optimization.
-#
-#  @author Samuel Farrens
-#  @version 1.0
-#  @date 2015
-#
+# -*- coding: utf-8 -*-
+
+"""COST FUNCTIONS
+
+This module contains classes of different cost functions for optimization.
+
+:Author: Samuel Farrens <samuel.farrens@gmail.com>
+
+:Version: 1.1
+
+:Date: 04/01/2017
+
+"""
 
 import numpy as np
 from functions.matrix import nuclear_norm
-from psf.transform import cube2matrix
-from plotting import liveCost, plotCost
+from transform import cube2matrix
+from plotting import plotCost
 
 
-##
-#  Cost function test.
-#
 class costTest():
+    """Test cost function class
+
+    This class implements a simple l2 norm test
+
+    Parameters
+    ----------
+    y : np.ndarray
+        Input original data array
+    operator : class
+        Degredation operator class
+
+    """
 
     def __init__(self, y, operator):
 
@@ -26,29 +38,58 @@ class costTest():
         self.op = operator
 
     def get_cost(self, x):
+        """Get cost function
+
+        This method returns the l2 norm error of the difference between the
+        original data and the data obtained after optimisation
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Input optimised data array
+
+        """
 
         return np.linalg.norm(self.y - self.op(x))
 
 
-##
-#  Basic cost function with l2 norm.
-#
 class costFunction():
+    """Cost function class
 
-    ##
-    #  Class initializer.
-    #
-    #  @param[in] y: Original data.
-    #  @param[in] grad: Gradient operator class.
-    #  @param[in] wavelet: Wavelet operator class.
-    #  @param[in] weights: Input weights.
-    #  @param[in] lambda_reg: Regularization factor.
-    #  @param[in] print_cost: Option to print cost function value.
-    #
+    This class implements the cost function for deconvolution
+
+    Parameters
+    ----------
+    y : np.ndarray
+        Input original data array
+    grad : class
+        Gradient operator class
+    wavelet : class, optional
+        Wavelet operator class ("sparse" mode only)
+    weights : np.ndarray, optional
+        Array of wavelet thresholding weights ("sparse" mode only)
+    lambda_reg : float, optional
+        Low-rank regularization parameter ("lowr" mode only)
+    mode : str {'lowr', 'sparse'}, optional
+        Deconvolution mode (default is "lowr")
+    positivity : bool, optional
+        Option to test positivity contraint (defult is "True")
+    tolerance : float, optional
+        Tolerance threshold for convergence (default is "1e-4")
+    window : int, optional
+        Iteration interval to test for convergence (default is "5")
+    print_cost : bool, optional
+        Option to print cost function value at each iteration (default is
+        "True")
+    output : str, optional
+        Output file name for cost function plot
+
+    """
+
     def __init__(self, y, grad, wavelet=None, weights=None,
                  lambda_reg=None, mode='lowr',
-                 positivity=True, tolerance=1e-4, print_cost=True,
-                 live_plotting=False, window=5, total_it=None, output=None):
+                 positivity=True, tolerance=1e-4, window=5, print_cost=True,
+                 output=None):
 
         self.y = y
         self.grad = grad
@@ -63,27 +104,40 @@ class costFunction():
         self.tolerance = tolerance
         self.print_cost = print_cost
         self.iteration = 0
-        self.liveplot = live_plotting
-        self.total_it = total_it
         self.output = output
         self.window = window
         self.test_list = []
 
-    ##
-    #  Method to update current values of the weights.
-    #
-    #  @param[in] weights: Input weights.
-    #
     def update_weights(self, weights):
+        """Update weights
+
+        Update the values of the wavelet threshold weights ("sparse" mode only)
+
+        Parameters
+        ----------
+        weights : np.ndarray
+            Array of wavelet thresholding weights
+
+        """
 
         self.weights = weights
 
-    ##
-    #  Method to calculate the l2 norm of the reconstruction.
-    #
-    #  @param[in] x: Input data.
-    #
     def l2norm(self, x):
+        """Calculate l2 norm
+
+        This method returns the l2 norm error of the difference between the
+        original data and the data obtained after optimisation
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Deconvolved data array
+
+        Returns
+        -------
+        float l2 norm value
+
+        """
 
         l2_norm = np.linalg.norm(self.y - self.grad.op(x))
 
@@ -92,12 +146,22 @@ class costFunction():
 
         return l2_norm
 
-    ##
-    #  Method to calculate the l1 norm of the reconstruction.
-    #
-    #  @param[in] x: Input data.
-    #
     def l1norm(self, x):
+        """Calculate l1 norm
+
+        This method returns the l1 norm error of the weighted wavelet
+        coefficients
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Deconvolved data array
+
+        Returns
+        -------
+        float l1 norm value
+
+        """
 
         x = self.weights * self.wavelet.op(x)
 
@@ -108,12 +172,22 @@ class costFunction():
 
         return l1_norm
 
-    ##
-    #  Method to calculate the nuclear norm of the reconstruction.
-    #
-    #  @param[in] x: Input data.
-    #
     def nucnorm(self, x):
+        """Calculate nuclear norm
+
+        This method returns the nuclear norm error of the deconvolved data in
+        matrix form
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Deconvolved data array
+
+        Returns
+        -------
+        float nuclear norm value
+
+        """
 
         x_prime = cube2matrix(x)
 
@@ -124,10 +198,22 @@ class costFunction():
 
         return nuc_norm
 
-    ##
-    #  Method to check for convergence of the cost.
-    #
     def check_cost(self, x):
+        """Check cost function
+
+        This method tests the cost function for convergence in the specified
+        interval of iterations
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Deconvolved data array
+
+        Returns
+        -------
+        bool result of the convergence test
+
+        """
 
         if self.iteration % (2 * self.window):
 
@@ -153,27 +239,42 @@ class costFunction():
                 print ' - CONVERGENCE TEST:', test
                 print ''
 
-            if self.liveplot:
-                liveCost(self.cost_list, self.iteration, self.total_it)
-
             return test <= self.tolerance
 
-    ##
-    #  Method to check the residual of the reconstruction.
-    #
     def check_residual(self, x):
+        """Check residual
+
+        This method calculates the residual between the deconvolution and the
+        observed data
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Deconvolved data array
+
+        """
 
         self.res = np.std(self.y - self.grad.op(x)) / np.linalg.norm(self.y)
 
         if self.print_cost:
             print ' - STD RESIDUAL:', self.res
 
-    ##
-    #  Method to calculate the cost of the reconstruction.
-    #
-    #  @param[in] x: Input data.
-    #
     def get_cost(self, x):
+        """Get cost function
+
+        This method calculates the full cost function and checks the result for
+        convergence
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Deconvolved data array
+
+        Returns
+        -------
+        bool result of the convergence test
+
+        """
 
         if self.print_cost:
             print ' - ITERATION:', self.iteration
@@ -209,5 +310,10 @@ class costFunction():
         return self.check_cost(x)
 
     def plot_cost(self):
+        """Plot cost function
+
+        This method plots the cost function as function of iteration number
+
+        """
 
         plotCost(self.cost_list, self.output)

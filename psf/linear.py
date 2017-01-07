@@ -1,16 +1,18 @@
-#  @file linear.py
-#
-#  LINEAR OPERATORS
-#
-#  Classes of linear operators for optimization.
-#
-#  @author Samuel Farrens
-#  @version 1.0
-#  @date 2015
-#
+# -*- coding: utf-8 -*-
+
+"""LINEAR OPERATORS
+
+This module contains linear operator classes.
+
+:Author: Samuel Farrens <samuel.farrens@gmail.com>
+
+:Version: 1.1
+
+:Date: 04/01/2017
+
+"""
 
 import numpy as np
-# from convolve import convolve
 from wavelet import *
 from functions.matrix import rotate
 from functions.signal import *
@@ -96,56 +98,71 @@ class Directional():
     #     self.inv_spec_rad = 1.0
 
 
-##
-#  Identity operator class.
-#
 class Identity():
+    """Identity operator class
 
-    ##
-    #  Class initializer.
-    #
+    This is a dummy class that can be used in the optimisation classes
+
+    """
+
     def __init__(self):
 
         self.l1norm = 1.0
 
-    ##
-    #  Class operator.
-    #
-    #  @param[in] data: Input data.
-    #
-    #  @return Input data.
-    #
     def op(self, data, **kwargs):
+        """Operator
+
+        Returns the input data unchanged
+
+        Parameters
+        ----------
+        data : np.ndarray
+            Input data array
+        **kwargs
+            Arbitrary keyword arguments
+
+        Returns
+        -------
+        np.ndarray input data
+
+        """
 
         return data
 
-    ##
-    #  Class adjoint operator.
-    #
-    #  @param[in] data: Input data.
-    #
-    #  @return Input data.
-    #
     def adj_op(self, data):
+        """Adjoint operator
+
+        Returns the input data unchanged
+
+        Parameters
+        ----------
+        data : np.ndarray
+            Input data array
+
+        Returns
+        -------
+        np.ndarray input data
+
+        """
 
         return data
 
 
-##
-#  Wavelet operator class.
-#
 class Wavelet():
+    """Wavelet class
 
-    ##
-    #  Class initializer.
-    #
-    #  @param[in] data: Input data.
-    #  @param[in] wavelet_levels: Number of wavelet levels.
-    #  @param[in] wavelet_opt: Wavelet type option.
-    #
-    #  @exception ValueError for invalid data format.
-    #
-    def __init__(self, data, wavelet_levels, wavelet_opt=None):
+    This class defines the wavelet transform operators
+
+    Parameters
+    ----------
+    data : np.ndarray
+        Input data array, normally an array of 2D images
+    wavelet_opt: str, optional
+        Additional options for `mr_transform`
+
+    """
+
+    def __init__(self, data, wavelet_opt=None):
 
         self.y = data
         self.data_shape = data.shape[-2:]
@@ -155,67 +172,91 @@ class Wavelet():
         self.l1norm = n * np.sqrt(sum((np.sum(np.abs(filter)) ** 2 for
                                        filter in self.filters)))
 
-    ##
-    #  Class operator.
-    #
-    #  @param[in] data: Input data.
-    #
-    #  @return Wavelet convolved data.
-    #
     def op(self, data):
+        """Operator
+
+        This method returns the input data convolved with the wavelet filters
+
+        Parameters
+        ----------
+        data : np.ndarray
+            Input data array, a 2D image
+
+        Returns
+        -------
+        np.ndarray wavelet convolved data
+
+        """
 
         return filter_convolve_stack(data, self.filters)
 
-    ##
-    #  Class adjoint operator.
-    #
-    #  @param[in] data: Input data.
-    #
-    #  @return Wavelet convolved data.
-    #
     def adj_op(self, data):
+        """Adjoint operator
+
+        This method returns the input data convolved with the wavelet filters
+        rotated by 180 degrees
+
+        Parameters
+        ----------
+        data : np.ndarray
+            Input data array, a 3D of wavelet coefficients
+
+        Returns
+        -------
+        np.ndarray wavelet convolved data
+
+        """
 
         return filter_convolve_stack(data, self.filters, filter_rot=True)
 
     ##
-    #  Method to calculate gradient.
+    # #  Method to calculate gradient.
+    # #
+    # #  @param[in] data: Input data.
+    # #
+    # #  Calculates: Phi (Phi.T X - Y)
+    # #
+    # #  @return Gradient step.
+    # #
+    # def get_grad(self, data):
     #
-    #  @param[in] data: Input data.
-    #
-    #  Calculates: Phi (Phi.T X - Y)
-    #
-    #  @return Gradient step.
-    #
-    def get_grad(self, data):
+    #     self.grad = self.op(self.adj_op(data) - self.y)
+    #     self.inv_spec_rad = 1.0
 
-        self.grad = self.op(self.adj_op(data) - self.y)
-        self.inv_spec_rad = 1.0
 
-
-##
-#  Combined linear operator class.
-#
 class LinearCombo():
+    """Linear combination class
 
-    ##
-    #  Class initializer.
-    #
-    #  @param[in] operators: List of initialised linear operator classes.
-    #
+    This class defines a combination of linear transform operators
+
+    Parameters
+    ----------
+    operators : list
+        List of linear operator class instances
+
+    """
+
     def __init__(self, operators):
 
         self.operators = operators
         self.l1norm = np.array([operator.l1norm for operator in
                                 self.operators])
 
-    ##
-    #  Class operator.
-    #
-    #  @param[in] data: Input data.
-    #
-    #  @return List of operator outputs.
-    #
     def op(self, data):
+        """Operator
+
+        This method returns the input data operated on by all of the operators
+
+        Parameters
+        ----------
+        data : np.ndarray
+            Input data array, a 2D image
+
+        Returns
+        -------
+        np.ndarray linear operation results
+
+        """
 
         res = np.empty(len(self.operators), dtype=np.ndarray)
 
@@ -224,16 +265,22 @@ class LinearCombo():
 
         return res
 
-        # return np.array([operator.op(data) for operator in self.operators])
-
-    ##
-    #  Class adjoint operator.
-    #
-    #  @param[in] data: Input data.
-    #
-    #  @return List of adjoint operator outputs.
-    #
     def adj_op(self, data):
+        """Adjoint operator
+
+        This method returns the sum of the input data operated on by all of the
+        adjoint operators
+
+        Parameters
+        ----------
+        data : np.ndarray
+            Input data array, an array of coefficients
+
+        Returns
+        -------
+        np.ndarray adjoint operation results
+
+        """
 
         return sum((operator.adj_op(x) for x, operator in
                     zip(data, self.operators)))

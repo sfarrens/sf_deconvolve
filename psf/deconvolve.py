@@ -21,12 +21,36 @@ from proximity import *
 from optimisation import *
 from reweight import cwbReweight
 from wavelet import filter_convolve, filter_convolve_stack
-from psf_gen import single_psf
 from transform import cube2matrix
 from functions.stats import sigma_mad
 
 
 def go(data, psf, **kwargs):
+    """Run deconvolution
+
+    This method initialises the operator classes and runs the optimisation
+    algorithm
+
+    Parameters
+    ----------
+    data : np.ndarray
+        Input data array, an array of 2D images
+    psf : np.ndarray
+        Input PSF array, a single 2D PSF or an array of 2D PSFs
+    **kwargs
+        Arbitrary keyword arguments
+
+    Returns
+    -------
+    np.ndarray decconvolved data
+
+    Raises
+    ------
+    ValueError
+        If the size of `wave_thresh_factor` does not match the size of
+        `wavelet_levels`
+
+    """
 
     ######
     # SET NOISE ESTIMATE
@@ -53,8 +77,7 @@ def go(data, psf, **kwargs):
     # SET THE LINEAR OPERATOR(S)
 
     if kwargs['mode'] == 'all':
-        linear_op = LinearCombo([Wavelet(data, kwargs['wavelet_levels'],
-                                kwargs['wavelet_opt']),
+        linear_op = LinearCombo([Wavelet(data, kwargs['wavelet_opt']),
                                 Identity()])
         wavelet_filters = linear_op.operators[0].filters
         linear_l1norm = linear_op.operators[0].l1norm
@@ -64,21 +87,22 @@ def go(data, psf, **kwargs):
         linear_l1norm = linear_op.l1norm
 
     elif kwargs['mode'] == 'sparse':
-        linear_op = Wavelet(data, kwargs['wavelet_levels'],
-                            kwargs['wavelet_opt'])
+        linear_op = Wavelet(data, kwargs['wavelet_opt'])
         wavelet_filters = linear_op.filters
         linear_l1norm = linear_op.l1norm
 
     ######
     # ESTIMATE THE NOISE IN THE WAVELET DOMAIN
 
-    if kwargs['wave_thresh_factor'].size == 1:
-        kwargs['wave_thresh_factor'] = np.repeat(kwargs['wave_thresh_factor'],
-                                                 kwargs['wavelet_levels'])
-
-    elif kwargs['wave_thresh_factor'].size != kwargs['wavelet_levels']:
-        raise ValueError('The number of wavelet threshold factors does not ' +
-                         'match the number of wavelet levels.')
+    # if kwargs['wave_thresh_factor'].size == 1:
+    #     kwargs['wave_thresh_factor'] = np.repeat(kwargs['wave_thresh_factor
+    # '],
+    #                                              kwargs['wavelet_levels'])
+    #
+    # elif kwargs['wave_thresh_factor'].size != kwargs['wavelet_levels']:
+    #     raise ValueError('The number of wavelet threshold factors does not
+    # ' +
+    #                      'match the number of wavelet levels.')
 
     if kwargs['mode'] in ('all', 'sparse'):
 
@@ -120,20 +144,34 @@ def go(data, psf, **kwargs):
 
     if kwargs['opt_type'] == 'condat':
 
-        tau = 1.0 / (grad_op.spec_rad + linear_l1norm)
-        sigma = tau
-        rho = kwargs['relax']
+        def get_sig_tau():
+            return 1.0 / (grad_op.spec_rad + linear_l1norm)
 
-        print ' - tau:', tau
-        print ' - sigma:', sigma
-        print ' - rho:', rho
-        kwargs['log'].info(' - tau: ' + str(tau))
-        kwargs['log'].info(' - sigma: ' + str(sigma))
-        kwargs['log'].info(' - rho: ' + str(rho))
+        if isinstance(kwargs['condat_tau'], type(None)):
+            condat_tau = get_sig_tau()
+        else:
+            condat_tau = kwargs['condat_tau']
 
-        print ' - 1/tau - sigma||L||^2 >= beta/2:', (1.0 / tau - sigma *
-                                                     linear_l1norm ** 2 >=
-                                                     grad_op.spec_rad / 2.0)
+        if isinstance(kwargs['condat_sigma'], type(None)):
+            condat_sigma = get_sig_tau()
+        else:
+            condat_sigma = kwargs['condat_sigma']
+
+        condat_rho = kwargs['relax']
+
+        print ' - tau:', condat_tau
+        print ' - sigma:', condat_sigma
+        print ' - rho:', condat_rho
+        kwargs['log'].info(' - tau: ' + str(condat_tau))
+        kwargs['log'].info(' - sigma: ' + str(condat_sigma))
+        kwargs['log'].info(' - rho: ' + str(condat_rho))
+
+        sig_tau_test = (1.0 / condat_tau - condat_sigma * linear_l1norm ** 2 >=
+                        grad_op.spec_rad / 2.0)
+
+        print ' - 1/tau - sigma||L||^2 >= beta/2:', sig_tau_test
+        kwargs['log'].info(' - 1/tau - sigma||L||^2 >= beta/2: ' +
+                           str(sig_tau_test))
 
     ######
     # FIND LAMBDA FOR LOW-RANK.
@@ -200,8 +238,8 @@ def go(data, psf, **kwargs):
 
     if kwargs['mode'] == 'all':
 
-        prox_dual_op = ProximityCombo([Threshold(rw.weights / sigma,
-                                      positivity=use_pos), LowRankMatrix(lamb,
+        prox_dual_op = ProximityCombo([Threshold(rw.weights / condat_sigma,),
+                                      LowRankMatrix(lamb,
                                       thresh_type=kwargs['lowr_thresh_type'],
                                       lowr_type=kwargs['lowr_type'],
                                       operator=grad_op.MtX)])
@@ -210,8 +248,7 @@ def go(data, psf, **kwargs):
                                wavelet=linear_op.operators[0],
                                weights=rw.weights, lambda_reg=lamb,
                                mode=kwargs['mode'], positivity=kwargs['pos'],
-                               live_plotting=kwargs['liveplot'],
-                               window=cost_test_window, total_it=total_n_iter,
+                               window=cost_test_window,
                                output=kwargs['output'])
 
     elif kwargs['mode'] == 'lowr':
@@ -226,20 +263,18 @@ def go(data, psf, **kwargs):
         cost_op = costFunction(data, grad=grad_op, wavelet=None, weights=None,
                                lambda_reg=lamb, mode=kwargs['mode'],
                                positivity=kwargs['pos'],
-                               live_plotting=kwargs['liveplot'],
                                window=cost_test_window,
-                               total_it=total_n_iter, output=kwargs['output'])
+                               output=kwargs['output'])
 
     elif kwargs['mode'] == 'sparse':
 
-        prox_dual_op = Threshold(rw.weights / sigma, positivity=use_pos)
+        prox_dual_op = Threshold(rw.weights / condat_sigma)
 
         cost_op = costFunction(data, grad=grad_op, wavelet=linear_op,
                                weights=rw.weights, lambda_reg=None,
                                mode=kwargs['mode'], positivity=kwargs['pos'],
-                               live_plotting=kwargs['liveplot'],
                                window=cost_test_window,
-                               total_it=total_n_iter, output=kwargs['output'])
+                               output=kwargs['output'])
 
     elif kwargs['mode'] == 'grad':
 
@@ -260,7 +295,8 @@ def go(data, psf, **kwargs):
 
     elif kwargs['opt_type'] == 'condat':
         opt = Condat(kwargs['primal'], dual, grad_op, prox_op, prox_dual_op,
-                     linear_op, cost_op, rho=rho, sigma=sigma, tau=tau,
+                     linear_op, cost_op, rho=condat_rho, sigma=condat_sigma,
+                     tau=condat_tau,
                      auto_iterate=False)
 
     elif kwargs['opt_type'] == 'gfwbw':
@@ -288,9 +324,9 @@ def go(data, psf, **kwargs):
                 rw.reweight(linear_op.op(opt.x_new)[0])
                 if kwargs['mode'] == 'all':
                     prox_dual_op.operators[0].update_weights(rw.weights /
-                                                             sigma)
+                                                             condat_sigma)
                 else:
-                    prox_dual_op.update_weights(rw.weights / sigma)
+                    prox_dual_op.update_weights(rw.weights / condat_sigma)
                 cost_op.update_weights(rw.weights)
                 opt.iterate(max_iter=kwargs['n_iter'])
                 print ''

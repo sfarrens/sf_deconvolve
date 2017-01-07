@@ -1,42 +1,50 @@
-#  @file optimisation.py
-#
-#  OPTIMISATION CLASSES
-#
-#  Classes of optimisation methods.
-#
-#  REFERENCES:
-#  1) Condat, A Primal-Dual Splitting Method for Convex Optimization Involving
-#  Lipschitzian, Proximable and Linear Composite Terms, 2013, Journal of
-#  Optimization Theory and Applications, 158, 2, 460. (C2013)
-#  2) Bauschke et al., Fixed-Point Algorithms for Inverse Problems in Science
-#  and Engineering, 2011, Chapter 10. (B2010)
-#  3) Raguet et al., Generalized Forward-Backward Splitting, 2012, , (R2012)
-#
-#  NOTES:
-#  * x_old is used in place of x_{n}.
-#  * x_new is used in place of x_{n+1}.
-#  * x_prox is used in place of \~{x}_{n+1}.
-#  * x_temp is used for intermediate operations.
-#
-#  @author Samuel Farrens
-#  @version 1.0
-#  @date 2015
-#
+# -*- coding: utf-8 -*-
+
+"""OPTIMISATION CLASSES
+
+This module contains classes for optimisation algoritms
+
+:Author: Samuel Farrens <samuel.farrens@gmail.com>
+
+:Version: 1.1
+
+:Date: 05/01/2017
+
+References
+----------
+1) Condat, A Primal-Dual Splitting Method for Convex Optimization Involving
+Lipschitzian, Proximable and Linear Composite Terms, 2013, Journal of
+Optimization Theory and Applications, 158, 2, 460. (C2013)
+2) Bauschke et al., Fixed-Point Algorithms for Inverse Problems in Science
+and Engineering, 2011, Chapter 10. (B2010)
+3) Raguet et al., Generalized Forward-Backward Splitting, 2012, , (R2012)
+
+NOTES
+-----
+* x_old is used in place of x_{n}.
+* x_new is used in place of x_{n+1}.
+* x_prox is used in place of \~{x}_{n+1}.
+* x_temp is used for intermediate operations.
+
+"""
 
 import numpy as np
 
 
-##
-#  FISTA optimisation class. Used to speed-up convergence.
-#
 class FISTA():
+    """FISTA
 
-    ##
-    #  Method that initialises the class instance.
-    #
-    #  @param[in] lambda_init: Initial value of the relaxation parameter.
-    #  @param[in] active: Option to activate FISTA convergence speed-up.
-    #
+    This class is inhereited by optimisation classes to speed up convergence
+
+    Parameters
+    ----------
+    lambda_init : float
+        Initial value of the relaxation parameter
+    active : bool
+        Option to activate FISTA convergence speed-up (default is 'True')
+
+    """
+
     def __init__(self, lambda_init=None, active=True):
 
         self.lambda_now = lambda_init
@@ -44,55 +52,76 @@ class FISTA():
         self.t_prev = 1.0
         self.use_speed_up = active
 
-    ##
-    #  Method turns off the speed up.
-    #
-    #  @param turn_on: Option to turn on or off speed-up.
-    #
     def speed_switch(self, turn_on=True):
+        """Speed swicth
+
+        This method turns on or off the speed-up
+
+        Parameters
+        ----------
+        turn_on : bool
+            Option to turn on speed-up (default is 'True')
+
+        """
 
         self.use_speed_up = turn_on
 
-    ##
-    #  Method that updates the lambda value.
-    #
-    #  Implements steps 3 and 4 from algoritm 10.7 in B2010.
-    #
     def update_lambda(self):
+        """Update lambda
+
+        This method updates the value of lambda
+
+        Notes
+        -----
+        Implements steps 3 and 4 from algoritm 10.7 in B2010
+
+        """
 
         self.t_prev = self.t_now
         self.t_now = (1 + np.sqrt(4 * self.t_prev ** 2 + 1)) * 0.5
         self.lambda_now = 1 + (self.t_prev - 1) / self.t_now
 
-    ##
-    #  Method that returns the update if the speed up is active.
-    #
     def speed_up(self):
+        """speed-up
+
+        This method returns the update if the speed-up is active
+
+        """
 
         if self.use_speed_up:
             self.update_lambda()
 
 
-##
-#  Forward-backward optimisation class.
-#
 class ForwardBackward(FISTA):
+    """Forward-Backward optimisation
 
-    ##
-    #  Class initialiser.
-    #
-    #  @param[in] x: Initial guess for the primal variable.
-    #  @param[in] grad: Gradient operator class.
-    #  @param[in] prox: Proximity operator class.
-    #  @param[in] cost: Cost function class.
-    #  @param[in] lambda_init: Initial value of the relaxation parameter.
-    #  @param[in] lambda_update: Relaxation parameter update method.
-    #  @param[in] use_fista: Option to use FISTA speed-up.
-    #  @param[in] auto_iterate: Iterate after initialization.
-    #
+    This class implements standard forward-backward optimisation with an the
+    option to use the FISTA speed-up
+
+    Parameters
+    ----------
+    x : np.ndarray
+        Initial guess for the primal variable
+    grad : class
+        Gradient operator class
+    prox : class
+        Proximity operator class
+    cost : class
+        Cost function class
+    lambda_init : float
+        Initial value of the relaxation parameter
+    lambda_update :
+        Relaxation parameter update method
+    use_fista : bool
+        Option to use FISTA (default is 'True')
+    auto_iterate : bool
+        Option to automatically begin iterations upon initialisation (default
+        is 'True')
+
+    """
+
     def __init__(self, x, grad, prox, cost=None, lambda_init=None,
-                 lambda_update=None, use_fista=True, auto_iterate=True,
-                 indent_level=1):
+                 lambda_update=None, use_fista=True, auto_iterate=True):
 
         FISTA.__init__(self, lambda_init, use_fista)
         self.x_old = x
@@ -102,16 +131,19 @@ class ForwardBackward(FISTA):
         self.cost_func = cost
         self.lambda_update = lambda_update
         self.converge = False
-        self.indent = ' ' * indent_level
         if auto_iterate:
             self.iterate()
 
-    ##
-    #  Method to update the current reconstruction.
-    #
-    #  Implements algorithm 10.7 (or 10.5) from B2010.
-    #
     def update(self):
+        """Update
+
+        This method updates the current reconstruction
+
+        Notes
+        -----
+        Implements algorithm 10.7 (or 10.5) from B2010
+
+        """
 
         # Step 1 from alg.10.7.
         self.grad.get_grad(self.z_old)
@@ -128,7 +160,7 @@ class ForwardBackward(FISTA):
 
         # Test primal variable for convergence.
         if np.sum(np.abs(self.z_old - self.z_new)) <= 1e-6:
-            print self.indent + '- converged!'
+            print ' - converged!'
             self.converge = True
 
         # Update old values for next iteration.
@@ -144,44 +176,61 @@ class ForwardBackward(FISTA):
             self.converge = self.cost_func.get_cost(self.z_new)
 
         if np.all(self.z_new == 0.0):
-            raise RuntimeError(self.indent + '- The reconstruction is fucked!')
+            raise RuntimeError('The reconstruction is fucked!')
 
-    ##
-    #  Method to iteratively update the reconstruction.
-    #
     def iterate(self, max_iter=150):
+        """Iterate
+
+        This method calls update until either convergence criteria is met or
+        the maximum number of iterations is reached
+
+        Parameters
+        ----------
+        max_iter : int, optional
+            Maximum number of iterations (default is '150')
+
+        """
 
         for i in xrange(max_iter):
             self.update()
 
             if self.converge:
-                print self.indent + '- Converged!'
+                print ' - Converged!'
                 break
 
         self.x_final = self.z_new
 
 
-##
-#  Forward-backward optimisation class.
-#
 class GenForwardBackward():
+    """Generalized Forward-Backward optimisation
 
-    ##
-    #  Class initialiser.
-    #
-    #  @param[in] x: Initial guess for the primal variable.
-    #  @param[in] grad: Gradient operator class.
-    #  @param[in] prox_list: List of proximity operator class.
-    #  @param[in] cost: Cost function class.
-    #  @param[in] lambda_init: Initial value of the relaxation parameter.
-    #  @param[in] lambda_update: Relaxation parameter update method.
-    #  @param[in] weights: Proximity operator weights.
-    #  @param[in] auto_iterate: Iterate after initialization.
-    #  @param[in] indent_level: Indentation level.
-    #
+    This class implements algorithm 1 from R2012
+
+    Parameters
+    ----------
+    x : np.ndarray
+        Initial guess for the primal variable
+    grad : class
+        Gradient operator class
+    prox_list : list
+        List of proximity operator classes
+    cost : class
+        Cost function class
+    lambda_init : float
+        Initial value of the relaxation parameter
+    lambda_update :
+        Relaxation parameter update method
+    weights : np.ndarray
+        Proximity operator weights
+    auto_iterate : bool
+        Option to automatically begin iterations upon initialisation (default
+        is 'True')
+
+    """
+
     def __init__(self, x, grad, prox_list, cost=None, lambda_init=1.0,
                  lambda_update=None, weights=None, auto_iterate=True,
-                 indent_level=1, plot=False):
+                 plot=False):
 
         self.x_old = x
         self.grad = grad
@@ -204,18 +253,21 @@ class GenForwardBackward():
 
         self.z = np.array([self.x_old for i in xrange(self.prox_list.size)])
 
-        self.indent = ' ' * indent_level
         self.plot = plot
         self.converge = False
         if auto_iterate:
             self.iterate()
 
-    ##
-    #  Method to update the current reconstruction.
-    #
-    #  Implements algorithm 1 from R2012.
-    #
     def update(self):
+        """Update
+
+        This method updates the current reconstruction
+
+        Notes
+        -----
+        Implements algorithm 1 from R2012
+
+        """
 
         # Calculate gradient for current iteration.
         self.grad.get_grad(self.x_old)
@@ -245,47 +297,71 @@ class GenForwardBackward():
             self.converge = self.cost_func.get_cost(self.x_new)
 
         if np.all(self.x_new == 0.0):
-            raise RuntimeError(self.indent + '- The reconstruction is fucked!')
+            raise RuntimeError('The deconvolution is fucked!')
 
-    ##
-    #  Method to iteratively update the reconstruction.
-    #
     def iterate(self, max_iter=150):
+        """Iterate
+
+        This method calls update until either convergence criteria is met or
+        the maximum number of iterations is reached
+
+        Parameters
+        ----------
+        max_iter : int, optional
+            Maximum number of iterations (default is '150')
+
+        """
 
         for i in xrange(max_iter):
             self.update()
 
             if self.converge:
-                print self.indent + '- Converged!'
+                print ' - Converged!'
                 break
 
         self.x_final = self.x_new
         self.cost_func.plot_cost()
 
 
-##
-#  Condat optimisation class.
-#
 class Condat():
+    """Condat optimisation
 
-    ##
-    #  Class initialiser.
-    #
-    #  @param[in] x: Initial guess for the primal variable.
-    #  @param[in] y: Initial guess for the dual variable.
-    #  @param[in] grad: Gradient operator class.
-    #  @param[in] prox: Proximity primal operator class.
-    #  @param[in] prox_dual: Proximity dual operator class.
-    #  @param[in] linear: Linear operator class.
-    #  @param[in] cost: Cost function class.
-    #  @param[in] rho: Relaxation parameter.
-    #  @param[in] sigma: Proximal dual parameter.
-    #  @param[in] tau: Proximal primal paramater.
-    #  @param[in] rho_update: Relaxation parameter update method.
-    #  @param[in] sigma_update: Proximal dual parameter update method.
-    #  @param[in] tau_update: Proximal primal parameter update method.
-    #  @param[in] auto_iterate: Iterate after initialization.
-    #
+    This class implements algorithm 10.7 from C2013
+
+    Parameters
+    ----------
+    x : np.ndarray
+        Initial guess for the primal variable
+    y : np.ndarray
+        Initial guess for the dual variable
+    grad : class
+        Gradient operator class
+    prox : class
+        Proximity primal operator class
+    prox_dual : class
+        Proximity dual operator class
+    linear : class
+        Linear operator class
+    cost : class
+        Cost function class
+    rho : float
+        Relaxation parameter
+    sigma : float
+        Proximal dual parameter
+    tau : float
+        Proximal primal paramater
+    rho_update :
+        Relaxation parameter update method
+    sigma_update :
+        Proximal dual parameter update method
+    tau_update :
+        Proximal primal parameter update method
+    auto_iterate : bool
+        Option to automatically begin iterations upon initialisation (default
+        is 'True')
+
+    """
+
     def __init__(self, x, y, grad, prox, prox_dual, linear, cost,
                  rho,  sigma, tau, rho_update=None, sigma_update=None,
                  tau_update=None, auto_iterate=True):
@@ -307,10 +383,13 @@ class Condat():
         if auto_iterate:
             self.iterate()
 
-    ##
-    #  Method to update parameter values.
-    #
     def update_param(self):
+        """Update parameters
+
+        This method updates the values of rho, sigma and tau with the methods
+        provided
+
+        """
 
         # Update relaxation parameter.
         if not isinstance(self.rho_update, type(None)):
@@ -324,12 +403,16 @@ class Condat():
         if not isinstance(self.tau_update, type(None)):
             self.tau = self.tau_update(self.tau)
 
-    ##
-    #  Method to update the current reconstruction.
-    #
-    #  Implements equation 9 (algorithm 3.1) from C2013.
-    #
     def update(self):
+        """Update
+
+        This method updates the current reconstruction
+
+        Notes
+        -----
+        Implements equation 9 (algorithm 3.1) from C2013
+
+        """
 
         # Step 1 from eq.9.
         self.grad.get_grad(self.x_old)
@@ -349,10 +432,6 @@ class Condat():
         self.x_new = self.rho * x_prox + (1 - self.rho) * self.x_old
         self.y_new = self.rho * y_prox + (1 - self.rho) * self.y_old
 
-        # self.x_new, self.y_new = (self.rho * np.array([x_prox, y_prox]) +
-        #                           (1 - self.rho) *
-        #                           np.array([self.x_old, self.y_old]))
-
         # Update old values for next iteration.
         np.copyto(self.x_old, self.x_new)
         np.copyto(self.y_old, self.y_new)
@@ -363,10 +442,18 @@ class Condat():
         # Test cost function for convergence.
         self.converge = self.cost_func.get_cost(self.x_new)
 
-    ##
-    #  Method to iteratively update the reconstruction.
-    #
     def iterate(self, max_iter=150):
+        """Iterate
+
+        This method calls update until either convergence criteria is met or
+        the maximum number of iterations is reached
+
+        Parameters
+        ----------
+        max_iter : int, optional
+            Maximum number of iterations (default is '150')
+
+        """
 
         for i in xrange(max_iter):
             self.update()
