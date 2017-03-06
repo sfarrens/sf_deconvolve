@@ -13,9 +13,9 @@ Contents
 ------------
 1. [Introduction](#intro_anchor)
 1. [Dependencies](#depend_anchor)
-1. [Execution](#exe_anchor)
-1. [Example](#eg_anchor)
-1. [Code Options](#opt_anchor)
+1.  [Execution](#exe_anchor)
+  1. [Example](#eg_anchor)
+  1. [Code Options](#opt_anchor)
 
 <a name="intro_anchor"></a>
 ## Introduction
@@ -56,7 +56,7 @@ Where *INPUT_IMAGES.npy* denotes the Numpy binary file containing the stack of o
 <a name="eg_anchor"></a>
 ### Example
 
-The following example can be run on the sample data provided [here](https://www.dropbox.com/sh/qh6rt76nd5a1ve5/AAD1semtINAwUn6bI5D42Urma?dl=0).
+The following example can be run on the sample data provided in the ``example`` directory.
 
 This example takes a sample of 100 galaxy images with PSF effects and added noise and the corresponding PSFs and recovers the original images using low-rank approximation and Condat-Vu optimisation.
 
