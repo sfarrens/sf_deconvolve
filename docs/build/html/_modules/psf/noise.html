@@ -81,7 +81,7 @@
             
             
                 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">psf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">psf_deconvolution</a></li>
 </ul>
 
             
@@ -153,7 +153,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    data : np.ndarray</span>
 <span class="sd">        Input data array</span>
-<span class="sd">    sigma : float, optional</span>
+<span class="sd">    sigma : float or list, optional</span>
 <span class="sd">        Standard deviation of the noise to be added (&#39;gauss&#39; only)</span>
 <span class="sd">    noise_type : str {&#39;gauss&#39;, &#39;poisson&#39;}</span>
 <span class="sd">        Type of noise to be added (default is &#39;gauss&#39;)</span>
@@ -166,18 +166,31 @@
 <span class="sd">    ------</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If `noise_type` is not &#39;gauss&#39; or &#39;poisson&#39;</span>
-
+<span class="sd">    ValueError</span>
+<span class="sd">        If number of `sigma` values does not match the first dimension of the</span>
+<span class="sd">        input data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">noise_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;gauss&#39;</span><span class="p">,</span> <span class="s1">&#39;poisson&#39;</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid noise type. Options are &quot;gauss&quot; or&#39;</span>
                          <span class="s1">&#39;&quot;poisson&quot;&#39;</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span> <span class="o">!=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Number of sigma values must match first &#39;</span>
+                             <span class="s1">&#39;dimension of input data&#39;</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">noise_type</span> <span class="ow">is</span> <span class="s1">&#39;gauss&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">data</span> <span class="o">+</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">random</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">noise_type</span> <span class="ow">is</span> <span class="s1">&#39;poisson&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">data</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">))</span></div>
+        <span class="n">random</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">data</span> <span class="o">+</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">random</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">s</span> <span class="o">*</span> <span class="n">r</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">random</span><span class="p">)])</span></div>
 
 
 <div class="viewcode-block" id="denoise"><a class="viewcode-back" href="../../psf.noise.html#psf.noise.denoise">[docs]</a><span class="k">def</span> <span class="nf">denoise</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">threshold_type</span><span class="o">=</span><span class="s1">&#39;hard&#39;</span><span class="p">):</span>

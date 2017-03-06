@@ -20,6 +20,8 @@ Submodules
    functions.shape
    functions.signal
    functions.stats
+   functions.string
+   functions.system
    functions.types
 
 Module contents

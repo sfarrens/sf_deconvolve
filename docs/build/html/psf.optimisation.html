@@ -30,10 +30,7 @@
   
 
   
-    <link rel="top" title="PSF 5.1 documentation" href="index.html"/>
-        <link rel="up" title="psf package" href="psf.html"/>
-        <link rel="next" title="psf.plotting module" href="psf.plotting.html"/>
-        <link rel="prev" title="psf.operators module" href="psf.operators.html"/> 
+    <link rel="top" title="PSF 5.1 documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -82,34 +79,8 @@
           
             
             
-                <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">psf</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="functions.html">functions package</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="psf.html">psf package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="psf.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="psf.algorithms.html">psf.algorithms module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.convolve.html">psf.convolve module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.cost.html">psf.cost module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.deconvolve.html">psf.deconvolve module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.directional.html">psf.directional module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.linear.html">psf.linear module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.noise.html">psf.noise module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.operators.html">psf.operators module</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="">psf.optimisation module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.plotting.html">psf.plotting module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.proximity.html">psf.proximity module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.reweight.html">psf.reweight module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.svd.html">psf.svd module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.transform.html">psf.transform module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.wavelet.html">psf.wavelet module</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="psf.html#module-contents">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="psf_scripts.html">psf_scripts package</a></li>
-</ul>
-</li>
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">psf_deconvolution</a></li>
 </ul>
 
             
@@ -139,10 +110,6 @@
 <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
-      
-          <li><a href="modules.html">psf</a> &raquo;</li>
-      
-          <li><a href="psf.html">psf package</a> &raquo;</li>
       
     <li>psf.optimisation module</li>
       <li class="wy-breadcrumbs-aside">
@@ -191,7 +158,8 @@ and Engineering, 2011, Chapter 10. (B2010)
 <dl class="class">
 <dt id="psf.optimisation.Condat">
 <em class="property">class </em><code class="descclassname">psf.optimisation.</code><code class="descname">Condat</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>grad</em>, <em>prox</em>, <em>prox_dual</em>, <em>linear</em>, <em>cost</em>, <em>rho</em>, <em>sigma</em>, <em>tau</em>, <em>rho_update=None</em>, <em>sigma_update=None</em>, <em>tau_update=None</em>, <em>auto_iterate=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/optimisation.html#Condat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.optimisation.Condat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Condat optimisation</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Condat optimisation</p>
 <p>This class implements algorithm 10.7 from C2013</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -285,6 +253,9 @@ the maximum number of iterations is reached</p>
 <p>This method updates the current reconstruction</p>
 <p class="rubric">Notes</p>
 <p>Implements equation 9 (algorithm 3.1) from C2013</p>
+<ul class="simple">
+<li>primal proximity operator set up for positivity constraint</li>
+</ul>
 </dd></dl>
 
 <dl class="method">
@@ -300,7 +271,8 @@ provided</p>
 <dl class="class">
 <dt id="psf.optimisation.FISTA">
 <em class="property">class </em><code class="descclassname">psf.optimisation.</code><code class="descname">FISTA</code><span class="sig-paren">(</span><em>lambda_init=None</em>, <em>active=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/optimisation.html#FISTA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.optimisation.FISTA" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class is inhereited by optimisation classes to speed up convergence</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>This class is inhereited by optimisation classes to speed up convergence</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -436,7 +408,8 @@ the maximum number of iterations is reached</p>
 <dl class="class">
 <dt id="psf.optimisation.GenForwardBackward">
 <em class="property">class </em><code class="descclassname">psf.optimisation.</code><code class="descname">GenForwardBackward</code><span class="sig-paren">(</span><em>x</em>, <em>grad</em>, <em>prox_list</em>, <em>cost=None</em>, <em>lambda_init=1.0</em>, <em>lambda_update=None</em>, <em>weights=None</em>, <em>auto_iterate=True</em>, <em>plot=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/optimisation.html#GenForwardBackward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.optimisation.GenForwardBackward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generalized Forward-Backward optimisation</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Generalized Forward-Backward optimisation</p>
 <p>This class implements algorithm 1 from R2012</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -516,15 +489,6 @@ the maximum number of iterations is reached</p>
            </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="psf.plotting.html" class="btn btn-neutral float-right" title="psf.plotting module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="psf.operators.html" class="btn btn-neutral" title="psf.operators module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

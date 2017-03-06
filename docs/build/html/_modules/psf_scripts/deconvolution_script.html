@@ -81,7 +81,7 @@
             
             
                 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">psf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">psf_deconvolution</a></li>
 </ul>
 
             
@@ -137,19 +137,18 @@
 
 <span class="sd">:Author: Samuel Farrens &lt;samuel.farrens@gmail.com&gt;</span>
 
-<span class="sd">:Version: 3.1</span>
+<span class="sd">:Version: 3.2</span>
 
-<span class="sd">:Date: 12/12/2016</span>
+<span class="sd">:Date: 13/12/2016</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">deconvolution_args</span> <span class="kn">import</span> <span class="n">get_opts</span>
 <span class="kn">from</span> <span class="nn">psf</span> <span class="kn">import</span> <span class="n">deconvolve</span> <span class="k">as</span> <span class="n">dc</span>
-<span class="kn">from</span> <span class="nn">creepy.image.quality</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">psf.tests</span> <span class="kn">import</span> <span class="n">test_deconvolution</span>
 <span class="kn">from</span> <span class="nn">functions.errors</span> <span class="kn">import</span> <span class="n">catch_error</span><span class="p">,</span> <span class="n">warn</span>
 <span class="kn">from</span> <span class="nn">functions.log</span> <span class="kn">import</span> <span class="n">set_up_log</span><span class="p">,</span> <span class="n">close_log</span>
-<span class="kn">from</span> <span class="nn">functions.stats</span> <span class="kn">import</span> <span class="n">gaussian_kernel</span>
 
 
 <div class="viewcode-block" id="set_out_string"><a class="viewcode-back" href="../../psf_scripts.deconvolution_script.html#psf_scripts.deconvolution_script.set_out_string">[docs]</a><span class="k">def</span> <span class="nf">set_out_string</span><span class="p">():</span>
@@ -164,61 +163,50 @@
         <span class="n">opts</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">input</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">mode</span></div>
 
 
-<div class="viewcode-block" id="check_data_format"><a class="viewcode-back" href="../../psf_scripts.deconvolution_script.html#psf_scripts.deconvolution_script.check_data_format">[docs]</a><span class="k">def</span> <span class="nf">check_data_format</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="check_data_format"><a class="viewcode-back" href="../../psf_scripts.deconvolution_script.html#psf_scripts.deconvolution_script.check_data_format">[docs]</a><span class="k">def</span> <span class="nf">check_data_format</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check data format</span>
 
-<span class="sd">    This method checks that the input data is correctly formatted.</span>
+<span class="sd">    This method checks that the input data has the correct number of dimensions</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    data : np.ndarray</span>
 <span class="sd">        Input data array</span>
+<span class="sd">    n_dim : int</span>
+<span class="sd">        Expected number of dimensions</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># The data must have 3 dimensions.</span>
-    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input data must have 3 dimensions.&#39;</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="n">n_dim</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input data must have &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n_dim</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; dimensions.&#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="test_deconvolution"><a class="viewcode-back" href="../../psf_scripts.deconvolution_script.html#psf_scripts.deconvolution_script.test_deconvolution">[docs]</a><span class="k">def</span> <span class="nf">test_deconvolution</span><span class="p">(</span><span class="n">deconv_data</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Test deconvolution</span>
+<div class="viewcode-block" id="check_psf"><a class="viewcode-back" href="../../psf_scripts.deconvolution_script.html#psf_scripts.deconvolution_script.check_psf">[docs]</a><span class="k">def</span> <span class="nf">check_psf</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_obj</span><span class="p">,</span> <span class="n">log</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check PSF</span>
 
-<span class="sd">    This method tests the quality of the deconvolved images.</span>
+<span class="sd">    This method checks that the input PSFs are properly normalised</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    deconv_data : np.ndarray</span>
-<span class="sd">        Deconvolved data</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    np.ndarray pixel errors, np.ndarray ellipticity errors</span>
+<span class="sd">    data : np.ndarray</span>
+<span class="sd">        Input data array</span>
+<span class="sd">    n_obj : int</span>
+<span class="sd">        Expected number of PSFs</span>
+<span class="sd">    log : logging.Logger</span>
+<span class="sd">        Log instance</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">random_seed</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">random_seed</span><span class="p">)</span>
-        <span class="n">clean_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">clean_data</span><span class="p">)</span>
-        <span class="n">clean_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">clean_data</span><span class="p">)[:</span><span class="n">deconv_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">psf_type</span> <span class="o">==</span> <span class="s1">&#39;fixed&#39;</span><span class="p">:</span>
+        <span class="n">check_data_format</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">clean_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">clean_data</span><span class="p">)[:</span><span class="n">deconv_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">check_data_format</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">n_obj</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Number of PSFs must match number of images&#39;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
-
-        <span class="k">def</span> <span class="nf">add_weights</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
-
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span> <span class="o">*</span> <span class="n">weight</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])</span>
-
-        <span class="n">gk</span> <span class="o">=</span> <span class="n">gaussian_kernel</span><span class="p">(</span><span class="n">clean_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">kernel</span><span class="p">)</span>
-
-        <span class="n">sparse_data</span> <span class="o">=</span> <span class="n">add_weights</span><span class="p">(</span><span class="n">deconv_data</span><span class="p">,</span> <span class="n">gk</span><span class="p">)</span>
-        <span class="n">clean_data</span> <span class="o">=</span> <span class="n">add_weights</span><span class="p">(</span><span class="n">clean_data</span><span class="p">,</span> <span class="n">gk</span><span class="p">)</span>
-
-    <span class="n">px_err</span> <span class="o">=</span> <span class="n">nmse</span><span class="p">(</span><span class="n">clean_data</span><span class="p">,</span> <span class="n">deconv_data</span><span class="p">)</span>
-    <span class="n">ellip_err</span> <span class="o">=</span> <span class="n">e_error</span><span class="p">(</span><span class="n">clean_data</span><span class="p">,</span> <span class="n">deconv_data</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="p">(</span><span class="n">px_err</span><span class="p">,</span> <span class="n">ellip_err</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">):</span>
+        <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Not all PSFs integrate to 1.0.&#39;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Not all PSFs integrate to 1.0.&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="run_script"><a class="viewcode-back" href="../../psf_scripts.deconvolution_script.html#psf_scripts.deconvolution_script.run_script">[docs]</a><span class="k">def</span> <span class="nf">run_script</span><span class="p">(</span><span class="n">log</span><span class="p">):</span>
@@ -244,18 +232,20 @@
 
     <span class="c1"># Read noisy data file</span>
     <span class="n">data_noisy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
-    <span class="n">check_data_format</span><span class="p">(</span><span class="n">data_noisy</span><span class="p">)</span>
+    <span class="n">check_data_format</span><span class="p">(</span><span class="n">data_noisy</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
     <span class="k">print</span> <span class="s1">&#39; - Input:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">input</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Input: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
 
     <span class="c1"># Read PSF file</span>
     <span class="n">psf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">psf</span><span class="p">)</span>
+    <span class="n">check_psf</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="n">data_noisy</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">log</span><span class="p">)</span>
     <span class="k">print</span> <span class="s1">&#39; - PSF:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">psf</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - PSF: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">psf</span><span class="p">)</span>
 
     <span class="c1"># Read current deconvolution results file</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">current_res</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
         <span class="n">primal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">current_res</span><span class="p">)</span>
+        <span class="n">check_data_format</span><span class="p">(</span><span class="n">primal</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
         <span class="k">print</span> <span class="s1">&#39; - Current Results:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">current_res</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Current Results: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">current_res</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -301,31 +291,33 @@
     <span class="n">wavelet_opt</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-t &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">wavelet_type</span><span class="p">]</span>
 
     <span class="c1"># Perform deconvolution.</span>
-    <span class="n">primal_res</span><span class="p">,</span> <span class="n">dual_res</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">go</span><span class="p">(</span><span class="n">data_noisy</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span>
-                                 <span class="n">noise_est</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">noise_est</span><span class="p">,</span>
-                                 <span class="n">primal</span><span class="o">=</span><span class="n">primal</span><span class="p">,</span>
-                                 <span class="n">psf_type</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">psf_type</span><span class="p">,</span>
-                                 <span class="n">wavelet_opt</span><span class="o">=</span><span class="n">wavelet_opt</span><span class="p">,</span>
-                                 <span class="n">wave_thresh_factor</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">wave_tf</span><span class="p">),</span>
-                                 <span class="n">lowr_thresh_factor</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">lowr_tf</span><span class="p">,</span>
-                                 <span class="n">lowr_thresh_type</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">lowr_thresh_type</span><span class="p">,</span>
-                                 <span class="n">lowr_type</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">lowr_type</span><span class="p">,</span>
-                                 <span class="n">n_reweights</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">n_reweights</span><span class="p">,</span>
-                                 <span class="n">n_iter</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">n_iter</span><span class="p">,</span>
-                                 <span class="n">relax</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">relax</span><span class="p">,</span>
-                                 <span class="n">condat_tau</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">condat_tau</span><span class="p">,</span>
-                                 <span class="n">condat_sigma</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">condat_sigma</span><span class="p">,</span>
-                                 <span class="n">mode</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
-                                 <span class="n">pos</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">no_pos</span><span class="p">,</span>
-                                 <span class="n">grad</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">no_grad</span><span class="p">,</span>
-                                 <span class="n">opt_type</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">opt_type</span><span class="p">,</span>
-                                 <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">,</span>
-                                 <span class="n">output</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+    <span class="n">primal_res</span><span class="p">,</span> <span class="n">dual_res</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">data_noisy</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span>
+                                  <span class="n">noise_est</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">noise_est</span><span class="p">,</span>
+                                  <span class="n">primal</span><span class="o">=</span><span class="n">primal</span><span class="p">,</span>
+                                  <span class="n">psf_type</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">psf_type</span><span class="p">,</span>
+                                  <span class="n">wavelet_opt</span><span class="o">=</span><span class="n">wavelet_opt</span><span class="p">,</span>
+                                  <span class="n">wave_thresh_factor</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">wave_tf</span><span class="p">),</span>
+                                  <span class="n">lowr_thresh_factor</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">lowr_tf</span><span class="p">,</span>
+                                  <span class="n">lowr_thresh_type</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">lowr_thresh_type</span><span class="p">,</span>
+                                  <span class="n">lowr_type</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">lowr_type</span><span class="p">,</span>
+                                  <span class="n">n_reweights</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">n_reweights</span><span class="p">,</span>
+                                  <span class="n">n_iter</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">n_iter</span><span class="p">,</span>
+                                  <span class="n">cost_window</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">cost_window</span><span class="p">,</span>
+                                  <span class="n">relax</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">relax</span><span class="p">,</span>
+                                  <span class="n">condat_tau</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">condat_tau</span><span class="p">,</span>
+                                  <span class="n">condat_sigma</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">condat_sigma</span><span class="p">,</span>
+                                  <span class="n">mode</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+                                  <span class="n">pos</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">no_pos</span><span class="p">,</span>
+                                  <span class="n">grad</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">no_grad</span><span class="p">,</span>
+                                  <span class="n">opt_type</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">opt_type</span><span class="p">,</span>
+                                  <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">,</span>
+                                  <span class="n">output</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
 
     <span class="c1"># Test the deconvolution</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">clean_data</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
 
-        <span class="n">image_errors</span> <span class="o">=</span> <span class="n">test_deconvolution</span><span class="p">(</span><span class="n">primal_res</span><span class="p">)</span>
+        <span class="n">image_errors</span> <span class="o">=</span> <span class="n">test_deconvolution</span><span class="p">(</span><span class="n">primal_res</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">clean_data</span><span class="p">,</span>
+                                          <span class="n">opts</span><span class="o">.</span><span class="n">random_seed</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">kernel</span><span class="p">)</span>
 
         <span class="k">print</span> <span class="s1">&#39; - Clean Data:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">clean_data</span>
         <span class="k">print</span> <span class="s1">&#39; - Random Seed:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">random_seed</span>

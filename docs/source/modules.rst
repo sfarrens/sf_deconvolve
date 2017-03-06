@@ -1,9 +1,9 @@
-psf
-===
+psf_deconvolution
+=================
 
 .. toctree::
    :maxdepth: 4
 
    functions
-   psf
-   psf_scripts
+   lib
+   scripts

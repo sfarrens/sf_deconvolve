@@ -81,7 +81,7 @@
             
             
                 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">psf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">psf_deconvolution</a></li>
 </ul>
 
             
@@ -235,8 +235,6 @@
 
     <span class="c1"># Reshape the singular values to the shape of the input image.</span>
     <span class="n">s_new</span> <span class="o">=</span> <span class="n">diagsvd</span><span class="p">(</span><span class="n">s_new</span><span class="p">,</span> <span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-
-    <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">s_new</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
 
     <span class="c1"># Return the thresholded image.</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">s_new</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span></div>

@@ -30,10 +30,7 @@
   
 
   
-    <link rel="top" title="PSF 5.1 documentation" href="index.html"/>
-        <link rel="up" title="psf package" href="psf.html"/>
-        <link rel="next" title="psf.noise module" href="psf.noise.html"/>
-        <link rel="prev" title="psf.directional module" href="psf.directional.html"/> 
+    <link rel="top" title="PSF 5.1 documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -82,34 +79,8 @@
           
             
             
-                <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">psf</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="functions.html">functions package</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="psf.html">psf package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="psf.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="psf.algorithms.html">psf.algorithms module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.convolve.html">psf.convolve module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.cost.html">psf.cost module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.deconvolve.html">psf.deconvolve module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.directional.html">psf.directional module</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="">psf.linear module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.noise.html">psf.noise module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.operators.html">psf.operators module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.optimisation.html">psf.optimisation module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.plotting.html">psf.plotting module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.proximity.html">psf.proximity module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.reweight.html">psf.reweight module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.svd.html">psf.svd module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.transform.html">psf.transform module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="psf.wavelet.html">psf.wavelet module</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="psf.html#module-contents">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="psf_scripts.html">psf_scripts package</a></li>
-</ul>
-</li>
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">psf_deconvolution</a></li>
 </ul>
 
             
@@ -139,10 +110,6 @@
 <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
-      
-          <li><a href="modules.html">psf</a> &raquo;</li>
-      
-          <li><a href="psf.html">psf package</a> &raquo;</li>
       
     <li>psf.linear module</li>
       <li class="wy-breadcrumbs-aside">
@@ -175,19 +142,10 @@
 </tbody>
 </table>
 <dl class="class">
-<dt id="psf.linear.Directional">
-<em class="property">class </em><code class="descclassname">psf.linear.</code><code class="descname">Directional</code><span class="sig-paren">(</span><em>data</em>, <em>angle_num</em>, <em>scale_num</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/linear.html#Directional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.Directional" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="psf.linear.Directional.get_filters">
-<code class="descname">get_filters</code><span class="sig-paren">(</span><em>angle_num</em>, <em>scale_num</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/linear.html#Directional.get_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.Directional.get_filters" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="psf.linear.Identity">
 <em class="property">class </em><code class="descclassname">psf.linear.</code><code class="descname">Identity</code><a class="reference internal" href="_modules/psf/linear.html#Identity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.Identity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Identity operator class</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Identity operator class</p>
 <p>This is a dummy class that can be used in the optimisation classes</p>
 <dl class="method">
 <dt id="psf.linear.Identity.adj_op">
@@ -241,16 +199,21 @@
 
 <dl class="class">
 <dt id="psf.linear.LinearCombo">
-<em class="property">class </em><code class="descclassname">psf.linear.</code><code class="descname">LinearCombo</code><span class="sig-paren">(</span><em>operators</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/linear.html#LinearCombo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.LinearCombo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Linear combination class</p>
+<em class="property">class </em><code class="descclassname">psf.linear.</code><code class="descname">LinearCombo</code><span class="sig-paren">(</span><em>operators</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/linear.html#LinearCombo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.LinearCombo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Linear combination class</p>
 <p>This class defines a combination of linear transform operators</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>operators</strong> : list</p>
-<blockquote class="last">
+<blockquote>
 <div><p>List of linear operator class instances</p>
+</div></blockquote>
+<p><strong>weights</strong> : list, optional</p>
+<blockquote class="last">
+<div><p>List of weights for combining the linear adjoint operator results</p>
 </div></blockquote>
 </td>
 </tr>
@@ -260,8 +223,9 @@
 <dt id="psf.linear.LinearCombo.adj_op">
 <code class="descname">adj_op</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/linear.html#LinearCombo.adj_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.LinearCombo.adj_op" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adjoint operator</p>
-<p>This method returns the sum of the input data operated on by all of the
-adjoint operators</p>
+<p>This method returns the combination of the result of all of the
+adjoint operators. If weights are provided the comibination is the sum
+of the weighted results, otherwise the combination is the mean.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -306,7 +270,8 @@ adjoint operators</p>
 <dl class="class">
 <dt id="psf.linear.Wavelet">
 <em class="property">class </em><code class="descclassname">psf.linear.</code><code class="descname">Wavelet</code><span class="sig-paren">(</span><em>data</em>, <em>wavelet_opt=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/psf/linear.html#Wavelet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#psf.linear.Wavelet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wavelet class</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Wavelet class</p>
 <p>This class defines the wavelet transform operators</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -377,15 +342,6 @@ rotated by 180 degrees</p>
            </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="psf.noise.html" class="btn btn-neutral float-right" title="psf.noise module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="psf.directional.html" class="btn btn-neutral" title="psf.directional module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

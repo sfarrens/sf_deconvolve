@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>psf &mdash; PSF 5.1 documentation</title>
+  <title>psf_deconvolution &mdash; PSF 5.1 documentation</title>
   
 
   
@@ -82,10 +82,10 @@
             
             
                 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="">psf</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="">psf_deconvolution</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="functions.html">functions package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="psf.html">psf package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="psf_scripts.html">psf_scripts package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lib.html">lib package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scripts.html">scripts package</a></li>
 </ul>
 </li>
 </ul>
@@ -118,7 +118,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>psf</li>
+    <li>psf_deconvolution</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -132,8 +132,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="psf">
-<h1>psf<a class="headerlink" href="#psf" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="psf-deconvolution">
+<h1>psf_deconvolution<a class="headerlink" href="#psf-deconvolution" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="functions.html">functions package</a><ul>
@@ -152,51 +152,45 @@
 <li class="toctree-l3"><a class="reference internal" href="functions.shape.html">functions.shape module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="functions.signal.html">functions.signal module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="functions.stats.html">functions.stats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="functions.string.html">functions.string module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="functions.system.html">functions.system module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="functions.types.html">functions.types module</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="functions.html#module-functions">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="psf.html">psf package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="psf.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="psf.algorithms.html">psf.algorithms module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf.convolve.html">psf.convolve module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf.cost.html">psf.cost module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf.deconvolve.html">psf.deconvolve module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf.directional.html">psf.directional module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf.linear.html">psf.linear module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf.noise.html">psf.noise module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf.operators.html">psf.operators module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf.optimisation.html">psf.optimisation module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf.plotting.html">psf.plotting module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf.proximity.html">psf.proximity module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf.reweight.html">psf.reweight module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf.svd.html">psf.svd module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf.transform.html">psf.transform module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf.wavelet.html">psf.wavelet module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lib.html">lib package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lib.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="lib.algorithms.html">lib.algorithms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.convolve.html">lib.convolve module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.cost.html">lib.cost module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.deconvolve.html">lib.deconvolve module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.directional.html">lib.directional module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.linear.html">lib.linear module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.noise.html">lib.noise module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.operators.html">lib.operators module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.optimisation.html">lib.optimisation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.other_methods.html">lib.other_methods module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.plotting.html">lib.plotting module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.proximity.html">lib.proximity module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.reweight.html">lib.reweight module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.svd.html">lib.svd module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.tests.html">lib.tests module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.transform.html">lib.transform module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.wavelet.html">lib.wavelet module</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="psf.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lib.html#module-contents">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="psf_scripts.html">psf_scripts package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="psf_scripts.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="psf_scripts.add_noise_script.html">psf_scripts.add_noise_script module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf_scripts.assign_random_psf.html">psf_scripts.assign_random_psf module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf_scripts.check_residual.html">psf_scripts.check_residual module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf_scripts.compare.html">psf_scripts.compare module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf_scripts.deconvolution_args.html">psf_scripts.deconvolution_args module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf_scripts.deconvolution_script.html">psf_scripts.deconvolution_script module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf_scripts.deconvolution_script_cython.html">psf_scripts.deconvolution_script_cython module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf_scripts.deconvolution_script_pypy.html">psf_scripts.deconvolution_script_pypy module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf_scripts.extract_euclid_psf.html">psf_scripts.extract_euclid_psf module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf_scripts.metrics.html">psf_scripts.metrics module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf_scripts.reconstruction_script_v2.html">psf_scripts.reconstruction_script_v2 module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="psf_scripts.shape_test.html">psf_scripts.shape_test module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scripts.html">scripts package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="scripts.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="scripts.deconvolution_args.html">scripts.deconvolution_args module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scripts.deconvolution_script.html">scripts.deconvolution_script module</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="psf_scripts.html#module-psf_scripts">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scripts.html#module-contents">Module contents</a></li>
 </ul>
 </li>
 </ul>

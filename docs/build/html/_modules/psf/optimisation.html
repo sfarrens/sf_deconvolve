@@ -81,7 +81,7 @@
             
             
                 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">psf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">psf_deconvolution</a></li>
 </ul>
 
             
@@ -160,7 +160,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
 
-<div class="viewcode-block" id="FISTA"><a class="viewcode-back" href="../../psf.optimisation.html#psf.optimisation.FISTA">[docs]</a><span class="k">class</span> <span class="nc">FISTA</span><span class="p">():</span>
+<div class="viewcode-block" id="FISTA"><a class="viewcode-back" href="../../psf.optimisation.html#psf.optimisation.FISTA">[docs]</a><span class="k">class</span> <span class="nc">FISTA</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;FISTA</span>
 
 <span class="sd">    This class is inhereited by optimisation classes to speed up convergence</span>
@@ -330,7 +330,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">x_final</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_new</span></div></div>
 
 
-<div class="viewcode-block" id="GenForwardBackward"><a class="viewcode-back" href="../../psf.optimisation.html#psf.optimisation.GenForwardBackward">[docs]</a><span class="k">class</span> <span class="nc">GenForwardBackward</span><span class="p">():</span>
+<div class="viewcode-block" id="GenForwardBackward"><a class="viewcode-back" href="../../psf.optimisation.html#psf.optimisation.GenForwardBackward">[docs]</a><span class="k">class</span> <span class="nc">GenForwardBackward</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Generalized Forward-Backward optimisation</span>
 
 <span class="sd">    This class implements algorithm 1 from R2012</span>
@@ -452,7 +452,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">cost_func</span><span class="o">.</span><span class="n">plot_cost</span><span class="p">()</span></div></div>
 
 
-<div class="viewcode-block" id="Condat"><a class="viewcode-back" href="../../psf.optimisation.html#psf.optimisation.Condat">[docs]</a><span class="k">class</span> <span class="nc">Condat</span><span class="p">():</span>
+<div class="viewcode-block" id="Condat"><a class="viewcode-back" href="../../psf.optimisation.html#psf.optimisation.Condat">[docs]</a><span class="k">class</span> <span class="nc">Condat</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Condat optimisation</span>
 
 <span class="sd">    This class implements algorithm 10.7 from C2013</span>
@@ -541,14 +541,15 @@
 <span class="sd">        -----</span>
 <span class="sd">        Implements equation 9 (algorithm 3.1) from C2013</span>
 
+<span class="sd">        - primal proximity operator set up for positivity constraint</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Step 1 from eq.9.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">get_grad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_old</span><span class="p">)</span>
 
-        <span class="n">x_temp</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_old</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">grad</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">*</span>
-                  <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">adj_op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_old</span><span class="p">))</span>
-        <span class="n">x_prox</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prox</span><span class="o">.</span><span class="n">op</span><span class="p">(</span><span class="n">x_temp</span><span class="p">)</span>
+        <span class="n">x_prox</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prox</span><span class="o">.</span><span class="n">op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_old</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">grad</span> <span class="o">-</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">adj_op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_old</span><span class="p">))</span>
 
         <span class="c1"># Step 2 from eq.9.</span>
         <span class="n">y_temp</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_old</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">*</span>
@@ -560,6 +561,8 @@
         <span class="c1"># Step 3 from eq.9.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="n">x_prox</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_old</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="n">y_prox</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_old</span>
+
+        <span class="k">del</span> <span class="n">x_prox</span><span class="p">,</span> <span class="n">y_prox</span><span class="p">,</span> <span class="n">y_temp</span>
 
         <span class="c1"># Update old values for next iteration.</span>
         <span class="n">np</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_old</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_new</span><span class="p">)</span>

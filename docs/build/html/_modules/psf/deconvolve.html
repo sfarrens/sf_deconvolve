@@ -81,7 +81,7 @@
             
             
                 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">psf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">psf_deconvolution</a></li>
 </ul>
 
             
@@ -154,7 +154,33 @@
 <span class="kn">from</span> <span class="nn">functions.stats</span> <span class="kn">import</span> <span class="n">sigma_mad</span>
 
 
-<div class="viewcode-block" id="go"><a class="viewcode-back" href="../../psf.deconvolve.html#psf.deconvolve.go">[docs]</a><span class="k">def</span> <span class="nf">go</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="get_lambda"><a class="viewcode-back" href="../../psf.deconvolve.html#psf.deconvolve.get_lambda">[docs]</a><span class="k">def</span> <span class="nf">get_lambda</span><span class="p">(</span><span class="n">n_images</span><span class="p">,</span> <span class="n">p_pixel</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">spec_rad</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get lambda value</span>
+
+<span class="sd">    This method calculates the singular value threshold for low-rank</span>
+<span class="sd">    regularisation</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_images : int</span>
+<span class="sd">        Total number of images</span>
+<span class="sd">    p_pixel : int</span>
+<span class="sd">        Total number of pixels</span>
+<span class="sd">    sigma : float</span>
+<span class="sd">        Noise standard deviation</span>
+<span class="sd">    spec_rad : float</span>
+<span class="sd">        The spectral radius of the gradient operator</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float Lambda value</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">n_images</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">p_pixel</span><span class="p">]))</span> <span class="o">*</span> <span class="n">spec_rad</span></div>
+
+
+<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../psf.deconvolve.html#psf.deconvolve.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Run deconvolution</span>
 
 <span class="sd">    This method initialises the operator classes and runs the optimisation</span>
@@ -199,8 +225,8 @@
         <span class="n">grad_op</span> <span class="o">=</span> <span class="n">StandardPSFnoGrad</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">psf_type</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;psf_type&#39;</span><span class="p">])</span>
 
     <span class="n">grad_op</span><span class="o">.</span><span class="n">get_spec_rad</span><span class="p">(</span><span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-    <span class="k">print</span> <span class="s1">&#39; - Spetral Radius:&#39;</span><span class="p">,</span> <span class="n">grad_op</span><span class="o">.</span><span class="n">spec_rad</span>
-    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Spetral Radius: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">grad_op</span><span class="o">.</span><span class="n">spec_rad</span><span class="p">))</span>
+    <span class="k">print</span> <span class="s1">&#39; - Spectral Radius:&#39;</span><span class="p">,</span> <span class="n">grad_op</span><span class="o">.</span><span class="n">spec_rad</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Spectral Radius: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">grad_op</span><span class="o">.</span><span class="n">spec_rad</span><span class="p">))</span>
 
     <span class="c1">######</span>
     <span class="c1"># SET THE LINEAR OPERATOR(S)</span>
@@ -307,7 +333,10 @@
 
     <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;lowr&#39;</span><span class="p">):</span>
 
-        <span class="n">lamb</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lowr_thresh_factor&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;noise_est&#39;</span><span class="p">]</span>
+        <span class="c1"># lamb = kwargs[&#39;lowr_thresh_factor&#39;] * kwargs[&#39;noise_est&#39;]</span>
+        <span class="n">lamb</span> <span class="o">=</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lowr_thresh_factor&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">get_lambda</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;noise_est&#39;</span><span class="p">],</span>
+                <span class="n">grad_op</span><span class="o">.</span><span class="n">spec_rad</span><span class="p">))</span>
 
         <span class="k">print</span> <span class="s1">&#39; - lambda:&#39;</span><span class="p">,</span> <span class="n">lamb</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - lambda: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lamb</span><span class="p">))</span>
@@ -363,11 +392,11 @@
         <span class="n">use_pos</span> <span class="o">=</span> <span class="bp">True</span>
 
     <span class="n">total_n_iter</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;n_iter&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;n_reweights&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">cost_test_window</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">cost_test_window</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;cost_window&#39;</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
 
-        <span class="n">prox_dual_op</span> <span class="o">=</span> <span class="n">ProximityCombo</span><span class="p">([</span><span class="n">Threshold</span><span class="p">(</span><span class="n">rw</span><span class="o">.</span><span class="n">weights</span> <span class="o">/</span> <span class="n">condat_sigma</span><span class="p">,),</span>
+        <span class="n">prox_dual_op</span> <span class="o">=</span> <span class="n">ProximityCombo</span><span class="p">([</span><span class="n">Threshold</span><span class="p">(</span><span class="n">rw</span><span class="o">.</span><span class="n">weights</span><span class="p">,),</span>
                                       <span class="n">LowRankMatrix</span><span class="p">(</span><span class="n">lamb</span><span class="p">,</span>
                                       <span class="n">thresh_type</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lowr_thresh_type&#39;</span><span class="p">],</span>
                                       <span class="n">lowr_type</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lowr_type&#39;</span><span class="p">],</span>
@@ -397,7 +426,7 @@
 
     <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;sparse&#39;</span><span class="p">:</span>
 
-        <span class="n">prox_dual_op</span> <span class="o">=</span> <span class="n">Threshold</span><span class="p">(</span><span class="n">rw</span><span class="o">.</span><span class="n">weights</span> <span class="o">/</span> <span class="n">condat_sigma</span><span class="p">)</span>
+        <span class="n">prox_dual_op</span> <span class="o">=</span> <span class="n">Threshold</span><span class="p">(</span><span class="n">rw</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
 
         <span class="n">cost_op</span> <span class="o">=</span> <span class="n">costFunction</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">grad</span><span class="o">=</span><span class="n">grad_op</span><span class="p">,</span> <span class="n">wavelet</span><span class="o">=</span><span class="n">linear_op</span><span class="p">,</span>
                                <span class="n">weights</span><span class="o">=</span><span class="n">rw</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span> <span class="n">lambda_reg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -410,14 +439,15 @@
         <span class="n">prox_dual_op</span> <span class="o">=</span> <span class="n">Identity</span><span class="p">()</span>
         <span class="n">prox_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prox_dual_op</span><span class="p">)</span>
 
-        <span class="n">cost_op</span> <span class="o">=</span> <span class="n">costFunction</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">grad</span><span class="o">=</span><span class="n">grad_op</span><span class="p">,</span>
-                               <span class="n">wavelet</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                               <span class="n">weights</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                               <span class="n">lambda_reg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                               <span class="n">mode</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">])</span>
+        <span class="n">cost_op</span> <span class="o">=</span> <span class="n">costFunction</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">grad</span><span class="o">=</span><span class="n">grad_op</span><span class="p">,</span> <span class="n">wavelet</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                               <span class="n">lambda_reg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">],</span>
+                               <span class="n">positivity</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">],</span>
+                               <span class="n">window</span><span class="o">=</span><span class="n">cost_test_window</span><span class="p">,</span>
+                               <span class="n">output</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">])</span>
 
     <span class="c1">######</span>
     <span class="c1"># PERFORM THE OPTIMISATION</span>
+
     <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;opt_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;fwbw&#39;</span><span class="p">:</span>
         <span class="n">opt</span> <span class="o">=</span> <span class="n">ForwardBackward</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primal&#39;</span><span class="p">],</span> <span class="n">grad_op</span><span class="p">,</span> <span class="n">prox_dual_op</span><span class="p">,</span>
                               <span class="n">cost_op</span><span class="p">,</span> <span class="n">auto_iterate</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
@@ -445,20 +475,17 @@
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;n_reweights&#39;</span><span class="p">]):</span>
 
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">opt</span><span class="o">.</span><span class="n">converge</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s1">&#39; Reweight:&#39;</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">print</span> <span class="s1">&#39;&#39;</span>
 
-                <span class="k">print</span> <span class="s1">&#39; Reweight:&#39;</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
-                <span class="k">print</span> <span class="s1">&#39;&#39;</span>
-
-                <span class="n">rw</span><span class="o">.</span><span class="n">reweight</span><span class="p">(</span><span class="n">linear_op</span><span class="o">.</span><span class="n">op</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">x_new</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
-                <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
-                    <span class="n">prox_dual_op</span><span class="o">.</span><span class="n">operators</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">update_weights</span><span class="p">(</span><span class="n">rw</span><span class="o">.</span><span class="n">weights</span> <span class="o">/</span>
-                                                             <span class="n">condat_sigma</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">prox_dual_op</span><span class="o">.</span><span class="n">update_weights</span><span class="p">(</span><span class="n">rw</span><span class="o">.</span><span class="n">weights</span> <span class="o">/</span> <span class="n">condat_sigma</span><span class="p">)</span>
-                <span class="n">cost_op</span><span class="o">.</span><span class="n">update_weights</span><span class="p">(</span><span class="n">rw</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
-                <span class="n">opt</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;n_iter&#39;</span><span class="p">])</span>
-                <span class="k">print</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">rw</span><span class="o">.</span><span class="n">reweight</span><span class="p">(</span><span class="n">linear_op</span><span class="o">.</span><span class="n">op</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">x_new</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+                <span class="n">prox_dual_op</span><span class="o">.</span><span class="n">operators</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">update_weights</span><span class="p">(</span><span class="n">rw</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">prox_dual_op</span><span class="o">.</span><span class="n">update_weights</span><span class="p">(</span><span class="n">rw</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
+            <span class="n">cost_op</span><span class="o">.</span><span class="n">update_weights</span><span class="p">(</span><span class="n">rw</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
+            <span class="n">opt</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;n_iter&#39;</span><span class="p">])</span>
+            <span class="k">print</span> <span class="s1">&#39;&#39;</span>
 
     <span class="c1">######</span>
     <span class="c1"># FINISH AND RETURN RESULTS</span>

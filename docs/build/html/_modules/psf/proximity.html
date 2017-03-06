@@ -81,7 +81,7 @@
             
             
                 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">psf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">psf_deconvolution</a></li>
 </ul>
 
             
@@ -162,7 +162,7 @@
     <span class="k">return</span> <span class="n">data</span> <span class="o">*</span> <span class="p">(</span><span class="n">data</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Positive"><a class="viewcode-back" href="../../psf.proximity.html#psf.proximity.Positive">[docs]</a><span class="k">class</span> <span class="nc">Positive</span><span class="p">():</span>
+<div class="viewcode-block" id="Positive"><a class="viewcode-back" href="../../psf.proximity.html#psf.proximity.Positive">[docs]</a><span class="k">class</span> <span class="nc">Positive</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Positivity proximity operator</span>
 
 <span class="sd">    This class defines the positivity proximity operator</span>
@@ -193,7 +193,7 @@
         <span class="k">return</span> <span class="n">positivity_operator</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="Threshold"><a class="viewcode-back" href="../../psf.proximity.html#psf.proximity.Threshold">[docs]</a><span class="k">class</span> <span class="nc">Threshold</span><span class="p">():</span>
+<div class="viewcode-block" id="Threshold"><a class="viewcode-back" href="../../psf.proximity.html#psf.proximity.Threshold">[docs]</a><span class="k">class</span> <span class="nc">Threshold</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Threshold proximity operator</span>
 
 <span class="sd">    This class defines the threshold proximity operator</span>
@@ -246,7 +246,7 @@
         <span class="k">return</span> <span class="n">denoise</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="s1">&#39;soft&#39;</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="LowRankMatrix"><a class="viewcode-back" href="../../psf.proximity.html#psf.proximity.LowRankMatrix">[docs]</a><span class="k">class</span> <span class="nc">LowRankMatrix</span><span class="p">():</span>
+<div class="viewcode-block" id="LowRankMatrix"><a class="viewcode-back" href="../../psf.proximity.html#psf.proximity.LowRankMatrix">[docs]</a><span class="k">class</span> <span class="nc">LowRankMatrix</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Low-rank proximity operator</span>
 
 <span class="sd">    This class defines the low-rank proximity operator</span>
@@ -295,14 +295,9 @@
         <span class="c1"># Update threshold with extra factor.</span>
         <span class="n">threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thresh</span> <span class="o">*</span> <span class="n">extra_factor</span>
 
-        <span class="c1"># Subtract mean from data.</span>
-        <span class="n">test_data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lowr_type</span> <span class="o">==</span> <span class="s1">&#39;standard&#39;</span><span class="p">:</span>
-            <span class="n">data_matrix</span> <span class="o">=</span> <span class="n">svd_thresh</span><span class="p">(</span><span class="n">cube2matrix</span><span class="p">(</span><span class="n">test_data</span><span class="p">),</span> <span class="n">threshold</span><span class="p">,</span>
+            <span class="n">data_matrix</span> <span class="o">=</span> <span class="n">svd_thresh</span><span class="p">(</span><span class="n">cube2matrix</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">threshold</span><span class="p">,</span>
                                      <span class="n">thresh_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">thresh_type</span><span class="p">)</span>
-
-            <span class="n">data_rec</span> <span class="o">=</span> <span class="n">matrix2cube</span><span class="p">(</span><span class="n">data_matrix</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
 
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">lowr_type</span> <span class="o">==</span> <span class="s1">&#39;ngole&#39;</span><span class="p">:</span>
             <span class="n">data_matrix</span> <span class="o">=</span> <span class="n">svd_thresh_coef</span><span class="p">(</span><span class="n">test_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="p">,</span>
@@ -311,14 +306,11 @@
 
         <span class="n">new_data</span> <span class="o">=</span> <span class="n">matrix2cube</span><span class="p">(</span><span class="n">data_matrix</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
 
-        <span class="c1"># Add mean back to updated data.</span>
-        <span class="n">new_data</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
         <span class="c1"># Return updated data.</span>
         <span class="k">return</span> <span class="n">new_data</span></div></div>
 
 
-<div class="viewcode-block" id="ProximityCombo"><a class="viewcode-back" href="../../psf.proximity.html#psf.proximity.ProximityCombo">[docs]</a><span class="k">class</span> <span class="nc">ProximityCombo</span><span class="p">():</span>
+<div class="viewcode-block" id="ProximityCombo"><a class="viewcode-back" href="../../psf.proximity.html#psf.proximity.ProximityCombo">[docs]</a><span class="k">class</span> <span class="nc">ProximityCombo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Proximity Combo</span>
 
 <span class="sd">    This class defines a combined proximity operator</span>
@@ -361,7 +353,7 @@
         <span class="k">return</span> <span class="n">res</span></div></div>
 
 
-<div class="viewcode-block" id="SubIter"><a class="viewcode-back" href="../../psf.proximity.html#psf.proximity.SubIter">[docs]</a><span class="k">class</span> <span class="nc">SubIter</span><span class="p">():</span>
+<div class="viewcode-block" id="SubIter"><a class="viewcode-back" href="../../psf.proximity.html#psf.proximity.SubIter">[docs]</a><span class="k">class</span> <span class="nc">SubIter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Sub iteration operator</span>
 
 <span class="sd">    This class defines the sub-iteration proximity operator</span>
