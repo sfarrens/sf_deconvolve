@@ -1,22 +1,30 @@
-#  @file shape.py
-#
-#  SHAPE ESTIMATION ROUTINES
-#
-#  Functions for estimating galaxy shapes.
-#  Based on work by Fred Ngole.
-#
-#  REFERENCES:
-#  1) Cropper et al., Defining a Weak Lensing Experiment in Space, 2013, MNRAS,
-#  431, 3103C. (C2013)
-#  2) Baker and Moallem, Iteratively weighted centroiding for Shack-Hartman
-#  wave-front sensors, 2007, Optics Express, 15, 8, 5147. (BM2007)
-#
-#  @author Samuel Farrens
-#  @version 1.0
-#  @date 2015
-#
+# -*- coding: utf-8 -*-
+
+"""SHAPE ESTIMATION ROUTINES
+
+This module contains methods and classes for estimating galaxy shapes.
+
+.. moduleauthor:: Samuel Farrens <samuel.farrens@gmail.com>
+
+Notes
+-----
+Some of the methods in this module are based on work by Fred Ngole.
+
+References
+----------
+
+.. [C2013] Cropper et al., Defining a Weak Lensing Experiment in Space, 2013,
+    MNRAS, 431, 3103C. [https://arxiv.org/abs/1210.7691]
+
+.. [BM2007] Baker and Moallem, Iteratively weighted centroiding for
+    Shack-Hartman wave-front sensors, 2007n, Optics Express, 15, 8, 5147.
+    [https://www.osapublishing.org/oe/abstract.cfm?uri=oe-15-8-5147]
+
+"""
+
 
 import numpy as np
+
 
 ##
 #  Class for calculating galaxy ellipticities from quadrupole moments.

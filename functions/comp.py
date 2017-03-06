@@ -15,6 +15,52 @@ import warnings
 
 
 ##
+#  Function that checks if input value is a float and if not converts it.
+#
+#  @param[in] val: Input value.
+#
+#  @return Float value.
+#
+def check_float(val):
+
+    if type(val) is float:
+        pass
+    elif type(val) is int:
+        val = float(val)
+    elif type(val) is list or type(val) is tuple:
+        val = np.array(val, dtype=float)
+    elif type(val) is np.ndarray and val.dtype is not 'float64':
+        val = val.astype(float)
+    else:
+        raise ValueError('Invalid input type.')
+
+    return val
+
+
+##
+#  Function that checks if input value is an int and if not converts it.
+#
+#  @param[in] val: Input value.
+#
+#  @return Int value.
+#
+def check_int(val):
+
+    if type(val) is int:
+        pass
+    elif type(val) is float:
+        val = int(val)
+    elif type(val) is list or type(val) is tuple:
+        val = np.array(val, dtype=int)
+    elif type(val) is np.ndarray and val.dtype is not 'int64':
+        val = val.astype(int)
+    else:
+        raise ValueError('Invalid input type.')
+
+    return val
+
+
+##
 #  Decorator that rounds the output of a function to 3 decimal places.
 #
 #  @param[in] func: Input funciton.

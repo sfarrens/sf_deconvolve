@@ -10,6 +10,61 @@
 #
 
 import numpy as np
+from functions.comp import check_float
+
+
+##
+#  Function that implements a Gaussian filter.
+#
+#  @param[in] x: Input data point.
+#  @param[in] sigma: Filter scale.
+#
+#  @return Guassian filtered data.
+#
+def Gaussian_filter(x, sigma, fourier=False):
+
+    x = check_float(x)
+    sigma = check_float(sigma)
+
+    val = np.exp(-0.5 * (x / sigma) ** 2)
+
+    if fourier:
+        return val
+
+    else:
+        return val / (np.sqrt(2 * np.pi) * sigma)
+
+
+##
+#  Function that implements a Mexican hat (or Ricker) wavelet.
+#
+#  @param[in] x: Input data point.
+#  @param[in] sigma: Filter scale.
+#
+#  @return Wavelet filtered data.
+#
+def mex_hat(x, sigma):
+
+    x = check_float(x)
+    sigma = check_float(sigma)
+
+    xs = (x / sigma) ** 2
+    val = 2 * (3 * sigma) ** -0.5 * np.pi ** -0.25
+
+    return val * (1 - xs) * np.exp(-0.5 * xs)
+
+
+##
+#  Function that implements a directional Mexican hat (or Ricker) wavelet.
+#
+#  @param[in] x: Input data point.
+#  @param[in] sigma: Filter scale.
+#
+#  @return Wavelet transformed data.
+#
+def mex_hat_dir(x, y, sigma):
+
+    return -0.5 * (x / sigma) ** 2 * mex_hat(y, sigma)
 
 
 ##

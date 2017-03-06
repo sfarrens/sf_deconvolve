@@ -198,11 +198,11 @@ def kernel_pattern(kernel_shape, mask):
     n_rep_axis1 = sum(1 - mask[:, 0])
     n_rep_axis2 = sum(1 - mask[0])
 
-    if np.any(mask[:, 0] == False):
-        pos_1 = np.where(mask[:, 0] == False)[0][0] - 1 + kernel_buffer[0]
+    if np.any(mask[:, 0] is False):
+        pos_1 = np.where(mask[:, 0] is False)[0][0] - 1 + kernel_buffer[0]
 
-    if np.any(mask[0] == False):
-        pos_2 = np.where(mask[0] == False)[0][0] - 1 + kernel_buffer[1]
+    if np.any(mask[0] is False):
+        pos_2 = np.where(mask[0] is False)[0][0] - 1 + kernel_buffer[1]
 
     pattern = np.arange(np.prod(kernel_shape)).reshape(kernel_shape)
 

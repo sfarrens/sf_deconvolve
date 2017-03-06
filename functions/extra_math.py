@@ -23,14 +23,15 @@ from scipy.integrate import quad
 #
 def factor(n):
 
-  factors = set()
+    factors = set()
 
-  for x in range(1, int(np.sqrt(n)) + 1):
-    if n % x == 0:
-      factors.add(x)
-      factors.add(n//x)
+    for x in range(1, int(np.sqrt(n)) + 1):
+        if n % x == 0:
+            factors.add(x)
+            factors.add(n//x)
 
-  return np.array(sorted(factors))
+    return np.array(sorted(factors))
+
 
 ##
 #  Function that finds the middle factor(s) of a number (n).
@@ -48,6 +49,7 @@ def mfactor(n):
 
     else:
         return f[f.size / 2 - 1:f.size / 2 + 1]
+
 
 ##
 #  Function that integrates a given

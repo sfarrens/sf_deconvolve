@@ -10,6 +10,7 @@
 #
 
 import numpy as np
+from itertools import product
 
 
 ##
@@ -52,35 +53,6 @@ def fancy_transpose(data, roll=1):
 
 
 ##
-#  Function that computes the nuclear norm of the input data.
-#
-#  @param[in] data: Input data.
-#
-#  @return Nuclear norm.
-#
-def nuclear_norm(data):
-
-    # Get SVD of the data.
-    u, s, v = np.linalg.svd(data)
-
-    # Return nuclear norm.
-    return np.sum(s)
-
-
-##
-#  Function that projects vector v onto vector u.
-#
-#  @param[in] u: Input vector u.
-#  @param[in] v: Input vector v.
-#
-#  @return Projection.
-#
-def project(u, v):
-
-    return np.inner(v, u) / np.inner(u, u) * u
-
-
-##
 #  This function orthonormalizes the row vectors of the input matrix.
 #
 #  @param[in] matrix: Input matrix.
@@ -112,3 +84,71 @@ def gram_schmidt(matrix, return_opt='orthonormal'):
         return u
     else:
         return u, e
+
+
+##
+#  Function that computes the nuclear norm of the input data.
+#
+#  @param[in] data: Input data.
+#
+#  @return Nuclear norm.
+#
+def nuclear_norm(data):
+
+    # Get SVD of the data.
+    u, s, v = np.linalg.svd(data)
+
+    # Return nuclear norm.
+    return np.sum(s)
+
+
+##
+#  Function that projects vector v onto vector u.
+#
+#  @param[in] u: Input vector u.
+#  @param[in] v: Input vector v.
+#
+#  @return Projection.
+#
+def project(u, v):
+
+    return np.inner(v, u) / np.inner(u, u) * u
+
+
+##
+#  Funciton that produces a 2x2 rotation matrix for the given input angle.
+#
+#  @param[in] angle: Rotation angle in radians.
+#
+#  @return Rotation matrix.
+#
+def rot_matrix(angle):
+
+    return np.around(np.array([[np.cos(angle), -np.sin(angle)],
+                     [np.sin(angle), np.cos(angle)]], dtype='float'), 10)
+
+
+##
+#  Funciton that rotates an input matrix about the input angle.
+#
+#  @param[in] matrix: Input matrix.
+#  @param[in] angle: Rotation angle in radians.
+#
+#  @return Rotated matrix.
+#
+def rotate(matrix, angle):
+
+    shape = np.array(matrix.shape)
+
+    if shape[0] != shape[1]:
+        raise ValueError('Input matrix must be square.')
+
+    shift = (np.array(shape) - 1) / 2
+
+    index = np.array(list(product(*np.array([np.arange(val) for val in
+                     shape])))) - shift
+
+    new_index = np.array(np.dot(index, rot_matrix(angle)), dtype='int') + shift
+    new_index[new_index >= shape[0]] -= shape[0]
+
+    return matrix[zip(new_index.T)].reshape(shape.T)

@@ -1,22 +1,28 @@
-PSF Tools
-==================
+PSF Deconvolution
+=================
 
-@authors Samuel Farrens
+> Author: **Samuel Farrens**
+
+> Year: **2017**
+
+> Version: **3.2**
+
+> Email: **[samuel.farrens@gmail.com](mailto:samuel.farrens@gmail.com)**
 
 Contents
 ------------
 1. [Introduction](#intro_anchor)
-2. [Dependencies](#depend_anchor)
-3. [Execution](#exe_anchor)
- * [Example](#eg_anchor)
- * [Code Options](#opt_anchor)
+1. [Dependencies](#depend_anchor)
+1. [Execution](#exe_anchor)
+1. [Example](#eg_anchor)
+1. [Code Options](#opt_anchor)
 
 <a name="intro_anchor"></a>
 ## Introduction
 
-This repository contains Python codes and scripts designed for PSF analysis.
+This repository contains Python codes and scripts designed for PSF deconvolution and analysis.
 
-The directory **PSF** contains all of the primary functions and classes used for optimisation and analysis. **PSF_SCRIPTS** contains the user scripts that call these functions and classes. **Functions** contains some additional generic functions and tools.
+The directory ``lib`` contains all of the primary functions and classes used for optimisation and analysis. ``scripts`` contains the user scripts that call these functions and classes. ``functions`` contains some additional generic functions and tools.
 
 <a name="depend_anchor"></a>
 ## Dependencies
@@ -39,13 +45,13 @@ The low-rank approximation analysis can be run purely in Python.
 <a name="exe_anchor"></a>
 ## Execution
 
-The primary script is **reconstruction_script.py** which is designed to take an observed (*i.e.* with PSF effects and noise) stack of galaxy images and a known PSF, and attempt to reconstruct the original images. The input format are Numpy binary files (.npy).
+The primary script is **deconvolution_script.py** which is designed to take an observed (*i.e.* with PSF effects and noise) stack of galaxy images and a known PSF, and attempt to reconstruct the original images. The input format are Numpy binary files (.npy).
 
 The script can be run as follows:
 
-> reconstruction_script -i INPUT_IMAGES.npy -p PSF.npy -o OUTPUT_NAME
+> deconvolution_script.py -i INPUT_IMAGES.npy -p PSF.npy -o OUTPUT_NAME
 
-Where *INPUT_IMAGES.npy* denotes the Numpy binary file containing the stack of observed galaxy images, *PSF.npy* denotes the PSF corresponding to each galaxy image and *OUTPUT_NAME* specifies the output file name.
+Where *INPUT_IMAGES.npy* denotes the Numpy binary file containing the stack of observed galaxy images, *PSF.npy* denotes the PSF corresponding to each galaxy image and *OUTPUT_NAME* specifies the output path and file name.
 
 <a name="eg_anchor"></a>
 ### Example
@@ -54,54 +60,58 @@ The following example can be run on the sample data provided [here](https://www.
 
 This example takes a sample of 100 galaxy images with PSF effects and added noise and the corresponding PSFs and recovers the original images using low-rank approximation and Condat-Vu optimisation.
 
-> reconstruction_script.py -i example_image_stack.npy -p example_psf.npy -o example_output --mode lowr
+> deconvolution_script.py -i example_image_stack.npy -p example_psf.npy -o example_output --mode lowr
 
 The result will be two Numpy binary files called *example_output_primal.npy* and *example_output_dual.npy* corresponding to the primal and dual variables in the splitting algorithm. The reconstructed images will be in the *example_output_primal.npy* file.
 
 <a name="opt_anchor"></a>
 ### Code Options
 
+#### Required Arguments
+
+* **-i INPUT, --input INPUT:** Input data file name. File should be a Numpy binary containing a stack of noisy galaxy images with PSF effects (*i.e.* a 3D array).
+
+* **-p PSF, --psf PSF:** PSF file name. File should be a Numpy binary containing either: (a) a single PSF (*i.e.* a 2D array for *fixed* format) or (b) a stack of PSFs corresponding to each of the galaxy images (*i.e.* a 3D array for *obj_var* format).
+
+#### Optional Arguments
+
 * **-h, --help:** Show the help message and exit.
 
 * **-v, --version:** Show the program's version number and exit.
 
-* **-i INPUT, --input INPUT:** Input data file name. File should be a Numpy binary containing a stack of noisy galaxy images with PSF effects. (default: None)
-
-* **-p PSF, --psf PSF:** PSF file name. File should be a Numpy binary containing either: (a) a single PSF (fixed format), (b) a stack of PSFs corresponding to each of the galaxy images (obj_var format), (c) a stack of PSFs corresponding to each of the pixels in each of the galaxy images (pix_var format). (default: None)
+* **-o, --output:** Output file name. If not specified output files will placed in input file path.
 
 * **--psf_type {fixed,obj_var,pix_var}:** PSF format type [fixed, obj_var or pix_var]. This option is used to specify the type of PSF being used. *fixed* corresponds to a single PSF for all galaxy images, *obj_var* corresponds to a unique PSF for each galaxy image and *pix_var* corresponds to a unique PSF for each pixel in each galaxy image. (default: obj_var)
 
-* **--psf_pcs PSF_PCS:** PSF principal components file name. File should be a Numpy binary containing the principal components of a stack of pixel variant PSFs. Only use for *psf_type = pix_var*. (default: None)
+* **--noise_est:** Initial estimate of the noise standard deviation in the observed galaxy images. If not specified this quantity is automatically calculated using the median absolute deviation.
 
-* **--psf_coef PSF_COEF:** PSF coefficients file name. File should be a Numpy binary containing the coefficients of a stack of pixel variant PSFs. Only use for *psf_type = pix_var*. (default: None)
+* **-m, --mode {all,sparse,lowr,grad}:** Option to specify the optimisation mode [all, sparse, lowr or grad]. *all* performs optimisation using both low-rank approximation and sparsity, *sparse* using only sparsity, *lowr* uses only low-rank and *grad* uses only gradient descent. (default: lowr)
 
-* **--noise_est NOISE_EST:** Initial estimate of the noisy in the observed galaxy images. If not specified this quantity is automatically calculated using the median absolute deviation. (default: None)
+* **--opt_type {condat,fwbw,gfwbw}:** Option to specify the optimisation method to be implemented [condat, fwbw or gfwbw]. *condat* implements the Condat-Vu proximal splitting method, *fwbw* implements Forward-Backward splitting with FISTA speed-up and *gfwbw* implements the generalised Forward-Backward splitting method. (default: condat)
 
-* **-o OUTPUT, --output OUTPUT:** Output file name. (default: None)
+* **--wavelet_type:** Type of Wavelet to be used (see [iSap Documentation](http://www.cosmostat.org/wp-content/uploads/2014/12/doc_iSAP.pdf)). (default: 1)
 
-* **-l LAYOUT LAYOUT, --layout LAYOUT LAYOUT:** Image layout for images in *map* format.  Only use for *data_format = map*. (default: None)
+* **--wave_thresh_factor:** Wavelet threshold factor. (default: [3.0, 3.0, 4.0])
 
-* **-m {all,wave,lowr,grad}, --mode {all,wave,lowr,grad}:** Option to specify the optimisation mode [all, wave, lowr or grad]. *all* performs optimisation using both low-rank approximation and wavelets, *wave* using only wavelets, *lowr* uses only low-rank and *grad* uses only gradient descent. (default: all)
+* **--lowr_thresh_factor:** Low rank threshold factor. (default: 1)
 
-* **--opt_type {condat,fwbw,gfwbw}:** Option to specify the optimisation method to be implemented [condat or fwbw]. *condat* implements the Condat-Vu proximal splitting method, *fwbw* implements Forward-Backward splitting with FISTA speed-up and *gfwbw* implements the generalised Forward-Backward splitting method. (default: condat)
+* **--lowr_type:** Type of low-rank regularisation [standard or ngole]. (default: standard)
 
-* **-w WAVELET_LEVELS, --wavelet_levels WAVELET_LEVELS:** Number of wavelet levels to be used (see [iSap Documentation](http://www.cosmostat.org/wp-content/uploads/2014/12/doc_iSAP.pdf)). (default: 3)
+* **--lowr_thresh_type:** Low rank threshold type [soft or hard]. (default: hard)
 
-* **--wavelet_type WAVELET_TYPE:** Type of Wavelet to be used (see [iSap Documentation](http://www.cosmostat.org/wp-content/uploads/2014/12/doc_iSAP.pdf)). (default: 1)
+* **--n_reweights:** Number of reweightings. (default: 1)
 
-* **--wave_thresh_factor WAVE_TF [WAVE_TF ...]:** Wavelet threshold factor. (default: [3.0, 3.0, 4.0])
+* **--n_iter:** Number of iterations. (default: 150)
 
-* **--lowr_thresh_factor LOWR_TF:** Low rank threshold factor. (default: 1)
+* **--relax:** Relaxation parameter (rho_n in Condat-Vu method). (default: 0.8)
 
-* **--lowr_thresh_type LOWR_THRESH_TYPE:** Low rank threshold type [soft or hard]. (default: soft)
+* **--condat_sigma:** Condat proximal dual parameter. (default: 0.5)
 
-* **--n_reweights N_REWEIGHTS:** Number of reweightings. (default: 1)
+* **--condat_tau:** Condat proximal primal parameter. (default: 0.5)
 
-* **--n_iter N_ITER:** Number of iterations. (default: 150)
+* **--kernel:** Standard deviation of pixels for Gaussian kernel. This option will multiply the deconvolution results by a Gaussian kernel.
 
-* **--relax RELAX:** Relaxation parameter (rho_n in Condat-Vu method). (default: 0.5)
-
-* **--data_format DATA_FORMAT:** Data format [map or cube]. This specified if the input data is a stack of galaxy images or a single map of all of the images. (default: cube)
+* **--cost_window:** Window to measure cost function. (default: 1)
 
 * **--no_pos:** Option to turn off positivity constraint.
 
