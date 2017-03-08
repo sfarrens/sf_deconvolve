@@ -1,5 +1,5 @@
-PSF Deconvolution
-=================
+SF_DECONVOLVE
+=============
 
 > Author: **Samuel Farrens**
 
@@ -20,14 +20,14 @@ Contents
 <a name="intro_anchor"></a>
 ## Introduction
 
-This repository contains Python codes and scripts designed for PSF deconvolution and analysis.
+This repository contains a Python code designed for PSF deconvolution and analysis.
 
-The directory ``lib`` contains all of the primary functions and classes used for optimisation and analysis. ``scripts`` contains the user scripts that call these functions and classes. ``functions`` contains some additional generic functions and tools.
+The directory ``lib`` contains all of the primary functions and classes used for optimisation and analysis. ``functions`` contains some additional generic functions and tools.
 
 <a name="depend_anchor"></a>
 ## Dependencies
 
-In order to run the scripts in this library the following packages must be installed:
+In order to run the code in this repository the following packages must be installed:
 
 * **[Python 2.7](https://www.python.org/download/releases/2.7/)</a>**
 [Tested with v 2.7.11]
@@ -45,22 +45,30 @@ The low-rank approximation analysis can be run purely in Python.
 <a name="exe_anchor"></a>
 ## Execution
 
-The primary script is **deconvolution_script.py** which is designed to take an observed (*i.e.* with PSF effects and noise) stack of galaxy images and a known PSF, and attempt to reconstruct the original images. The input format are Numpy binary files (.npy).
+The primary code is **sf_deconvolve.py** which is designed to take an observed (*i.e.* with PSF effects and noise) stack of galaxy images and a known PSF, and attempt to reconstruct the original images. The input format are Numpy binary files (.npy).
 
-The script can be run as follows:
+The code can be run as follows:
 
-> deconvolution_script.py -i INPUT_IMAGES.npy -p PSF.npy -o OUTPUT_NAME
+> sf_deconvolve.py -i INPUT_IMAGES.npy -p PSF.npy -o OUTPUT_NAME
 
 Where *INPUT_IMAGES.npy* denotes the Numpy binary file containing the stack of observed galaxy images, *PSF.npy* denotes the PSF corresponding to each galaxy image and *OUTPUT_NAME* specifies the output path and file name.
+
+Alternatively the code arguments can be stored in a configuration file (with any name) and the code can be run by providing
+the file name preceded by a `@`.
+
+> sf_deconvolve.py @config.ini
+
 
 <a name="eg_anchor"></a>
 ### Example
 
 The following example can be run on the sample data provided in the ``example`` directory.
 
-This example takes a sample of 100 galaxy images with PSF effects and added noise and the corresponding PSFs and recovers the original images using low-rank approximation and Condat-Vu optimisation.
+This example takes a sample of 100 galaxy images (with PSF effects and added noise) and the corresponding PSFs, and recovers the original images using low-rank approximation via Condat-Vu optimisation.
 
-> deconvolution_script.py -i example_image_stack.npy -p example_psf.npy -o example_output --mode lowr
+> sf_deconvolve.py -i example_image_stack.npy -p example_psf.npy -o example_output --mode lowr
+
+The example can also be run using the configuration file provided.
 
 The result will be two Numpy binary files called *example_output_primal.npy* and *example_output_dual.npy* corresponding to the primal and dual variables in the splitting algorithm. The reconstructed images will be in the *example_output_primal.npy* file.
 

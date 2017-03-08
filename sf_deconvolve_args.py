@@ -16,6 +16,47 @@ import argparse as ap
 from argparse import ArgumentDefaultsHelpFormatter as formatter
 
 
+class ArgParser(ap.ArgumentParser):
+
+    """Argument Parser
+
+    This class defines a custom argument parser to override the
+    defult convert_arg_line_to_args method from argparse.
+
+    """
+
+    def __init__(self, *args, **kwargs):
+
+        super(ArgParser, self).__init__(*args, **kwargs)
+
+    def convert_arg_line_to_args(self, line):
+        """Convert argument line to arguments
+
+        This method overrides the default method of argparse. It skips blank
+        and comment lines, and allows .ini style formatting.
+
+        Parameters
+        ----------
+        line : str
+            Input argument string
+
+        Yields
+        ------
+        str
+            Argument strings
+
+        """
+
+        line = line.split()
+        if line and line[0][0] not in ('#', ';'):
+            if line[0][0] != '-':
+                line[0] = '--' + line[0]
+            if len(line) > 1 and '=' in line[0]:
+                line = line[0].split('=') + line[1:]
+            for arg in line:
+                yield arg
+
+
 def get_opts():
 
     """Get script options
@@ -26,9 +67,10 @@ def get_opts():
 
     # Set up argument parser
 
-    parser = ap.ArgumentParser(add_help=False, usage='%(prog)s [options]',
-                               description='PSF Deconvolution Script',
-                               formatter_class=formatter)
+    parser = ArgParser(add_help=False, usage='%(prog)s [options]',
+                       description='PSF Deconvolution Script',
+                       formatter_class=formatter,
+                       fromfile_prefix_chars='@')
     required = parser.add_argument_group('Required Arguments')
     optional = parser.add_argument_group('Optional Arguments')
 
@@ -38,7 +80,7 @@ def get_opts():
                           help='show this help message and exit')
 
     optional.add_argument('-v', '--version', action='version',
-                          version='%(prog)s v3.0')
+                          version='%(prog)s v3.2')
 
     required.add_argument('-i', '--input', dest='input', required=True,
                           help='Input noisy data file name.')
@@ -109,11 +151,11 @@ def get_opts():
                           help='Relaxation parameter (rho_n).')
 
     optional.add_argument('--condat_sigma', dest='condat_sigma',
-                          type=float, required=False,
+                          type=float, required=False, default=0.5,
                           help='Condat proximal dual parameter.')
 
     optional.add_argument('--condat_tau', dest='condat_tau',
-                          type=float, required=False,
+                          type=float, required=False, default=0.5,
                           help='Condat proximal dual parameter')
 
     optional.add_argument('--kernel', dest='kernel',
