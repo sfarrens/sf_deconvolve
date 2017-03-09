@@ -1,4 +1,4 @@
-#! /usr/bin/env Python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """PSF DECONVOLUTION SCRIPT
