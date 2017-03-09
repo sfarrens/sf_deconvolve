@@ -16,8 +16,8 @@ observed galaxy images.
 
 import numpy as np
 from sf_deconvolve_args import get_opts
-from psf import deconvolve as dc
-from psf.tests import test_deconvolution
+from lib import deconvolve as dc
+from lib.tests import test_deconvolution
 from functions.errors import catch_error, warn
 from functions.log import set_up_log, close_log
 
