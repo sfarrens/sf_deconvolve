@@ -8,7 +8,7 @@ observed galaxy images.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 3.2
+:Version: 3.3
 
 :Date: 13/12/2016
 
@@ -108,10 +108,10 @@ def run_script(log):
     log.info(' - Input: ' + opts.input)
 
     # Read PSF file
-    psf = np.load(opts.psf)
+    psf = np.load(opts.psf_file)
     check_psf(psf, data_noisy.shape[0], log)
-    print ' - PSF:', opts.psf
-    log.info(' - PSF: ' + opts.psf)
+    print ' - PSF:', opts.psf_file
+    log.info(' - PSF: ' + opts.psf_file)
 
     # Read current deconvolution results file
     if not isinstance(opts.current_res, type(None)):
@@ -126,76 +126,64 @@ def run_script(log):
     print ' - Mode:', opts.mode
     print ' - PSF Type:', opts.psf_type
     print ' - Optimisation:', opts.opt_type
-    print ' - Positivity:', opts.no_pos
-    print ' - Gradient Descent: ', opts.no_grad
+    print ' - Positivity:', not opts.no_pos
+    print ' - Gradient Descent: ', not opts.no_grad
     print ' - Number of Reweightings:', opts.n_reweights
     print ' - Number of Iterations:', opts.n_iter
+    print ' - Cost Function Window:', opts.cost_window
+    print ' - Convergence Tolerance:', opts.convergence
     log.info(' - Mode: ' + opts.mode)
     log.info(' - PSF Type: ' + opts.psf_type)
     log.info(' - Optimisation: ' + opts.opt_type)
-    log.info(' - Positivity: ' + str(opts.no_pos))
-    log.info(' - Gradient Descent: ' + str(opts.no_grad))
+    log.info(' - Positivity: ' + str(not opts.no_pos))
+    log.info(' - Gradient Descent: ' + str(not opts.no_grad))
     log.info(' - Number of Reweightings: ' + str(opts.n_reweights))
     log.info(' - Number of Iterations: ' + str(opts.n_iter))
+    log.info(' - Cost Function Window: ' + str(opts.cost_window))
+    log.info(' - Convergence Tolerance: ' + str(opts.convergence))
 
     # Log sparsity options
     if opts.mode in ('all', 'sparse'):
         print ' - Wavelet Type:', opts.wavelet_type
-        print ' - Wavelet Threshold Factor:', opts.wave_tf
+        print ' - Wavelet Threshold Factor:', opts.wave_thresh_factor
         log.info(' - Wavelet Type: ' + str(opts.wavelet_type))
         log.info(' - Wavelet Threshold Factor: ' +
-                 str(opts.wave_tf))
+                 str(opts.wave_thresh_factor))
 
     # Log low-rank options
     if opts.mode in ('all', 'lowr'):
-        print ' - Low Rank Threshold Factor:', opts.lowr_tf
+        print ' - Low Rank Threshold Factor:', opts.lowr_thresh_factor
         print ' - Low Rank Threshold Type:', opts.lowr_thresh_type
         print ' - Low Rank Type:', opts.lowr_type
         log.info(' - Low Rank Threshold Factor: ' +
-                 str(opts.lowr_tf))
+                 str(opts.lowr_thresh_factor))
         log.info(' - Low Rank Threshold Type: ' + str(opts.lowr_thresh_type))
         log.info(' - Low Rank Type: ' + str(opts.lowr_type))
 
     print h_line
 
-    # Set mr_transform wavelet type option
-    wavelet_opt = ['-t ' + opts.wavelet_type]
-
     # Perform deconvolution.
-    primal_res, dual_res = dc.run(data_noisy, psf,
-                                  noise_est=opts.noise_est,
-                                  primal=primal,
-                                  psf_type=opts.psf_type,
-                                  wavelet_opt=wavelet_opt,
-                                  wave_thresh_factor=np.array(opts.wave_tf),
-                                  lowr_thresh_factor=opts.lowr_tf,
-                                  lowr_thresh_type=opts.lowr_thresh_type,
-                                  lowr_type=opts.lowr_type,
-                                  n_reweights=opts.n_reweights,
-                                  n_iter=opts.n_iter,
-                                  cost_window=opts.cost_window,
-                                  relax=opts.relax,
-                                  condat_tau=opts.condat_tau,
-                                  condat_sigma=opts.condat_sigma,
-                                  mode=opts.mode,
-                                  pos=opts.no_pos,
-                                  grad=opts.no_grad,
-                                  opt_type=opts.opt_type,
-                                  log=log,
-                                  output=opts.output)
+    primal_res, dual_res = dc.run(data_noisy, psf, primal=primal, log=log,
+                                  **vars(opts))
 
     # Test the deconvolution
     if not isinstance(opts.clean_data, type(None)):
 
         image_errors = test_deconvolution(primal_res, opts.clean_data,
-                                          opts.random_seed, opts.kernel)
+                                          opts.random_seed, opts.kernel,
+                                          opts.metric)
 
         print ' - Clean Data:', opts.clean_data
         print ' - Random Seed:', opts.random_seed
-        print ' - Pixel Error:', image_errors[0]
-        print ' - Shape Error:', image_errors[1]
         log.info(' - Clean Data: ' + opts.clean_data)
         log.info(' - Random Seed: ' + str(opts.random_seed))
+
+        if not isinstance(opts.kernel, type(None)):
+            print ' - Gaussian Kernel:', opts.kernel
+            log.info(' - Gaussian Kernel: ' + str(opts.kernel))
+
+        print ' - Pixel Error:', image_errors[0]
+        print ' - Shape Error:', image_errors[1]
         log.info(' - Pixel Error: ' + str(image_errors[0]))
         log.info(' - Shape Error: ' + str(image_errors[1]))
 

@@ -6,7 +6,7 @@ This module contains classes of proximity operators for optimisation
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 1.1
+:Version: 1.2
 
 :Date: 06/01/2017
 
@@ -46,14 +46,12 @@ class Positive(object):
     def op(self, data, **kwargs):
         """Operator
 
-        This method returns the input data convolved with the wavelet filters
+        This method preserves only the positive coefficients of the input data
 
         Parameters
         ----------
         data : np.ndarray
             Input data array
-        **kwargs
-            Arbitrary keyword arguments
 
         Returns
         -------

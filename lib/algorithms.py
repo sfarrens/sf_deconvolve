@@ -6,7 +6,7 @@ This module contains classes for defining basic algorithms
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 1.1
+:Version: 1.2
 
 :Date: 05/01/2017
 
@@ -51,7 +51,7 @@ class PowerMethod(object):
 
         return np.random.random(self.data_shape)
 
-    def get_spec_rad(self, tolerance=1e-6, max_iter=150):
+    def get_spec_rad(self, tolerance=1e-6, max_iter=10):
         """Get spectral radius
 
         This method calculates the spectral radius

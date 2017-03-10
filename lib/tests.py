@@ -13,7 +13,7 @@ a given stack of deconvolved images
 
 """
 
-from quality import *
+from creepy.image.quality import *
 from functions.stats import gaussian_kernel, psnr_stack
 
 
