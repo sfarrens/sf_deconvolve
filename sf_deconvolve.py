@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""PSF DECONVOLUTION SCRIPT
+"""SF_DECONVOLVE
 
 This module is executable and contains methods for deconvolving a set of
 observed galaxy images.
@@ -12,11 +12,23 @@ observed galaxy images.
 
 :Date: 13/12/2016
 
+References
+----------
+
+.. [F2017] Farrens et al., Space variant deconvolution of galaxy survey images,
+    2017, A&A. [https://arxiv.org/abs/1703.02305]
+
+Notes
+-----
+This code implements equations 8 and 17 from [F2017]_.
+
 """
 
 import numpy as np
+from os.path import splitext
 from sf_deconvolve_args import get_opts
-from lib import deconvolve as dc
+from lib.file_io import *
+from lib.deconvolve import run
 from lib.tests import test_deconvolution
 from functions.errors import catch_error, warn
 from functions.log import set_up_log, close_log
@@ -31,28 +43,10 @@ def set_out_string():
     """
 
     if isinstance(opts.output, type(None)):
-        opts.output = opts.input + '_' + opts.mode
+        opts.output = splitext(opts.input)[0] + '_' + opts.mode
 
 
-def check_data_format(data, n_dim):
-    """Check data format
-
-    This method checks that the input data has the correct number of dimensions
-
-    Parameters
-    ----------
-    data : np.ndarray
-        Input data array
-    n_dim : int
-        Expected number of dimensions
-
-    """
-
-    if data.ndim != n_dim:
-        raise ValueError('Input data must have ' + str(n_dim) + ' dimensions.')
-
-
-def check_psf(data, n_obj, log):
+def check_psf(data, log):
     """Check PSF
 
     This method checks that the input PSFs are properly normalised
@@ -61,19 +55,10 @@ def check_psf(data, n_obj, log):
     ----------
     data : np.ndarray
         Input data array
-    n_obj : int
-        Expected number of PSFs
     log : logging.Logger
         Log instance
 
     """
-
-    if opts.psf_type == 'fixed':
-        check_data_format(data, 2)
-    else:
-        check_data_format(data, 3)
-        if data.shape[0] != n_obj:
-            raise ValueError('Number of PSFs must match number of images')
 
     if not np.all(np.abs(np.sum(data, axis=(1, 2)) - 1) < 1e-5):
         warn('Not all PSFs integrate to 1.0.')
@@ -92,35 +77,31 @@ def run_script(log):
 
     """
 
-    h_line = ' ----------------------------------------'
+    h_line = ' ' + '-' * 70
+    print h_line
 
     # Begin log
-    output_text = 'Running Deconvolution Script...'
+    output_text = ' Running SF_DECONVOLVE'
     print output_text
     log.info(output_text)
 
     print h_line
 
-    # Read noisy data file
-    data_noisy = np.load(opts.input)
-    check_data_format(data_noisy, 3)
-    print ' - Input:', opts.input
-    log.info(' - Input: ' + opts.input)
+    ###########################################################################
+    # Read the input data files
+    data_noisy, psf_data, primal = read_input_files(opts.input, opts.psf_file,
+                                                    opts.current_res)
+    check_psf(psf_data, log)
+    ###########################################################################
 
-    # Read PSF file
-    psf = np.load(opts.psf_file)
-    check_psf(psf, data_noisy.shape[0], log)
-    print ' - PSF:', opts.psf_file
-    log.info(' - PSF: ' + opts.psf_file)
-
-    # Read current deconvolution results file
+    # Log input options
+    print ' - Input File:', opts.input
+    print ' - PSF File:', opts.psf_file
+    log.info(' - Input File: ' + opts.input)
+    log.info(' - PSF File: ' + opts.psf_file)
     if not isinstance(opts.current_res, type(None)):
-        primal = np.load(opts.current_res)
-        check_data_format(primal, 3)
         print ' - Current Results:', opts.current_res
         log.info(' - Current Results: ' + opts.current_res)
-    else:
-        primal = None
 
     # Log set-up options
     print ' - Mode:', opts.mode
@@ -162,26 +143,33 @@ def run_script(log):
 
     print h_line
 
+    ###########################################################################
     # Perform deconvolution.
-    primal_res, dual_res = dc.run(data_noisy, psf, primal=primal, log=log,
-                                  **vars(opts))
+    primal_res, dual_res = run(data_noisy, psf_data, primal=primal, log=log,
+                               **vars(opts))
+    ###########################################################################
 
-    # Test the deconvolution
     if not isinstance(opts.clean_data, type(None)):
 
+        #######################################################################
+        # Test the deconvolution
         image_errors = test_deconvolution(primal_res, opts.clean_data,
                                           opts.random_seed, opts.kernel,
                                           opts.metric)
+        #######################################################################
 
+        # Log testing options
         print ' - Clean Data:', opts.clean_data
         print ' - Random Seed:', opts.random_seed
         log.info(' - Clean Data: ' + opts.clean_data)
         log.info(' - Random Seed: ' + str(opts.random_seed))
 
+        # Log kernel options
         if not isinstance(opts.kernel, type(None)):
             print ' - Gaussian Kernel:', opts.kernel
             log.info(' - Gaussian Kernel: ' + str(opts.kernel))
 
+        # Log test results
         print ' - Pixel Error:', image_errors[0]
         print ' - Shape Error:', image_errors[1]
         log.info(' - Pixel Error: ' + str(image_errors[0]))
@@ -189,20 +177,26 @@ def run_script(log):
 
     print h_line
 
+    ###########################################################################
     # Save outputs to numpy binary files
+    write_output_files(opts.output, primal_res, dual_res=dual_res,
+                       output_format=opts.output_format)
+    ###########################################################################
 
-    np.save(opts.output + '_primal', primal_res)
-    print ' Output 1 saved to: ' + opts.output + '_primal' + '.npy'
-    log.info('Output 1 saved to: ' + opts.output + '_primal' + '.npy')
-
+    # Log output options
+    print (' Output 1 saved to: ' + opts.output + '_primal' + '.' +
+           opts.output_format)
+    log.info('Output 1 saved to: ' + opts.output + '_primal' + '.' +
+             opts.output_format)
     if opts.opt_type == 'condat':
-        np.save(opts.output + '_dual', dual_res)
-        print ' Output 2 saved to: ' + opts.output + '_dual' + '.npy'
-        log.info('Output 2 saved to: ' + opts.output + '_dual' + '.npy')
+        print (' Output 2 saved to: ' + opts.output + '_dual' + '.' +
+               opts.output_format)
+        log.info('Output 2 saved to: ' + opts.output + '_dual' + '.' +
+                 opts.output_format)
 
+    # Close log
     log.info('Script successfully completed!')
     log.info('')
-
     close_log(log)
 
     print h_line

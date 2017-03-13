@@ -6,9 +6,9 @@ This module sets the arguments for deconvolution_script.py.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 1.0
+:Version: 2.0
 
-:Date: 12/12/2016
+:Date: 13/03/2017
 
 """
 
@@ -92,6 +92,9 @@ def get_opts():
                           help='PSF file name.')
 
     optional.add_argument('-o', '--output', help='Output file name.')
+
+    optional.add_argument('--output_format', choices={'npy', 'fits'},
+                          default='npy', help='Output file format.')
 
     optional.add_argument('-k', '--current_res',
                           help='Current deconvolution results file name.')

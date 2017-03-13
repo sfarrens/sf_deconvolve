@@ -324,7 +324,7 @@ def set_primal_dual(data_shape, **kwargs):
 
     print ' - Primal Variable Shape:', kwargs['primal'].shape
     print ' - Dual Variable Shape:', kwargs['dual'].shape
-    print ' ----------------------------------------'
+    print ' ' + '-' * 70
     kwargs['log'].info(' - Primal Variable Shape: ' +
                        str(kwargs['primal'].shape))
     kwargs['log'].info(' - Dual Variable Shape: ' +
