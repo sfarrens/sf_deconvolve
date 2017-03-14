@@ -58,15 +58,18 @@ The primary code is **sf_deconvolve.py** which is designed to take an observed (
 
 The code can be run as follows:
 
-> sf_deconvolve.py -i INPUT_IMAGES.npy -p PSF.npy -o OUTPUT_NAME
+```bash
+$ sf_deconvolve.py -i INPUT_IMAGES.npy -p PSF.npy -o OUTPUT_NAME
+```
 
 Where *INPUT_IMAGES.npy* denotes the Numpy binary file containing the stack of observed galaxy images, *PSF.npy* denotes the PSF corresponding to each galaxy image and *OUTPUT_NAME* specifies the output path and file name.
 
 Alternatively the code arguments can be stored in a configuration file (with any name) and the code can be run by providing
 the file name preceded by a `@`.
 
-> sf_deconvolve.py @config.ini
-
+```bash
+$ sf_deconvolve.py @config.ini
+```
 
 <a name="eg_anchor"></a>
 ### Example
@@ -75,7 +78,9 @@ The following example can be run on the sample data provided in the ``example`` 
 
 This example takes a sample of 100 galaxy images (with PSF effects and added noise) and the corresponding PSFs, and recovers the original images using low-rank approximation via Condat-Vu optimisation.
 
-> sf_deconvolve.py -i example_image_stack.npy -p example_psf.npy -o example_output --mode lowr
+```bash
+$ sf_deconvolve.py -i example_image_stack.npy -p example_psf.npy -o example_output --mode lowr
+```
 
 The example can also be run using the configuration file provided.
 
