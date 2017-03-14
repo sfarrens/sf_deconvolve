@@ -7,7 +7,7 @@ SF_DECONVOLVE
 
 > Version: **3.2**
 
-> Email: **[samuel.farrens@gmail.com](mailto:samuel.farrens@gmail.com)**
+> Email: [samuel.farrens@gmail.com](mailto:samuel.farrens@gmail.com)
 
 > Website: [sfarrens.github.io](https://sfarrens.github.io/)
 
