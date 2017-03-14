@@ -13,9 +13,9 @@ Contents
 ------------
 1. [Introduction](#intro_anchor)
 1. [Dependencies](#depend_anchor)
-1.  [Execution](#exe_anchor)
-  1. [Example](#eg_anchor)
-  1. [Code Options](#opt_anchor)
+1. [Execution](#exe_anchor)
+    1. [Example](#eg_anchor)
+    1. [Code Options](#opt_anchor)
 1. [Troubleshooting](#trouble)
 
 <a name="intro_anchor"></a>
