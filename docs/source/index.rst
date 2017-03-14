@@ -18,7 +18,7 @@ summary of this paper is available |link-to-post|.
 .. |link-to-post| raw:: html
 
   <a href="https://sfarrens.github.io/space-variant-deconvolution-of-galaxy-survey-images.html"
-  target="_blank">Farrens et al. (2017)</a>
+  target="_blank">here</a>
 
 Contents:
 *********
