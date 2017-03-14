@@ -13,6 +13,7 @@ a given stack of deconvolved images
 
 """
 
+from file_io import read_file
 from quality import *
 from functions.stats import gaussian_kernel, psnr_stack
 
@@ -40,14 +41,24 @@ def test_deconvolution(deconv_data, clean_data_file,
     -------
     np.ndarray pixel errors, np.ndarray ellipticity errors
 
+    Raises
+    ------
+    ValueError
+        If the number of clean images does not match the number of deconvolved
+        images
+
     """
 
     if not isinstance(random_seed, type(None)):
         np.random.seed(random_seed)
-        clean_data = np.load(clean_data_file)
+        clean_data = read_file(clean_data_file)
         clean_data = np.random.permutation(clean_data)[:deconv_data.shape[0]]
     else:
-        clean_data = np.load(clean_data_file)[:deconv_data.shape[0]]
+        clean_data = read_file(clean_data_file)[:deconv_data.shape[0]]
+
+    if clean_data.shape != deconv_data.shape:
+        raise ValueError('The number of clean images must match the number '
+                         'deconvolved images.')
 
     if not isinstance(kernel, type(None)):
 

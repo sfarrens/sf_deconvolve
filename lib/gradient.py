@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-"""OPERATOR CLASSES
+"""GRADIENT CLASSES
 
-This module contains classses for defining algorithm operators and gradients.
+This module contains classses for defining algorithm gradients.
 Based on work by Yinghao Ge and Fred Ngole.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 1.1
+:Version: 1.2
 
 :Date: 04/01/2017
 
@@ -125,7 +125,7 @@ class StandardPSF(GradBasic, PowerMethod):
         self.psf = psf
         self.psf_type = psf_type
 
-        PowerMethod.__init__(self, self.MtMX, self.y.shape, auto_run=False)
+        PowerMethod.__init__(self, self.MtMX, self.y.shape)
 
     def MX(self, x):
         """MX

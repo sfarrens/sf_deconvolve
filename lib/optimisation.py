@@ -6,7 +6,7 @@ This module contains classes for optimisation algoritms
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 1.1
+:Version: 1.2
 
 :Date: 05/01/2017
 
@@ -175,9 +175,6 @@ class ForwardBackward(FISTA):
         if not isinstance(self.cost_func, type(None)):
             self.converge = self.cost_func.get_cost(self.z_new)
 
-        if np.all(self.z_new == 0.0):
-            raise RuntimeError('The reconstruction is fucked!')
-
     def iterate(self, max_iter=150):
         """Iterate
 
@@ -229,8 +226,7 @@ class GenForwardBackward(object):
     """
 
     def __init__(self, x, grad, prox_list, cost=None, lambda_init=1.0,
-                 lambda_update=None, weights=None, auto_iterate=True,
-                 plot=False):
+                 lambda_update=None, weights=None, auto_iterate=True):
 
         self.x_old = x
         self.grad = grad
@@ -253,7 +249,6 @@ class GenForwardBackward(object):
 
         self.z = np.array([self.x_old for i in xrange(self.prox_list.size)])
 
-        self.plot = plot
         self.converge = False
         if auto_iterate:
             self.iterate()
@@ -296,9 +291,6 @@ class GenForwardBackward(object):
         if not isinstance(self.cost_func, type(None)):
             self.converge = self.cost_func.get_cost(self.x_new)
 
-        if np.all(self.x_new == 0.0):
-            raise RuntimeError('The deconvolution is fucked!')
-
     def iterate(self, max_iter=150):
         """Iterate
 
@@ -320,7 +312,6 @@ class GenForwardBackward(object):
                 break
 
         self.x_final = self.x_new
-        self.cost_func.plot_cost()
 
 
 class Condat(object):
@@ -467,4 +458,3 @@ class Condat(object):
 
         self.x_final = self.x_new
         self.y_final = self.y_new
-        self.cost_func.plot_cost()

@@ -6,9 +6,9 @@ This module contains classes of different cost functions for optimization.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 1.1
+:Version: 1.2
 
-:Date: 04/01/2017
+:Date: 13/03/2017
 
 """
 
@@ -292,7 +292,7 @@ class costFunction(object):
             if self.residual:
                 self.check_residual(x)
 
-            if self.positivity:
+            if self.positivity and self.print_cost:
                 print ' - MIN(X):', np.min(x)
 
             if self.mode == 'all':

@@ -6,9 +6,9 @@ This module sets the arguments for deconvolution_script.py.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 1.0
+:Version: 2.1
 
-:Date: 12/12/2016
+:Date: 14/03/2017
 
 """
 
@@ -63,117 +63,115 @@ def get_opts():
 
     This method sets the PSF deconvolution script options.
 
+    Returns
+    -------
+    arguments namespace
+
     """
 
     # Set up argument parser
-
     parser = ArgParser(add_help=False, usage='%(prog)s [options]',
                        description='PSF Deconvolution Script',
                        formatter_class=formatter,
                        fromfile_prefix_chars='@')
     required = parser.add_argument_group('Required Arguments')
     optional = parser.add_argument_group('Optional Arguments')
+    init = parser.add_argument_group(' * Initialisation')
+    optimisation = parser.add_argument_group(' * Optimisation')
+    lowrank = parser.add_argument_group(' * Low-Rank Aproximation')
+    sparsity = parser.add_argument_group(' * Sparsity')
+    condat = parser.add_argument_group(' * Condat Algorithm')
+    testing = parser.add_argument_group(' * Testing')
 
     # Add arguments
-
     optional.add_argument('-h', '--help', action='help',
                           help='show this help message and exit')
 
     optional.add_argument('-v', '--version', action='version',
                           version='%(prog)s v3.2')
 
-    required.add_argument('-i', '--input', dest='input', required=True,
+    optional.add_argument('-q', '--quiet', action='store_true',
+                          help='Suppress verbose.')
+
+    required.add_argument('-i', '--input', required=True,
                           help='Input noisy data file name.')
 
-    required.add_argument('-p', '--psf', dest='psf', required=True,
+    required.add_argument('-p', '--psf_file', required=True,
                           help='PSF file name.')
 
-    optional.add_argument('-o', '--output', dest='output',
-                          required=False, help='Output file name.')
+    optional.add_argument('-o', '--output', help='Output file name.')
 
-    optional.add_argument('-k', '--current_res', dest='current_res',
-                          required=False,
-                          help='Current deconvolution results file name.')
+    optional.add_argument('--output_format', choices={'npy', 'fits'},
+                          default='npy', help='Output file format.')
 
-    optional.add_argument('-c', '--clean_data', dest='clean_data',
-                          required=False, help='Clean data file name.')
+    init.add_argument('-k', '--current_res',
+                      help='Current deconvolution results file name.')
 
-    optional.add_argument('-r', '--random_seed', dest='random_seed',
-                          type=int, required=False, help='Random seed.')
+    init.add_argument('--noise_est', type=float,
+                      help='Initial noise estimate.')
 
-    optional.add_argument('--psf_type', dest='psf_type', required=False,
-                          default='obj_var',
-                          choices=('fixed', 'obj_var'),
-                          help='PSF fortmat type. [fixed or obj_var]')
+    optimisation.add_argument('-m', '--mode', default='lowr',
+                              choices=('all', 'sparse', 'lowr', 'grad'),
+                              help='Option to specify the regularisation '
+                              'mode.')
 
-    optional.add_argument('--noise_est', dest='noise_est', type=float,
-                          required=False, help='Initial noise estimate.')
+    optimisation.add_argument('--opt_type', default='condat',
+                              choices=('condat', 'fwbw', 'gfwbw'),
+                              help='Option to specify the optimisation method '
+                              'to be implemented.')
 
-    optional.add_argument('-m', '--mode', dest='mode', default='lowr',
-                          choices=('all', 'sparse', 'lowr', 'grad'),
-                          required=False, help='Option to specify the '
-                          'optimisation mode. [all, sparse, lowr or grad]')
+    optimisation.add_argument('--n_iter', type=int, default=150,
+                              help='Number of iterations.')
 
-    optional.add_argument('--opt_type', dest='opt_type', default='condat',
-                          choices=('condat', 'fwbw', 'gfwbw'), required=False,
-                          help='Option to specify the optimisation method to'
-                          'be implemented. [condat, fwbw or gfwbw]')
+    optimisation.add_argument('--cost_window', type=int, default=1,
+                              help='Window to measure cost function.')
 
-    optional.add_argument('--wavelet_type', dest='wavelet_type',
-                          required=False, default='1', help='Wavelet type.')
+    optimisation.add_argument('--convergence', type=float,
+                              default=1e-4, help='Convergence tolerance.')
 
-    optional.add_argument('--wave_thresh_factor', dest='wave_tf', type=float,
-                          nargs='+', required=False, default=[3.0, 3.0, 4.0],
+    optimisation.add_argument('--no_pos', action='store_true',
+                              help='Option to turn off postivity constraint.')
+
+    optimisation.add_argument('--no_grad', action='store_true',
+                              help='Option to turn off gradinet calculation.')
+
+    lowrank.add_argument('--lowr_thresh_factor', type=float, default=1,
+                         help='Low rank threshold factor.')
+
+    lowrank.add_argument('--lowr_type', choices=('standard', 'ngole'),
+                         default='standard', help='Low rank type.')
+
+    lowrank.add_argument('--lowr_thresh_type', choices=('hard', 'soft'),
+                         default='hard', help='Low rank threshold type.')
+
+    sparsity.add_argument('--wavelet_type', default='1',
+                          help='mr_transform wavelet type.')
+
+    sparsity.add_argument('--wave_thresh_factor', type=float, nargs='+',
+                          default=[3.0, 3.0, 4.0],
                           help='Wavelet threshold factor.')
 
-    optional.add_argument('--lowr_thresh_factor', dest='lowr_tf', type=float,
-                          required=False, default=1,
-                          help='Low rank threshold factor.')
-
-    optional.add_argument('--lowr_type', dest='lowr_type',
-                          required=False, default='standard',
-                          help='Low rank type. [standard or ngole]')
-
-    optional.add_argument('--lowr_thresh_type', dest='lowr_thresh_type',
-                          required=False, default='hard',
-                          help='Low rank threshold type. [soft or hard]')
-
-    optional.add_argument('--n_reweights', dest='n_reweights',
-                          type=int, required=False, default=1,
+    sparsity.add_argument('--n_reweights', type=int, default=1,
                           help='Number of reweightings.')
 
-    optional.add_argument('--n_iter', dest='n_iter',
-                          type=int, required=False, default=150,
-                          help='Number of iterations.')
+    condat.add_argument('--relax', type=float, default=0.8,
+                        help='Relaxation parameter (rho_n).')
 
-    optional.add_argument('--relax', dest='relax',
-                          type=float, required=False, default=0.8,
-                          help='Relaxation parameter (rho_n).')
+    condat.add_argument('--condat_sigma', type=float, nargs='?', const=None,
+                        default=0.5, help='Condat proximal dual parameter.')
 
-    optional.add_argument('--condat_sigma', dest='condat_sigma',
-                          type=float, required=False, default=0.5,
-                          help='Condat proximal dual parameter.')
+    condat.add_argument('--condat_tau', type=float, nargs='?', const=None,
+                        default=0.5, help='Condat proximal primal parameter')
 
-    optional.add_argument('--condat_tau', dest='condat_tau',
-                          type=float, required=False, default=0.5,
-                          help='Condat proximal dual parameter')
+    testing.add_argument('-c', '--clean_data', help='Clean data file name.')
 
-    optional.add_argument('--kernel', dest='kernel',
-                          type=float, required=False,
-                          help='Sigma value for Gaussian kernel.')
+    testing.add_argument('-r', '--random_seed', type=int, help='Random seed.')
 
-    optional.add_argument('--cost_window', dest='cost_window',
-                          type=int, required=False, default=1,
-                          help='Window to measure cost function.')
+    testing.add_argument('--kernel', type=float,
+                         help='Sigma value for Gaussian kernel.')
 
-    optional.add_argument('--no_pos', dest='no_pos',
-                          action='store_false', required=False,
-                          help='Option to turn off postivity constraint.')
+    testing.add_argument('--metric', choices=('mean', 'median'),
+                         default='median', help='Metric to average errors.')
 
-    optional.add_argument('--no_grad', dest='no_grad',
-                          action='store_false', required=False,
-                          help='Option to turn off gradinet calculation.')
-
-    # Return the arguments
-
+    # Return the argument namespace
     return parser.parse_args()
