@@ -1,0 +1,522 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>psf.cost &mdash; PSF 5.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="PSF 5.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> PSF
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                5.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">psf_deconvolution</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">PSF</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>psf.cost</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for psf.cost</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;COST FUNCTIONS</span>
+
+<span class="sd">This module contains classes of different cost functions for optimization.</span>
+
+<span class="sd">:Author: Samuel Farrens &lt;samuel.farrens@gmail.com&gt;</span>
+
+<span class="sd">:Version: 1.1</span>
+
+<span class="sd">:Date: 04/01/2017</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">functions.matrix</span> <span class="kn">import</span> <span class="n">nuclear_norm</span>
+<span class="kn">from</span> <span class="nn">transform</span> <span class="kn">import</span> <span class="n">cube2matrix</span>
+<span class="kn">from</span> <span class="nn">plotting</span> <span class="kn">import</span> <span class="n">plotCost</span>
+
+
+<div class="viewcode-block" id="costTest"><a class="viewcode-back" href="../../psf.cost.html#psf.cost.costTest">[docs]</a><span class="k">class</span> <span class="nc">costTest</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Test cost function class</span>
+
+<span class="sd">    This class implements a simple l2 norm test</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : np.ndarray</span>
+<span class="sd">        Input original data array</span>
+<span class="sd">    operator : class</span>
+<span class="sd">        Degredation operator class</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">operator</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">op</span> <span class="o">=</span> <span class="n">operator</span>
+
+<div class="viewcode-block" id="costTest.get_cost"><a class="viewcode-back" href="../../psf.cost.html#psf.cost.costTest.get_cost">[docs]</a>    <span class="k">def</span> <span class="nf">get_cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get cost function</span>
+
+<span class="sd">        This method returns the l2 norm error of the difference between the</span>
+<span class="sd">        original data and the data obtained after optimisation</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : np.ndarray</span>
+<span class="sd">            Input optimised data array</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">op</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="costFunction"><a class="viewcode-back" href="../../psf.cost.html#psf.cost.costFunction">[docs]</a><span class="k">class</span> <span class="nc">costFunction</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Cost function class</span>
+
+<span class="sd">    This class implements the cost function for deconvolution</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : np.ndarray</span>
+<span class="sd">        Input original data array</span>
+<span class="sd">    grad : class</span>
+<span class="sd">        Gradient operator class</span>
+<span class="sd">    wavelet : class, optional</span>
+<span class="sd">        Wavelet operator class (&quot;sparse&quot; mode only)</span>
+<span class="sd">    weights : np.ndarray, optional</span>
+<span class="sd">        Array of wavelet thresholding weights (&quot;sparse&quot; mode only)</span>
+<span class="sd">    lambda_reg : float, optional</span>
+<span class="sd">        Low-rank regularization parameter (&quot;lowr&quot; mode only)</span>
+<span class="sd">    mode : str {&#39;lowr&#39;, &#39;sparse&#39;}, optional</span>
+<span class="sd">        Deconvolution mode (default is &quot;lowr&quot;)</span>
+<span class="sd">    positivity : bool, optional</span>
+<span class="sd">        Option to test positivity contraint (defult is &quot;True&quot;)</span>
+<span class="sd">    tolerance : float, optional</span>
+<span class="sd">        Tolerance threshold for convergence (default is &quot;1e-4&quot;)</span>
+<span class="sd">    window : int, optional</span>
+<span class="sd">        Iteration interval to test for convergence (default is &quot;5&quot;)</span>
+<span class="sd">    print_cost : bool, optional</span>
+<span class="sd">        Option to print cost function value at each iteration (default is</span>
+<span class="sd">        &quot;True&quot;)</span>
+<span class="sd">    residual : bool, optional</span>
+<span class="sd">        Option to calculate the residual (default is</span>
+<span class="sd">        &quot;False&quot;)</span>
+<span class="sd">    output : str, optional</span>
+<span class="sd">        Output file name for cost function plot</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">grad</span><span class="p">,</span> <span class="n">wavelet</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">lambda_reg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lowr&#39;</span><span class="p">,</span>
+                 <span class="n">positivity</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">print_cost</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                 <span class="n">residual</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="n">grad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wavelet</span> <span class="o">=</span> <span class="n">wavelet</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda_reg</span> <span class="o">=</span> <span class="n">lambda_reg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">positivity</span> <span class="o">=</span> <span class="n">positivity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_weights</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cost</span> <span class="o">=</span> <span class="mf">1e6</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cost_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span> <span class="o">=</span> <span class="n">tolerance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_cost</span> <span class="o">=</span> <span class="n">print_cost</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">residual</span> <span class="o">=</span> <span class="n">residual</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="n">window</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="costFunction.update_weights"><a class="viewcode-back" href="../../psf.cost.html#psf.cost.costFunction.update_weights">[docs]</a>    <span class="k">def</span> <span class="nf">update_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update weights</span>
+
+<span class="sd">        Update the values of the wavelet threshold weights (&quot;sparse&quot; mode only)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        weights : np.ndarray</span>
+<span class="sd">            Array of wavelet thresholding weights</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">weights</span></div>
+
+<div class="viewcode-block" id="costFunction.l2norm"><a class="viewcode-back" href="../../psf.cost.html#psf.cost.costFunction.l2norm">[docs]</a>    <span class="k">def</span> <span class="nf">l2norm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate l2 norm</span>
+
+<span class="sd">        This method returns the l2 norm error of the difference between the</span>
+<span class="sd">        original data and the data obtained after optimisation</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : np.ndarray</span>
+<span class="sd">            Deconvolved data array</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float l2 norm value</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">l2_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">op</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_cost</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s1">&#39; - L2 NORM:&#39;</span><span class="p">,</span> <span class="n">l2_norm</span>
+
+        <span class="k">return</span> <span class="n">l2_norm</span></div>
+
+<div class="viewcode-block" id="costFunction.l1norm"><a class="viewcode-back" href="../../psf.cost.html#psf.cost.costFunction.l1norm">[docs]</a>    <span class="k">def</span> <span class="nf">l1norm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate l1 norm</span>
+
+<span class="sd">        This method returns the l1 norm error of the weighted wavelet</span>
+<span class="sd">        coefficients</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : np.ndarray</span>
+<span class="sd">            Deconvolved data array</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float l1 norm value</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelet</span><span class="o">.</span><span class="n">op</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">l1_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_cost</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s1">&#39; - L1 NORM:&#39;</span><span class="p">,</span> <span class="n">l1_norm</span>
+
+        <span class="k">return</span> <span class="n">l1_norm</span></div>
+
+<div class="viewcode-block" id="costFunction.nucnorm"><a class="viewcode-back" href="../../psf.cost.html#psf.cost.costFunction.nucnorm">[docs]</a>    <span class="k">def</span> <span class="nf">nucnorm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate nuclear norm</span>
+
+<span class="sd">        This method returns the nuclear norm error of the deconvolved data in</span>
+<span class="sd">        matrix form</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : np.ndarray</span>
+<span class="sd">            Deconvolved data array</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float nuclear norm value</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">x_prime</span> <span class="o">=</span> <span class="n">cube2matrix</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">nuc_norm</span> <span class="o">=</span> <span class="n">nuclear_norm</span><span class="p">(</span><span class="n">x_prime</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_cost</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s1">&#39; - NUCLEAR NORM:&#39;</span><span class="p">,</span> <span class="n">nuc_norm</span>
+
+        <span class="k">return</span> <span class="n">nuc_norm</span></div>
+
+<div class="viewcode-block" id="costFunction.check_cost"><a class="viewcode-back" href="../../psf.cost.html#psf.cost.costFunction.check_cost">[docs]</a>    <span class="k">def</span> <span class="nf">check_cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check cost function</span>
+
+<span class="sd">        This method tests the cost function for convergence in the specified</span>
+<span class="sd">        interval of iterations</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : np.ndarray</span>
+<span class="sd">            Deconvolved data array</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool result of the convergence test</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span> <span class="o">%</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">):</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">test_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="bp">False</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">test_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">)</span>
+
+            <span class="c1"># a = (self.test_list[-2] - self.test_list[-1]) / self.window</span>
+            <span class="c1"># b = np.abs(np.gradient(self.test_list[-2:], self.window)[-1])</span>
+
+            <span class="n">t1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_list</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">t2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_list</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">test_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">test</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">t1</span> <span class="o">-</span> <span class="n">t2</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">t1</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_cost</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s1">&#39; - CONVERGENCE TEST:&#39;</span><span class="p">,</span> <span class="n">test</span>
+                <span class="k">print</span> <span class="s1">&#39;&#39;</span>
+
+            <span class="k">return</span> <span class="n">test</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span></div>
+
+<div class="viewcode-block" id="costFunction.check_residual"><a class="viewcode-back" href="../../psf.cost.html#psf.cost.costFunction.check_residual">[docs]</a>    <span class="k">def</span> <span class="nf">check_residual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check residual</span>
+
+<span class="sd">        This method calculates the residual between the deconvolution and the</span>
+<span class="sd">        observed data</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : np.ndarray</span>
+<span class="sd">            Deconvolved data array</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">op</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_cost</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s1">&#39; - STD RESIDUAL:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span></div>
+
+<div class="viewcode-block" id="costFunction.get_cost"><a class="viewcode-back" href="../../psf.cost.html#psf.cost.costFunction.get_cost">[docs]</a>    <span class="k">def</span> <span class="nf">get_cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get cost function</span>
+
+<span class="sd">        This method calculates the full cost function and checks the result for</span>
+<span class="sd">        convergence</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : np.ndarray</span>
+<span class="sd">            Deconvolved data array</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool result of the convergence test</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">:</span>
+
+            <span class="n">test</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_cost</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s1">&#39; - ITERATION:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">cost_old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">residual</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">check_residual</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">positivity</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s1">&#39; - MIN(X):&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cost</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">l2norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">l1norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">nucnorm</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;sparse&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cost</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">l2norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">l1norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;lowr&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cost</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">l2norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_reg</span> <span class="o">*</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">nucnorm</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;grad&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cost</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">l2norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">cost_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_cost</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s1">&#39; - Log10 COST:&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cost</span><span class="p">)</span>
+                <span class="k">print</span> <span class="s1">&#39;&#39;</span>
+
+            <span class="n">test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_cost</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">test</span></div>
+
+<div class="viewcode-block" id="costFunction.plot_cost"><a class="viewcode-back" href="../../psf.cost.html#psf.cost.costFunction.plot_cost">[docs]</a>    <span class="k">def</span> <span class="nf">plot_cost</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plot cost function</span>
+
+<span class="sd">        This method plots the cost function as function of iteration number</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">plotCost</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cost_list</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Samuel Farrens.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'5.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

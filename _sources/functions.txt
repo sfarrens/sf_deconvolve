@@ -22,6 +22,7 @@ Submodules
    functions.stats
    functions.string
    functions.system
+   functions.types
 
 Module contents
 ---------------
