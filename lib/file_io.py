@@ -29,10 +29,6 @@ def check_data_format(data, n_dim):
     n_dim : int or list of ints
         Expected number of dimensions
 
-    Returns
-    -------
-    np.ndarray (reshaped) data array
-
     Raises
     ------
     ValueError
@@ -43,11 +39,6 @@ def check_data_format(data, n_dim):
     if data.ndim not in list(n_dim):
         raise ValueError('Input data array has an invalid number of '
                          'dimensions.')
-
-    if data.ndim == 2:
-        data = data.reshape(1, *data.shape)
-
-    return data
 
 
 def read_from_fits(file_name):
@@ -117,7 +108,7 @@ def read_file(file_name):
         raise ValueError('Invalid file extension. Files must be FITS or numpy '
                          'binary.')
 
-    data = check_data_format(data, [2, 3])
+    check_data_format(data, [2, 3])
 
     return data
 
@@ -150,6 +141,10 @@ def read_input_files(data_file_name, psf_file_name, current_file_name=None):
     """
 
     input_data = read_file(data_file_name)
+
+    if input_data.ndim == 2:
+        input_data = data.reshape(1, *input_data.shape)
+
     psf_data = read_file(psf_file_name)
 
     if input_data.shape[0] < psf_data.shape[0]:

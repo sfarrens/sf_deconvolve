@@ -8,9 +8,9 @@ observed galaxy images.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 3.3
+:Version: 3.4
 
-:Date: 13/12/2016
+:Date: 14/03/2017
 
 References
 ----------
@@ -49,7 +49,8 @@ def set_out_string():
 def check_psf(data, log):
     """Check PSF
 
-    This method checks that the input PSFs are properly normalised
+    This method checks that the input PSFs are properly normalised and updates
+    the opts namespace with the PSF type
 
     Parameters
     ----------
@@ -60,9 +61,17 @@ def check_psf(data, log):
 
     """
 
-    if not np.all(np.abs(np.sum(data, axis=(1, 2)) - 1) < 1e-5):
+    psf_sum = np.sum(data, axis=tuple(range(data.ndim - 2, data.ndim)))
+
+    if not np.all(np.abs(psf_sum - 1) < 1e-5):
         warn('Not all PSFs integrate to 1.0.')
         log.info(' - Not all PSFs integrate to 1.0.')
+
+    opts_dict = vars(opts)
+    opts_dict['psf_type'] = 'obj_var'
+
+    if data.ndim == 2:
+        opts_dict['psf_type'] = 'fixed'
 
 
 def run_script(log):
