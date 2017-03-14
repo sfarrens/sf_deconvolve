@@ -1,10 +1,10 @@
-.. PSF documentation master file, created by
-   sphinx-quickstart on Sat Jan  7 18:15:10 2017.
+.. sf_deconvolve documentation master file, created by
+   sphinx-quickstart on Tue Mar 14 14:39:12 2017.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to PSF's documentation!
-===============================
+Welcome to sf_deconvolve's documentation!
+=========================================
 
 Contents:
 *********
