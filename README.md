@@ -9,6 +9,10 @@ SF_DECONVOLVE
 
 > Email: **[samuel.farrens@gmail.com](mailto:samuel.farrens@gmail.com)**
 
+> Website: [sfarrens.github.io](https://sfarrens.github.io/)
+
+> Reference Paper: [arXiv:1703.02305](https://arxiv.org/abs/1703.02305)
+
 Contents
 ------------
 1. [Introduction](#intro_anchor)
