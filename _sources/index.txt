@@ -1,0 +1,28 @@
+.. sf_deconvolve documentation master file, created by
+   sphinx-quickstart on Tue Mar 14 13:57:02 2017.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+SF_DECONVOLVE Documentation
+===========================
+
+This code is implements the deconvolution algorithm described |link-to-paper|.
+
+.. |link-to-paper| raw:: html
+
+  <a href="https://arxiv.org/abs/1703.02305" target="_blank">here</a>
+
+A brief summary of this paper is available |link-to-post|.
+
+.. |link-to-post| raw:: html
+
+  <a href="https://sfarrens.github.io/space-variant-deconvolution-of-galaxy-survey-images.html" target="_blank">here</a>
+
+
+Contents:
+*********
+
+.. toctree::
+   :maxdepth: 2
+
+   modules
