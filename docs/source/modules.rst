@@ -1,9 +1,9 @@
-psf_deconvolution
-=================
+sf_deconvolve
+=============
 
 .. toctree::
    :maxdepth: 4
 
    functions
    lib
-   scripts
+   sf_deconvolve
