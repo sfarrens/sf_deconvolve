@@ -14,9 +14,9 @@ Hao Shan and Fred Ngole
 """
 
 import numpy as np
-from convolve import convolve
-from functions.matrix import rotate
-from functions.signal import *
+from creepy.image.convolve import convolve
+from creepy.math.matrix import rotate
+from creepy.signal.filter import *
 
 
 def get_dir_filters(shape, angle_num, sigma):

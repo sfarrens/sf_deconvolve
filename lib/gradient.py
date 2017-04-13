@@ -14,8 +14,8 @@ Based on work by Yinghao Ge and Fred Ngole.
 """
 
 import numpy as np
-from algorithms import PowerMethod
-from convolve import psf_convolve
+from creepy.math.matrix import PowerMethod
+from creepy.image.convolve import psf_convolve
 
 
 class GradBasic(object):

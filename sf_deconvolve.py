@@ -8,15 +8,9 @@ observed galaxy images.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 3.4
+:Version: 3.5
 
 :Date: 14/03/2017
-
-References
-----------
-
-.. [F2017] Farrens et al., Space variant deconvolution of galaxy survey images,
-    2017, A&A. [https://arxiv.org/abs/1703.02305]
 
 Notes
 -----
@@ -24,14 +18,15 @@ This code implements equations 8 and 17 from [F2017]_.
 
 """
 
-import numpy as np
 from os.path import splitext
-from lib.sf_deconvolve_args import get_opts
+
+import numpy as np
+from lib.args import get_opts
 from lib.file_io import *
 from lib.deconvolve import run
 from lib.tests import test_deconvolution
-from functions.errors import catch_error, warn
-from functions.log import set_up_log, close_log
+from creepy.interface.errors import catch_error, warn
+from creepy.interface.log import set_up_log, close_log
 
 
 def set_out_string():

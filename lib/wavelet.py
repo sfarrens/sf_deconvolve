@@ -16,9 +16,9 @@ import numpy as np
 from os import remove
 from subprocess import check_call
 from datetime import datetime
-from convolve import convolve
 from astropy.io import fits
-from functions.np_adjust import rotate_stack
+from creepy.image.convolve import convolve
+from creepy.base.np_adjust import rotate_stack
 
 
 def call_mr_transform(data, opt=None, path='./', remove_files=True):

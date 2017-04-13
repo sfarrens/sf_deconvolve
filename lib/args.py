@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""PSF DECONVOLUTION ARGUMENTS
+"""SF DECONVOLVE ARGUMENTS
 
-This module sets the arguments for deconvolution_script.py.
+This module sets the arguments for sf_deconvolve.py.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 

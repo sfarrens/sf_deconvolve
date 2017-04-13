@@ -13,14 +13,14 @@ This module deconvolves a set of galaxy images with a known object-variant PSF.
 """
 
 from scipy.linalg import norm
+from creepy.signal.optimisation import *
+from creepy.math.stats import sigma_mad
 from gradient import *
 from cost import *
 from linear import *
 from proximity import *
-from optimisation import *
 from reweight import cwbReweight
 from wavelet import filter_convolve, filter_convolve_stack
-from functions.stats import sigma_mad
 
 
 def set_noise(data, **kwargs):
@@ -275,9 +275,13 @@ def set_lowr_thresh(data_shape, **kwargs):
 
     """
 
-    kwargs['lambda'] = (kwargs['lowr_thresh_factor'] *
-                        get_lambda(data_shape[0], np.prod(data_shape[1:]),
-                        kwargs['noise_est'], kwargs['grad_op'].spec_rad))
+    if kwargs['lowr_type'] == 'standard':
+        kwargs['lambda'] = (kwargs['lowr_thresh_factor'] *
+                            get_lambda(data_shape[0], np.prod(data_shape[1:]),
+                            kwargs['noise_est'], kwargs['grad_op'].spec_rad))
+
+    elif kwargs['lowr_type'] == 'ngole':
+        kwargs['lambda'] = (kwargs['lowr_thresh_factor'] * kwargs['noise_est'])
 
     print ' - lambda:', kwargs['lambda']
     kwargs['log'].info(' - lambda: ' + str(kwargs['lambda']))

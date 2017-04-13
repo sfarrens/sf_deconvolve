@@ -13,10 +13,10 @@ This module contains classes of proximity operators for optimisation
 """
 
 import numpy as np
-from noise import denoise
-from svd import svd_thresh, svd_thresh_coef
-from transform import *
-from optimisation import *
+from creepy.signal.noise import thresh
+from creepy.signal.svd import svd_thresh, svd_thresh_coef
+from creepy.signal.optimisation import ForwardBackward
+from creepy.base.transform import *
 
 
 def positivity_operator(data):
@@ -112,7 +112,7 @@ class Threshold(object):
 
         threshold = self.weights * extra_factor
 
-        return denoise(data, threshold, 'soft')
+        return thresh(data, threshold, 'soft')
 
 
 class LowRankMatrix(object):

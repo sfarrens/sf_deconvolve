@@ -14,8 +14,7 @@ This module contains linear operator classes.
 
 import numpy as np
 from wavelet import *
-from functions.matrix import rotate
-from functions.signal import *
+from creepy.math.matrix import rotate
 
 
 class Identity(object):
