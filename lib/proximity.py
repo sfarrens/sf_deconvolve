@@ -169,7 +169,7 @@ class LowRankMatrix(object):
                                      thresh_type=self.thresh_type)
 
         elif self.lowr_type == 'ngole':
-            data_matrix = svd_thresh_coef(test_data, self.operator,
+            data_matrix = svd_thresh_coef(data, self.operator,
                                           threshold,
                                           thresh_type=self.thresh_type)
 
