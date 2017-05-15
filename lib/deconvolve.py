@@ -369,7 +369,7 @@ def set_prox_op_and_cost(data, **kwargs):
                                   lowr_type=kwargs['lowr_type'],
                                   operator=kwargs['grad_op'].MtX)]))
 
-        kwargs['cost_op'] = (costFunction(data, grad=kwargs['grad_op'],
+        kwargs['cost_op'] = (costFunction(data, operator=kwargs['grad_op'].MX,
                              wavelet=kwargs['linear_op'].operators[0],
                              weights=kwargs['reweight'].weights,
                              lambda_reg=kwargs['lambda'],
@@ -387,7 +387,7 @@ def set_prox_op_and_cost(data, **kwargs):
                                  lowr_type=kwargs['lowr_type'],
                                  operator=kwargs['grad_op'].MtX))
 
-        kwargs['cost_op'] = (costFunction(data, grad=kwargs['grad_op'],
+        kwargs['cost_op'] = (costFunction(data, operator=kwargs['grad_op'].MX,
                              wavelet=None, weights=None,
                              lambda_reg=kwargs['lambda'], mode=kwargs['mode'],
                              positivity=not kwargs['no_pos'],
@@ -400,7 +400,7 @@ def set_prox_op_and_cost(data, **kwargs):
 
         kwargs['prox_op'].append(Threshold(kwargs['reweight'].weights))
 
-        kwargs['cost_op'] = (costFunction(data, grad=kwargs['grad_op'],
+        kwargs['cost_op'] = (costFunction(data, operator=kwargs['grad_op'].MX,
                              wavelet=kwargs['linear_op'],
                              weights=kwargs['reweight'].weights,
                              lambda_reg=None,
@@ -415,7 +415,7 @@ def set_prox_op_and_cost(data, **kwargs):
 
         kwargs['prox_op'].append(Identity())
 
-        kwargs['cost_op'] = (costFunction(data, grad=kwargs['grad_op'],
+        kwargs['cost_op'] = (costFunction(data, operator=kwargs['grad_op'].MX,
                              wavelet=None, weights=None,
                              lambda_reg=None, mode=kwargs['mode'],
                              positivity=not kwargs['no_pos'],

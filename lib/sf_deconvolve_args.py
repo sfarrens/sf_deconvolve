@@ -127,7 +127,7 @@ def get_opts():
                               help='Window to measure cost function.')
 
     optimisation.add_argument('--convergence', type=float,
-                              default=1e-4, help='Convergence tolerance.')
+                              default=3e-4, help='Convergence tolerance.')
 
     optimisation.add_argument('--no_pos', action='store_true',
                               help='Option to turn off postivity constraint.')

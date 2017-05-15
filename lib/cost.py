@@ -62,8 +62,8 @@ class costFunction(object):
     ----------
     y : np.ndarray
         Input original data array
-    grad : class
-        Gradient operator class
+    operator : function
+        Matrix operator function
     wavelet : class, optional
         Wavelet operator class ("sparse" mode only)
     weights : np.ndarray, optional
@@ -89,13 +89,13 @@ class costFunction(object):
 
     """
 
-    def __init__(self, y, grad, wavelet=None, weights=None,
+    def __init__(self, y, operator, wavelet=None, weights=None,
                  lambda_reg=None, mode='lowr',
                  positivity=True, tolerance=1e-4, window=1, print_cost=True,
                  residual=False, output=None):
 
         self.y = y
-        self.grad = grad
+        self.op = operator
         self.wavelet = wavelet
         self.lambda_reg = lambda_reg
         self.mode = mode
@@ -142,7 +142,7 @@ class costFunction(object):
 
         """
 
-        l2_norm = np.linalg.norm(self.y - self.grad.op(x))
+        l2_norm = np.linalg.norm(self.y - self.op(x))
 
         if self.print_cost:
             print ' - L2 NORM:', l2_norm
@@ -228,9 +228,6 @@ class costFunction(object):
 
             self.test_list.append(self.cost)
 
-            # a = (self.test_list[-2] - self.test_list[-1]) / self.window
-            # b = np.abs(np.gradient(self.test_list[-2:], self.window)[-1])
-
             t1 = np.average(self.test_list[-4:-2], axis=0)
             t2 = np.average(self.test_list[-2:], axis=0)
             self.test_list = []
@@ -256,7 +253,7 @@ class costFunction(object):
 
         """
 
-        self.res = np.std(self.y - self.grad.op(x)) / np.linalg.norm(self.y)
+        self.res = np.std(self.y - self.op(x)) / np.linalg.norm(self.y)
 
         if self.print_cost:
             print ' - STD RESIDUAL:', self.res
