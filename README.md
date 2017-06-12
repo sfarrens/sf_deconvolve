@@ -103,7 +103,7 @@ The code can then be run as follows:
 >>> primal_res, dual_res = run(INPUT_IMAGES, INPUT_PSFS, log=log, **KEYWORDS)
 ```
 
-Provided `INPUT_IMAGES` and `INPUT_PSFS` have been read into memory and that the required `KEYWORDS` dictionary has been created (this requires defining values for virtually all of the arguments listed [below](#opt_anchor)), the resulting deconvolved images will be saved to the variable `primal_res`.
+Where `INPUT_IMAGES` and `INPUT_PSFS` are both Numpy arrays and `KEYWORDS` is a dictionary that contains all of the parameter settings (this requires defining values for virtually all of the arguments listed [below](#opt_anchor)). The resulting deconvolved images will be saved to the variable `primal_res`.
 
 <a name="eg_anchor"></a>
 ### Example
