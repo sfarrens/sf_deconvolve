@@ -13,6 +13,7 @@ Contents
 1. [Introduction](#intro_anchor)
 1. [Dependencies](#depend_anchor)
 1. [Execution](#exe_anchor)
+    1. [Input Format](#in_format)
     1. [Running the executable script](#py_ex)
     1. [Running the code in a Python session](#py_sesh)
     1. [Example](#eg_anchor)
@@ -55,6 +56,7 @@ The low-rank approximation method can be run purely in Python.
 
 The primary code is an executable script called **sf_deconvolve.py** which is designed to take an observed (*i.e.* with PSF effects and noise) stack of galaxy images and a known PSF, and attempt to reconstruct the original images. The input format are Numpy binary files (.npy) or FITS image files (.fits).
 
+<a name="in_format"></a>
 ### Input Format
 
 The input files should have the following format:
