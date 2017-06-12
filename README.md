@@ -1,16 +1,11 @@
 SF_DECONVOLVE
 =============
 
-> Author: **Samuel Farrens**
-
-> Year: **2017**
-
-> Version: **3.2**
-
-> Email: [samuel.farrens@gmail.com](mailto:samuel.farrens@gmail.com)
-
-> Website: [sfarrens.github.io](https://sfarrens.github.io/)
-
+> Author: **Samuel Farrens**  
+> Year: **2017**  
+> Version: **3.2**  
+> Email: [samuel.farrens@gmail.com](mailto:samuel.farrens@gmail.com)  
+> Website: [sfarrens.github.io](https://sfarrens.github.io/)  
 > Reference Paper: [arXiv:1703.02305](https://arxiv.org/abs/1703.02305)
 
 Contents
@@ -18,6 +13,8 @@ Contents
 1. [Introduction](#intro_anchor)
 1. [Dependencies](#depend_anchor)
 1. [Execution](#exe_anchor)
+    1. [Running the executable script](#py_ex)
+    1. [Running the code in a Python session](#py_sesh)
     1. [Example](#eg_anchor)
     1. [Code Options](#opt_anchor)
 1. [Troubleshooting](#trouble)
@@ -56,15 +53,28 @@ The low-rank approximation method can be run purely in Python.
 <a name="exe_anchor"></a>
 ## Execution
 
-The primary code is **sf_deconvolve.py** which is designed to take an observed (*i.e.* with PSF effects and noise) stack of galaxy images and a known PSF, and attempt to reconstruct the original images. The input format are Numpy binary files (.npy) or FITS image files (.fits).
+The primary code is an executable script called **sf_deconvolve.py** which is designed to take an observed (*i.e.* with PSF effects and noise) stack of galaxy images and a known PSF, and attempt to reconstruct the original images. The input format are Numpy binary files (.npy) or FITS image files (.fits).
 
-The code can be run as follows:
+### Input Format
+
+The input files should have the following format:
+
+- Input Images: This should be either a Numpy binary or a FITS file containing a 3D array of galaxy images. *e.g.* for a sample of 10 images, each with size 41x41, the shape of the array should be [10, 41, 41].
+
+- Input PSF(s): This should be either a Numpy binary or a FITS file containing a 2D array (for a fixed PSF) or a 3D array (for a spatially varying PSF) of PSF images. For the spatially varying case the number of PSF images must match the number of corresponding galaxy images. *e.g.* For a sample of 10 images the codes expects 10 PSFs.
+
+See the files provides in the `examples` directory for reference.
+
+<a name="py_ex"></a>
+### Running the executable script
+
+The code can be run in a terminal (not in a Python session) as follows:
 
 ```bash
 $ sf_deconvolve.py -i INPUT_IMAGES.npy -p PSF.npy -o OUTPUT_NAME
 ```
 
-Where *INPUT_IMAGES.npy* denotes the Numpy binary file containing the stack of observed galaxy images, *PSF.npy* denotes the PSF corresponding to each galaxy image and *OUTPUT_NAME* specifies the output path and file name.
+Where `INPUT_IMAGES.npy` denotes the Numpy binary file containing the stack of observed galaxy images, `PSF.npy` denotes the PSF corresponding to each galaxy image and `OUTPUT_NAME` specifies the output path and file name.
 
 Alternatively the code arguments can be stored in a configuration file (with any name) and the code can be run by providing
 the file name preceded by a `@`.
@@ -72,6 +82,26 @@ the file name preceded by a `@`.
 ```bash
 $ sf_deconvolve.py @config.ini
 ```
+<a name="py_sesh"></a>
+### Running the code in a Python session
+
+To run the code in an active Python session you should include the following imports:
+
+```Python
+>>> from lib.deconvolve import run
+>>> from functions.log import set_up_log
+```
+
+*Note:* At present it is necessary to create a logging session but this may be relaxed in a future update.
+
+The code can then be run as follows:
+
+```Python
+>>> set_up_log('LOG_FILE_NAME')
+>>> primal_res, dual_res = run(INPUT_IMAGES, INPUT_PSFS, KEYWORDS)
+```
+
+Provided `INPUT_IMAGES` and `INPUT_PSFS` have been read into memory and that the required `KEYWORDS` dictionary has been created (this requires defining values for virtually all of the arguments listed [below](#opt_anchor)), the resulting deconvolved images will be saved to the variable `primal_res`.
 
 <a name="eg_anchor"></a>
 ### Example
@@ -86,7 +116,9 @@ $ sf_deconvolve.py -i example_image_stack.npy -p example_psf.npy -o example_outp
 
 The example can also be run using the configuration file provided.
 
-The result will be two Numpy binary files called *example_output_primal.npy* and *example_output_dual.npy* corresponding to the primal and dual variables in the splitting algorithm. The reconstructed images will be in the *example_output_primal.npy* file.
+The result will be two Numpy binary files called `example_output_primal.npy` and `example_output_dual.npy` corresponding to the primal and dual variables in the splitting algorithm. The reconstructed images will be in the `example_output_primal.npy` file.
+
+The example can also be run with the FITS files provided.
 
 <a name="opt_anchor"></a>
 ### Code Options
