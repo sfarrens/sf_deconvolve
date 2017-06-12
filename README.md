@@ -99,8 +99,8 @@ To run the code in an active Python session you should include the following imp
 The code can then be run as follows:
 
 ```Python
->>> set_up_log('LOG_FILE_NAME')
->>> primal_res, dual_res = run(INPUT_IMAGES, INPUT_PSFS, KEYWORDS)
+>>> log = set_up_log('LOG_FILE_NAME')
+>>> primal_res, dual_res = run(INPUT_IMAGES, INPUT_PSFS, log=log, **KEYWORDS)
 ```
 
 Provided `INPUT_IMAGES` and `INPUT_PSFS` have been read into memory and that the required `KEYWORDS` dictionary has been created (this requires defining values for virtually all of the arguments listed [below](#opt_anchor)), the resulting deconvolved images will be saved to the variable `primal_res`.
