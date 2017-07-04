@@ -26,12 +26,12 @@ This code implements equations 8 and 17 from [F2017]_.
 
 import numpy as np
 from os.path import splitext
-from lib.sf_deconvolve_args import get_opts
-from lib.file_io import *
-from lib.deconvolve import run
-from lib.tests import test_deconvolution
-from functions.errors import catch_error, warn
-from functions.log import set_up_log, close_log
+from sf_deconvolve.lib.sf_deconvolve_args import get_opts
+from sf_deconvolve.lib.file_io import *
+from sf_deconvolve.lib.deconvolve import run
+from sf_deconvolve.lib.tests import test_deconvolution
+from sf_deconvolve.functions.errors import catch_error, warn
+from sf_deconvolve.functions.log import set_up_log, close_log
 
 
 def set_out_string():
