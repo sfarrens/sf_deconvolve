@@ -14,8 +14,8 @@ This module contains linear operator classes.
 
 import numpy as np
 from wavelet import *
-from functions.matrix import rotate
-from functions.signal import *
+from sf_deconvolve.functions.matrix import rotate
+from sf_deconvolve.functions.signal import *
 
 
 class Identity(object):

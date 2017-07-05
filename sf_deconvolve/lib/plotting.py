@@ -12,6 +12,7 @@ This module contains methods for making plots.
 
 """
 
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -33,7 +34,7 @@ def plotCost(cost_list, output=None):
     if isinstance(output, type(None)):
         file_name = 'cost_function.png'
     else:
-        file_name = output + '_cost_function.png'
+        file_name = os.path.join(output, '_cost_function.png')
 
     plt.figure()
     plt.plot(np.log10(cost_list), 'r-')

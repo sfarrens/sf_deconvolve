@@ -26,6 +26,42 @@ class GradBasic(object):
 
     """
 
+    def MX(self, x):
+        """ MX
+
+        This method calculates the action of the matrix M on the data X, in
+        this case fourier transform of the the input data
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Input data array, an array of recovered 2D images
+
+        Returns
+        -------
+        np.ndarray result
+        """
+
+        raise NotImplementedError("Method must be defined in derivate class.")
+
+    def MtX(self, x):
+        """ MtX
+
+        This method calculates the action of the transpose of the matrix M on
+        the data X, in this case inverse fourier transform of the input data
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Input data array, an array of recovered 2D images
+
+        Returns
+        -------
+        np.ndarray result
+        """
+
+        raise NotImplementedError("Method must be defined in derivate class.")
+
     def MtMX(self, x):
         """M^T M X
 

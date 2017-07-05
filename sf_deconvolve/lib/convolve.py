@@ -14,8 +14,11 @@ This module contains methods for convolving data.
 
 import numpy as np
 from scipy.signal import fftconvolve
-from astropy.convolution import convolve_fft
-from functions.np_adjust import rotate, rotate_stack
+try:
+    from astropy.convolution import convolve_fft
+except:
+    pass
+from sf_deconvolve.functions.np_adjust import rotate, rotate_stack
 
 
 def convolve(data, kernel, method='astropy'):

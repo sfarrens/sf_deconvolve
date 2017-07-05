@@ -10,7 +10,7 @@
 #
 
 import numpy as np
-from functions.comp import check_float
+from sf_deconvolve.functions.comp import check_float
 
 
 ##

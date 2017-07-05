@@ -94,7 +94,10 @@ def denoise(data, level, threshold_type='hard'):
                          '"soft"')
 
     if threshold_type == 'soft':
-        return np.sign(data) * (np.abs(data) - level) * (np.abs(data) >= level)
+        num = np.copy(data)
+        num = np.maximum(np.abs(num) - level, 0)
+        deno = num + level
+        return (num / deno) * data
 
     else:
         return data * (np.abs(data) >= level)
