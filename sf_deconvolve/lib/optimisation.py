@@ -30,41 +30,55 @@ NOTES
 
 import numpy as np
 
+class update_rule(object):
+    """update_rule
 
-class FISTA(object):
-    """FISTA
-
-    This class is inhereited by optimisation classes to speed up convergence
+    This class is implement the basic update rule for the primal variable
 
     Parameters
     ----------
-    lambda_init : float
-        Initial value of the relaxation parameter
-    active : bool
-        Option to activate FISTA convergence speed-up (default is 'True')
+    x : np.ndarray
+        Primal variable
 
     """
+    def __init__(self):
+        pass
 
-    def __init__(self, lambda_init=None, active=True):
 
-        self.lambda_now = lambda_init
-        self.t_now = 1.0
-        self.t_prev = 1.0
-        self.use_speed_up = active
+    def get_update(self, x_new, x_old):
+        """Update the primal variable
 
-    def speed_switch(self, turn_on=True):
-        """Speed swicth
+        This method updates the primal variable using FISTA's rule
 
-        This method turns on or off the speed-up
-
-        Parameters
-        ----------
-        turn_on : bool
-            Option to turn on speed-up (default is 'True')
+        Notes
+        -----
+        This class compute the identity.
 
         """
 
-        self.use_speed_up = turn_on
+        return x_new
+
+class FISTA(update_rule):
+    """FISTA
+
+    This class implements the FISTA speed up rule for the primal variable
+
+    Parameters
+    ----------
+    x_old : np.ndarray
+        Primal variable
+    x_new : np.ndarray
+        Primal variable
+    t_init : float
+        Initial value of the step parameter
+    """
+
+    def __init__(self, x_old=None, t_init=1):
+        self.x_old = x_old
+        self.lambda_now = 0
+        self.t_now = t_init
+        self.t_prev = t_init
+        self.update_lambda()
 
     def update_lambda(self):
         """Update lambda
@@ -81,18 +95,23 @@ class FISTA(object):
         self.t_now = (1 + np.sqrt(4 * self.t_prev ** 2 + 1)) * 0.5
         self.lambda_now = 1 + (self.t_prev - 1) / self.t_now
 
-    def speed_up(self):
-        """speed-up
+    def get_update(self, x_new, x_old):
+        """Update the primal variable
 
-        This method returns the update if the speed-up is active
+        This method updates the primal variable using the combination in the
+        referenced paper
+
+        Notes
+        -----
+        Implements steps 3 and 4 from algoritm 10.7 in B2010
 
         """
+        self.update_lambda()
+        z_new = x_old + self.lambda_now * (x_new - x_old)
+        return z_new
 
-        if self.use_speed_up:
-            self.update_lambda()
 
-
-class ForwardBackward(FISTA):
+class ForwardBackward(object):
     """Forward-Backward optimisation
 
     This class implements standard forward-backward optimisation with an the
@@ -108,28 +127,28 @@ class ForwardBackward(FISTA):
         Proximity operator class
     cost : class
         Cost function class
-    lambda_init : float
-        Initial value of the relaxation parameter
-    lambda_update :
-        Relaxation parameter update method
-    use_fista : bool
-        Option to use FISTA (default is 'True')
+    speed_up_rule : class
+        Primal variable update rule class (implemented yet None or FISTA)
+    converge : bool
+        Describe the convergence of the algorithm
     auto_iterate : bool
         Option to automatically begin iterations upon initialisation (default
         is 'True')
 
     """
 
-    def __init__(self, x, grad, prox, cost=None, lambda_init=None,
-                 lambda_update=None, use_fista=True, auto_iterate=True):
+    def __init__(self, x, grad, prox, cost=None, speed_up_rule_cls=None,
+                 auto_iterate=True):
 
-        FISTA.__init__(self, lambda_init, use_fista)
         self.x_old = x
         self.z_old = np.copy(self.x_old)
         self.grad = grad
         self.prox = prox
         self.cost_func = cost
-        self.lambda_update = lambda_update
+        if speed_up_rule_cls is None:
+            self.speed_up_rule_cls = update_rule()
+        else:
+            self.speed_up_rule_cls = speed_up_rule_cls
         self.converge = False
         if auto_iterate:
             self.iterate()
@@ -152,11 +171,8 @@ class ForwardBackward(FISTA):
         # Step 2 from alg.10.7.
         self.x_new = self.prox.op(y_old)
 
-        # Steps 3 and 4 from alg.10.7.
-        self.speed_up()
-
-        # Step 5 from alg.10.7.
-        self.z_new = self.x_old + self.lambda_now * (self.x_new - self.x_old)
+        # Step 5 from alg.10.7
+        self.z_new = self.speed_up_rule_cls.get_update(self.x_new, self.x_old)
 
         # Test primal variable for convergence.
         if np.sum(np.abs(self.z_old - self.z_new)) <= 1e-6:
@@ -166,10 +182,6 @@ class ForwardBackward(FISTA):
         # Update old values for next iteration.
         np.copyto(self.x_old, self.x_new)
         np.copyto(self.z_old, self.z_new)
-
-        # Update parameter values for next iteration.
-        if not isinstance(self.lambda_update, type(None)):
-            self.lambda_now = self.lambda_update(self.lambda_now)
 
         # Test cost function for convergence.
         if not isinstance(self.cost_func, type(None)):
