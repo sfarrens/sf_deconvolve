@@ -18,6 +18,8 @@ Optimization Theory and Applications, 158, 2, 460. (C2013)
 2) Bauschke et al., Fixed-Point Algorithms for Inverse Problems in Science
 and Engineering, 2011, Chapter 10. (B2010)
 3) Raguet et al., Generalized Forward-Backward Splitting, 2012, , (R2012)
+4) Taylor et al., Worst-case Performance of First-order Methods, Proximal
+Optimized Gradient Method (T2017)
 
 NOTES
 -----
@@ -298,6 +300,124 @@ class GenForwardBackward(object):
         # Update parameter values for next iteration.
         if not isinstance(self.lambda_update, type(None)):
             self.lambda_now = self.lambda_update(self.lambda_now)
+
+        # Test cost function for convergence.
+        if not isinstance(self.cost_func, type(None)):
+            self.converge = self.cost_func.get_cost(self.x_new)
+
+    def iterate(self, max_iter=150):
+        """Iterate
+
+        This method calls update until either convergence criteria is met or
+        the maximum number of iterations is reached
+
+        Parameters
+        ----------
+        max_iter : int, optional
+            Maximum number of iterations (default is '150')
+
+        """
+
+        for i in xrange(max_iter):
+            self.update()
+
+            if self.converge:
+                print ' - Converged!'
+                break
+
+        self.x_final = self.x_new
+
+
+class POGM(object):
+    """POGM
+
+    This class implements the POGM speed up rule for the primal variable
+
+    Parameters
+    ----------
+    x : np.ndarray
+        Initial guess for the primal variable
+    grad : class
+        Gradient operator class
+    prox : class
+        Proximity operator class
+    cost : class
+        Cost function class
+    converge : bool
+        Describe the convergence of the algorithm
+    auto_iterate : bool
+        Option to automatically begin iterations upon initialisation (default
+        is 'True')
+
+    """
+    def __init__(self, x, grad, prox, cost=None, auto_iterate=True):
+
+        self.x_old = x
+        self.z_old = np.copy(self.x_old)
+        self.y_old = np.copy(self.x_old)
+        self.grad = grad
+        self.prox = prox
+        self.cost_func = cost
+        self.converge = False
+        self.theta_now = 1.0
+        self.theta_prev = 1.0
+        self.gamma = 1.0
+        self.lambda_now = 1.0
+        if auto_iterate:
+            self.iterate()
+
+    def update_theta(self):
+        """Update theta parameter
+
+        This method updates the inertial coefficients
+
+        """
+
+        self.theta_prev = self.theta_now
+        self.theta_now = (1 + np.sqrt(4 * self.theta_prev ** 2 + 1)) * 0.5
+
+    def update_gamma(self):
+        """Update theta parameter
+
+        This method updates the value of gamma
+
+        """
+
+        self.gamma = (2*self.theta_prev + self.theta_now - 1)/self.theta_now
+
+    def update(self):
+        """Update
+
+        This method updates the current reconstruction
+
+        """
+        # Step 1 from POGM algorithm
+        self.grad.get_grad(self.x_old)
+        y_new = self.x_old - self.grad.inv_spec_rad * self.grad.grad
+
+        self.update_theta()
+
+        # Step 2 from POGM algorithm
+        z_new = y_new \
+                    + ((self.theta_prev-1)/self.theta_now)*(y_new-self.y_old) \
+                    + (self.theta_prev/self.theta_now)*(y_new-self.x_old) \
+                    + ((self.theta_prev-1)/(self.gamma*self.theta_now)) \
+                    * (self.z_old-self.x_old)
+
+        self.update_gamma()
+
+        # Step 3 form POGM algorithm
+        self.x_new = self.prox.op(z_new,extra_factor=self.gamma)
+
+        # Test primal variable for convergence.
+        if np.sum(np.abs(self.x_old - self.x_new)) <= 1e-6:
+            print ' - converged!'
+            self.converge = True
+
+        # Update old values for next iteration.
+        np.copyto(self.x_old, self.x_new)
+        np.copyto(self.y_old, y_new)
+        np.copyto(self.z_old, z_new)
 
         # Test cost function for convergence.
         if not isinstance(self.cost_func, type(None)):
