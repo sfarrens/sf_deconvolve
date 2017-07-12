@@ -13,7 +13,7 @@ This module contains classes of different cost functions for optimization.
 """
 
 import numpy as np
-from functions.matrix import nuclear_norm
+from sf_deconvolve.functions.matrix import nuclear_norm
 from transform import cube2matrix
 from plotting import plotCost
 

@@ -15,7 +15,7 @@ This module contains methods for transforming data.
 import numpy as np
 from scipy.ndimage import gaussian_filter
 from itertools import islice, product
-from functions.np_adjust import data2np
+from sf_deconvolve.functions.np_adjust import data2np
 
 
 def cube2map(data_cube, layout):

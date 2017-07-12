@@ -58,7 +58,9 @@ class Positive(object):
         np.ndarray all positive elements from input data
 
         """
-
+        if np.issubsctype(data.dtype, np.complex):
+            raise ValueError("Can't compare complex values: do not use "
+                             "positivity constraint with complex data.")
         return positivity_operator(data)
 
 

@@ -17,7 +17,7 @@ from scipy.linalg import svd, diagsvd
 from convolve import convolve
 from noise import denoise
 from transform import cube2matrix, matrix2cube
-from functions.errors import warn
+from sf_deconvolve.functions.errors import warn
 
 
 def find_n_pc(u, factor=0.5):
