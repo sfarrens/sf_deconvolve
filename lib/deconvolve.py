@@ -13,14 +13,14 @@ This module deconvolves a set of galaxy images with a known object-variant PSF.
 """
 
 from scipy.linalg import norm
-from creepy.signal.optimisation import *
-from creepy.math.stats import sigma_mad
+from sf_tools.signal.optimisation import *
+from sf_tools.math.stats import sigma_mad
+from sf_tools.signal.cost import *
+from sf_tools.signal.linear import *
+from sf_tools.signal.proximity import *
+from sf_tools.signal.reweight import cwbReweight
+from sf_tools.signal.wavelet import filter_convolve, filter_convolve_stack
 from gradient import *
-from cost import *
-from linear import *
-from proximity import *
-from reweight import cwbReweight
-from wavelet import filter_convolve, filter_convolve_stack
 
 
 def set_noise(data, **kwargs):

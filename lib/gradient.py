@@ -2,75 +2,21 @@
 
 """GRADIENT CLASSES
 
-This module contains classses for defining algorithm gradients.
-Based on work by Yinghao Ge and Fred Ngole.
+This module contains classses for defining PSF deconvolution specific
+gradients.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 1.2
+:Version: 1.0
 
-:Date: 04/01/2017
+:Date: 19/07/2017
 
 """
 
 import numpy as np
-from creepy.math.matrix import PowerMethod
-from creepy.image.convolve import psf_convolve
-
-
-class GradBasic(object):
-    """Basic gradient class
-
-    This class defines the basic methods that will be inherited by specific
-    gradient classes
-
-    """
-
-    def MtMX(self, x):
-        """M^T M X
-
-        This method calculates the action of the transpose of the matrix M on
-        the action of the matrix M on the data X
-
-        Parameters
-        ----------
-        x : np.ndarray
-            Input data array
-
-        Returns
-        -------
-        np.ndarray result
-
-        Notes
-        -----
-        Calculates  M^T (MX)
-
-        """
-
-        return self.MtX(self.MX(x))
-
-    def get_grad(self, x):
-        """Get the gradient step
-
-        This method calculates the gradient step from the input data
-
-        Parameters
-        ----------
-        x : np.ndarray
-            Input data array
-
-        Returns
-        -------
-        np.ndarray gradient value
-
-        Notes
-        -----
-
-        Calculates M^T (MX - Y)
-
-        """
-
-        self.grad = self.MtX(self.MX(x) - self.y)
+from sf_tools.signal.gradient import GradBasic
+from sf_tools.math.matrix import PowerMethod
+from sf_tools.image.convolve import psf_convolve
 
 
 class GradZero(GradBasic):

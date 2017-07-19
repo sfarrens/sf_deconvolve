@@ -25,8 +25,8 @@ from lib.args import get_opts
 from lib.file_io import *
 from lib.deconvolve import run
 from lib.tests import test_deconvolution
-from creepy.interface.errors import catch_error, warn
-from creepy.interface.log import set_up_log, close_log
+from sf_tools.interface.errors import catch_error, warn
+from sf_tools.interface.log import set_up_log, close_log
 
 
 def set_out_string():

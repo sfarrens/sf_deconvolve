@@ -14,8 +14,8 @@ a given stack of deconvolved images
 """
 
 from file_io import read_file
-from creepy.image.quality import *
-from creepy.math.stats import gaussian_kernel, psnr_stack
+from sf_tools.image.quality import *
+from sf_tools.math.stats import gaussian_kernel, psnr_stack
 
 
 def test_deconvolution(deconv_data, clean_data_file,
