@@ -15,12 +15,13 @@ This module deconvolves a set of galaxy images with a known object-variant PSF.
 from scipy.linalg import norm
 from sf_tools.signal.optimisation import *
 from sf_tools.math.stats import sigma_mad
-from sf_tools.signal.cost import *
+from sf_tools.signal.cost import costObj
 from sf_tools.signal.linear import *
 from sf_tools.signal.proximity import *
 from sf_tools.signal.reweight import cwbReweight
 from sf_tools.signal.wavelet import filter_convolve, filter_convolve_stack
 from gradient import *
+from cost import sf_deconvolveCost
 
 
 def set_noise(data, **kwargs):
@@ -373,16 +374,13 @@ def set_prox_op_and_cost(data, **kwargs):
                                   lowr_type=kwargs['lowr_type'],
                                   operator=kwargs['grad_op'].MtX)]))
 
-        kwargs['cost_op'] = (costFunction(data, grad=kwargs['grad_op'],
-                             wavelet=kwargs['linear_op'].operators[0],
-                             weights=kwargs['reweight'].weights,
-                             lambda_reg=kwargs['lambda'],
-                             mode=kwargs['mode'],
-                             positivity=not kwargs['no_pos'],
-                             tolerance=kwargs['convergence'],
-                             window=kwargs['cost_window'],
-                             output=kwargs['output'],
-                             print_cost=not kwargs['quiet']))
+        cost_instance = (sf_deconvolveCost(data, grad=kwargs['grad_op'],
+                         wavelet=kwargs['linear_op'].operators[0],
+                         weights=kwargs['reweight'].weights,
+                         lambda_reg=kwargs['lambda'],
+                         mode=kwargs['mode'],
+                         positivity=not kwargs['no_pos'],
+                         verbose=not kwargs['quiet']))
 
     elif kwargs['mode'] == 'lowr':
 
@@ -391,42 +389,39 @@ def set_prox_op_and_cost(data, **kwargs):
                                  lowr_type=kwargs['lowr_type'],
                                  operator=kwargs['grad_op'].MtX))
 
-        kwargs['cost_op'] = (costFunction(data, grad=kwargs['grad_op'],
-                             wavelet=None, weights=None,
-                             lambda_reg=kwargs['lambda'], mode=kwargs['mode'],
-                             positivity=not kwargs['no_pos'],
-                             tolerance=kwargs['convergence'],
-                             window=kwargs['cost_window'],
-                             output=kwargs['output'],
-                             print_cost=not kwargs['quiet']))
+        cost_instance = (sf_deconvolveCost(data, grad=kwargs['grad_op'],
+                         wavelet=None, weights=None,
+                         lambda_reg=kwargs['lambda'], mode=kwargs['mode'],
+                         positivity=not kwargs['no_pos'],
+                         verbose=not kwargs['quiet']))
 
     elif kwargs['mode'] == 'sparse':
 
         kwargs['prox_op'].append(Threshold(kwargs['reweight'].weights))
 
-        kwargs['cost_op'] = (costFunction(data, grad=kwargs['grad_op'],
-                             wavelet=kwargs['linear_op'],
-                             weights=kwargs['reweight'].weights,
-                             lambda_reg=None,
-                             mode=kwargs['mode'],
-                             positivity=not kwargs['no_pos'],
-                             tolerance=kwargs['convergence'],
-                             window=kwargs['cost_window'],
-                             output=kwargs['output'],
-                             print_cost=not kwargs['quiet']))
+        cost_instance = (sf_deconvolveCost(data, grad=kwargs['grad_op'],
+                         wavelet=kwargs['linear_op'],
+                         weights=kwargs['reweight'].weights,
+                         lambda_reg=None,
+                         mode=kwargs['mode'],
+                         positivity=not kwargs['no_pos'],
+                         verbose=not kwargs['quiet']))
 
     elif kwargs['mode'] == 'grad':
 
         kwargs['prox_op'].append(Identity())
 
-        kwargs['cost_op'] = (costFunction(data, grad=kwargs['grad_op'],
-                             wavelet=None, weights=None,
-                             lambda_reg=None, mode=kwargs['mode'],
-                             positivity=not kwargs['no_pos'],
-                             tolerance=kwargs['convergence'],
-                             window=kwargs['cost_window'],
-                             output=kwargs['output'],
-                             print_cost=not kwargs['quiet']))
+        cost_instance = (sf_deconvolveCost(data, grad=kwargs['grad_op'],
+                         wavelet=None, weights=None,
+                         lambda_reg=None, mode=kwargs['mode'],
+                         positivity=not kwargs['no_pos'],
+                         verbose=not kwargs['quiet']))
+
+    kwargs['cost_op'] = (costObj(cost_instance,
+                         tolerance=kwargs['convergence'],
+                         cost_interval=kwargs['cost_window'],
+                         plot_output=kwargs['output'],
+                         verbose=not kwargs['quiet']))
 
     return kwargs
 
@@ -565,7 +560,7 @@ def run(data, psf, **kwargs):
 
     # FINISH AND RETURN RESULTS
     kwargs['log'].info(' - Final iteration number: ' +
-                       str(kwargs['cost_op'].iteration))
+                       str(kwargs['cost_op']._iteration))
     kwargs['log'].info(' - Final log10 cost value: ' +
                        str(np.log10(kwargs['cost_op'].cost)))
     kwargs['log'].info(' - Converged: ' + str(kwargs['optimisation'].converge))
