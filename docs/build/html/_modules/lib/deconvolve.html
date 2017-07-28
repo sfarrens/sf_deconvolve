@@ -1,0 +1,793 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>lib.deconvolve &mdash; sf_deconvolve 3.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="sf_deconvolve 3.2 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> sf_deconvolve
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">sf_deconvolve</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">sf_deconvolve</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>lib.deconvolve</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for lib.deconvolve</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;PSF DECONVOLUTION MODULE</span>
+
+<span class="sd">This module deconvolves a set of galaxy images with a known object-variant PSF.</span>
+
+<span class="sd">:Author: Samuel Farrens &lt;samuel.farrens@gmail.com&gt;</span>
+
+<span class="sd">:Version: 6.0</span>
+
+<span class="sd">:Date: 10/03/2017</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="k">import</span> <span class="n">norm</span>
+<span class="kn">from</span> <span class="nn">sf_tools.signal.optimisation</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">sf_tools.math.stats</span> <span class="k">import</span> <span class="n">sigma_mad</span>
+<span class="kn">from</span> <span class="nn">sf_tools.signal.cost</span> <span class="k">import</span> <span class="n">costObj</span>
+<span class="kn">from</span> <span class="nn">sf_tools.signal.linear</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">sf_tools.signal.proximity</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">sf_tools.signal.reweight</span> <span class="k">import</span> <span class="n">cwbReweight</span>
+<span class="kn">from</span> <span class="nn">sf_tools.signal.wavelet</span> <span class="k">import</span> <span class="n">filter_convolve</span><span class="p">,</span> <span class="n">filter_convolve_stack</span>
+<span class="kn">from</span> <span class="nn">gradient</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">cost</span> <span class="k">import</span> <span class="n">sf_deconvolveCost</span>
+
+
+<div class="viewcode-block" id="set_noise"><a class="viewcode-back" href="../../lib.deconvolve.html#lib.deconvolve.set_noise">[docs]</a><span class="k">def</span> <span class="nf">set_noise</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set the noise level</span>
+
+<span class="sd">    This method calculates the noise standard deviation using the median</span>
+<span class="sd">    absolute deviation (MAD) of the input data and adds it to the keyword</span>
+<span class="sd">    arguments.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : np.ndarray</span>
+<span class="sd">        Input noisy data (3D array)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict Updated keyword arguments</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># It the noise is not already provided calculate it using the MAD</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;noise_est&#39;</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;noise_est&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma_mad</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="nb">print</span> <span class="s1">&#39; - Noise Estimate:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;noise_est&#39;</span><span class="p">]</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Noise Estimate: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;noise_est&#39;</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">kwargs</span></div>
+
+
+<div class="viewcode-block" id="set_grad_op"><a class="viewcode-back" href="../../lib.deconvolve.html#lib.deconvolve.set_grad_op">[docs]</a><span class="k">def</span> <span class="nf">set_grad_op</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set the gradient operator</span>
+
+<span class="sd">    This method defines the gradient operator class to use and add an instance</span>
+<span class="sd">    to the keyword arguments.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : np.ndarray</span>
+<span class="sd">        Input noisy data (3D array)</span>
+<span class="sd">    psf : np.ndarray</span>
+<span class="sd">        PSF data (2D or 3D array)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict Updated keyword arguments</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Set the gradient operator</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;psf_known&#39;</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">GradKnownPSF</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span>
+                                         <span class="n">psf_type</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;psf_type&#39;</span><span class="p">])</span>
+
+    <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;psf_unknown&#39;</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">GradUnknownPSF</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">Positive</span><span class="p">(),</span>
+                                           <span class="n">psf_type</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;psf_type&#39;</span><span class="p">],</span>
+                                           <span class="n">beta_reg</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;beta_psf&#39;</span><span class="p">],</span>
+                                           <span class="n">lambda_reg</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lambda_psf&#39;</span><span class="p">])</span>
+
+    <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">GradNone</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">psf_type</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;psf_type&#39;</span><span class="p">])</span>
+
+    <span class="nb">print</span> <span class="s1">&#39; - Spectral Radius:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">spec_rad</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Spectral Radius: &#39;</span> <span class="o">+</span>
+                       <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">spec_rad</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">kwargs</span></div>
+
+
+<div class="viewcode-block" id="set_linear_op"><a class="viewcode-back" href="../../lib.deconvolve.html#lib.deconvolve.set_linear_op">[docs]</a><span class="k">def</span> <span class="nf">set_linear_op</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set the gradient operator</span>
+
+<span class="sd">    This method defines the gradient operator class to use and add an instance</span>
+<span class="sd">    to the keyword arguments. It additionally add the l1 norm of the linear</span>
+<span class="sd">    operator and the wavelet filters (if used) to the kwagrs.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : np.ndarray</span>
+<span class="sd">        Input noisy data (3D array)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict Updated keyword arguments</span>
+
+<span class="sd">    ToDo</span>
+<span class="sd">    ----</span>
+<span class="sd">    - Clean up wavelet_filters and l1norm</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Set the options for mr_transform (for sparsity)</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;sparse&#39;</span><span class="p">):</span>
+        <span class="n">wavelet_opt</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-t &#39;</span> <span class="o">+</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;wavelet_type&#39;</span><span class="p">]]</span>
+
+    <span class="c1"># Set the linear operator</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_op&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">LinearCombo</span><span class="p">([</span><span class="n">Wavelet</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">wavelet_opt</span><span class="p">),</span>
+                                          <span class="n">Identity</span><span class="p">()])</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;wavelet_filters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">operators</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">filters</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_l1norm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">operators</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">l1norm</span>
+
+    <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;lowr&#39;</span><span class="p">,</span> <span class="s1">&#39;grad&#39;</span><span class="p">):</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_op&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Identity</span><span class="p">()</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_l1norm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">l1norm</span>
+
+    <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;sparse&#39;</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_op&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Wavelet</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">wavelet_opt</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;wavelet_filters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">filters</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_l1norm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">l1norm</span>
+
+    <span class="k">return</span> <span class="n">kwargs</span></div>
+
+
+<div class="viewcode-block" id="set_sparse_weights"><a class="viewcode-back" href="../../lib.deconvolve.html#lib.deconvolve.set_sparse_weights">[docs]</a><span class="k">def</span> <span class="nf">set_sparse_weights</span><span class="p">(</span><span class="n">data_shape</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set the sparsity weights</span>
+
+<span class="sd">    This method defines the weights for thresholding in the sparse domain and</span>
+<span class="sd">    add them to the keyword arguments. It additionally defines the shape of the</span>
+<span class="sd">    dual variable.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_shape : tuple</span>
+<span class="sd">        Shape of the input data array</span>
+<span class="sd">    psf : np.ndarray</span>
+<span class="sd">        PSF data (2D or 3D array)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict Updated keyword arguments</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Convolve the PSF with the wavelet filters</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;psf_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;fixed&#39;</span><span class="p">:</span>
+
+        <span class="n">filter_conv</span> <span class="o">=</span> <span class="p">(</span><span class="n">filter_convolve</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rot90</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                       <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;wavelet_filters&#39;</span><span class="p">]))</span>
+
+        <span class="n">filter_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">norm</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">b</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">data_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                                <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">filter_conv</span><span class="p">,</span>
+                                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;wave_thresh_factor&#39;</span><span class="p">])])</span>
+
+        <span class="n">filter_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">filter_norm</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span>
+                                <span class="n">xrange</span><span class="p">(</span><span class="n">data_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">filter_conv</span> <span class="o">=</span> <span class="p">(</span><span class="n">filter_convolve_stack</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rot90</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                       <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;wavelet_filters&#39;</span><span class="p">]))</span>
+
+        <span class="n">filter_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">norm</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">data_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                                <span class="k">for</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span>
+                                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;wave_thresh_factor&#39;</span><span class="p">])]</span>
+                                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">filter_conv</span><span class="p">])</span>
+
+    <span class="c1"># Define a reweighting instance</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;reweight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cwbReweight</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;noise_est&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">filter_norm</span><span class="p">)</span>
+
+    <span class="c1"># Set the shape of the dual variable</span>
+    <span class="n">dual_shape</span> <span class="o">=</span> <span class="p">([</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;wavelet_filters&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">data_shape</span><span class="p">))</span>
+    <span class="n">dual_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dual_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">dual_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dual_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dual_shape&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dual_shape</span>
+
+    <span class="k">return</span> <span class="n">kwargs</span></div>
+
+
+<div class="viewcode-block" id="set_condat_param"><a class="viewcode-back" href="../../lib.deconvolve.html#lib.deconvolve.set_condat_param">[docs]</a><span class="k">def</span> <span class="nf">set_condat_param</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set the Condat-Vu parameters</span>
+
+<span class="sd">    This method sets the values of tau and sigma in the Condat-Vu proximal-dual</span>
+<span class="sd">    splitting algorithm if not already provided. It additionally checks that</span>
+<span class="sd">    the combination of values will lead to convergence.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict Updated keyword arguments</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Define a metho for calculating sigma and/or tau</span>
+    <span class="k">def</span> <span class="nf">get_sig_tau</span><span class="p">():</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">spec_rad</span> <span class="o">+</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_l1norm&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Calulate tau if not provided</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_tau&#39;</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+        <span class="n">condat_tau</span> <span class="o">=</span> <span class="n">get_sig_tau</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">condat_tau</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_tau&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Calculate sigma if not provided</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_sigma&#39;</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+        <span class="n">condat_sigma</span> <span class="o">=</span> <span class="n">get_sig_tau</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">condat_sigma</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_sigma&#39;</span><span class="p">]</span>
+
+    <span class="nb">print</span> <span class="s1">&#39; - tau:&#39;</span><span class="p">,</span> <span class="n">condat_tau</span>
+    <span class="nb">print</span> <span class="s1">&#39; - sigma:&#39;</span><span class="p">,</span> <span class="n">condat_sigma</span>
+    <span class="nb">print</span> <span class="s1">&#39; - rho:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;relax&#39;</span><span class="p">]</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - tau: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">condat_tau</span><span class="p">))</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - sigma: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">condat_sigma</span><span class="p">))</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - rho: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;relax&#39;</span><span class="p">]))</span>
+
+    <span class="c1"># Test combination of sigma and tau</span>
+    <span class="n">sig_tau_test</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">condat_tau</span> <span class="o">-</span> <span class="n">condat_sigma</span> <span class="o">*</span>
+                    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_l1norm&#39;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">&gt;=</span>
+                    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">spec_rad</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+
+    <span class="nb">print</span> <span class="s1">&#39; - 1/tau - sigma||L||^2 &gt;= beta/2:&#39;</span><span class="p">,</span> <span class="n">sig_tau_test</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - 1/tau - sigma||L||^2 &gt;= beta/2: &#39;</span> <span class="o">+</span>
+                       <span class="nb">str</span><span class="p">(</span><span class="n">sig_tau_test</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">kwargs</span></div>
+
+
+<div class="viewcode-block" id="get_lambda"><a class="viewcode-back" href="../../lib.deconvolve.html#lib.deconvolve.get_lambda">[docs]</a><span class="k">def</span> <span class="nf">get_lambda</span><span class="p">(</span><span class="n">n_images</span><span class="p">,</span> <span class="n">p_pixel</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">spec_rad</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get lambda value</span>
+
+<span class="sd">    This method calculates the singular value threshold for low-rank</span>
+<span class="sd">    regularisation</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_images : int</span>
+<span class="sd">        Total number of images</span>
+<span class="sd">    p_pixel : int</span>
+<span class="sd">        Total number of pixels</span>
+<span class="sd">    sigma : float</span>
+<span class="sd">        Noise standard deviation</span>
+<span class="sd">    spec_rad : float</span>
+<span class="sd">        The spectral radius of the gradient operator</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float Lambda value</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">n_images</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">p_pixel</span><span class="p">]))</span> <span class="o">*</span> <span class="n">spec_rad</span></div>
+
+
+<div class="viewcode-block" id="set_lowr_thresh"><a class="viewcode-back" href="../../lib.deconvolve.html#lib.deconvolve.set_lowr_thresh">[docs]</a><span class="k">def</span> <span class="nf">set_lowr_thresh</span><span class="p">(</span><span class="n">data_shape</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set the low-rank threshold</span>
+
+<span class="sd">    This method sets the value of the low-rank singular value threshold.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_shape : tuple</span>
+<span class="sd">        Shape of the input data array</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict Updated keyword arguments</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lowr_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;standard&#39;</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lowr_thresh_factor&#39;</span><span class="p">]</span> <span class="o">*</span>
+                            <span class="n">get_lambda</span><span class="p">(</span><span class="n">data_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">data_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span>
+                            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;noise_est&#39;</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">spec_rad</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lowr_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ngole&#39;</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lowr_thresh_factor&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;noise_est&#39;</span><span class="p">])</span>
+
+    <span class="nb">print</span> <span class="s1">&#39; - lambda:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">]</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - lambda: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">kwargs</span></div>
+
+
+<div class="viewcode-block" id="set_primal_dual"><a class="viewcode-back" href="../../lib.deconvolve.html#lib.deconvolve.set_primal_dual">[docs]</a><span class="k">def</span> <span class="nf">set_primal_dual</span><span class="p">(</span><span class="n">data_shape</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set primal and dual variables</span>
+
+<span class="sd">    This method sets the initial values of the primal and dual variables</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_shape : tuple</span>
+<span class="sd">        Shape of the input data array</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict Updated keyword arguments</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Set the initial values of the primal variable if not provided</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primal&#39;</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primal&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">data_shape</span><span class="p">)</span>
+
+    <span class="c1"># Set the initial values of the dual variable</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dual&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dual_shape&#39;</span><span class="p">])</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dual&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">data_shape</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;lowr&#39;</span><span class="p">,</span> <span class="s1">&#39;grad&#39;</span><span class="p">):</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">data_shape</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;sparse&#39;</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dual_shape&#39;</span><span class="p">])</span>
+
+    <span class="nb">print</span> <span class="s1">&#39; - Primal Variable Shape:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+    <span class="nb">print</span> <span class="s1">&#39; - Dual Variable Shape:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dual&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+    <span class="nb">print</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">70</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Primal Variable Shape: &#39;</span> <span class="o">+</span>
+                       <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Dual Variable Shape: &#39;</span> <span class="o">+</span>
+                       <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dual&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">kwargs</span></div>
+
+
+<div class="viewcode-block" id="set_prox_op_and_cost"><a class="viewcode-back" href="../../lib.deconvolve.html#lib.deconvolve.set_prox_op_and_cost">[docs]</a><span class="k">def</span> <span class="nf">set_prox_op_and_cost</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set the proximity operators and cost function</span>
+
+<span class="sd">    This method sets the proximity operators and cost function instances.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : np.ndarray</span>
+<span class="sd">        Input noisy data (3D array)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict Updated keyword arguments</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Create a list of proximity operators</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;prox_op&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Set the first operator as positivity contraint or simply identity</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;no_pos&#39;</span><span class="p">]:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;prox_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Positive</span><span class="p">())</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;prox_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Identity</span><span class="p">())</span>
+
+    <span class="c1"># Add a second proximity operator and set the corresponding cost function</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;prox_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ProximityCombo</span><span class="p">(</span>
+                                 <span class="p">[</span><span class="n">Threshold</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;reweight&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">weights</span><span class="p">,),</span>
+                                  <span class="n">LowRankMatrix</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">],</span>
+                                  <span class="n">thresh_type</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lowr_thresh_type&#39;</span><span class="p">],</span>
+                                  <span class="n">lowr_type</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lowr_type&#39;</span><span class="p">],</span>
+                                  <span class="n">operator</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">Ht_op</span><span class="p">)]))</span>
+
+        <span class="n">cost_instance</span> <span class="o">=</span> <span class="p">(</span><span class="n">sf_deconvolveCost</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">grad</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">],</span>
+                         <span class="n">wavelet</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">operators</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                         <span class="n">weights</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;reweight&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span>
+                         <span class="n">lambda_lowr</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">],</span>
+                         <span class="n">mode</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">],</span>
+                         <span class="n">positivity</span><span class="o">=</span><span class="ow">not</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;no_pos&#39;</span><span class="p">],</span>
+                         <span class="n">verbose</span><span class="o">=</span><span class="ow">not</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;quiet&#39;</span><span class="p">]))</span>
+
+    <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;lowr&#39;</span><span class="p">:</span>
+
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;prox_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">LowRankMatrix</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">],</span>
+                                 <span class="n">thresh_type</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lowr_thresh_type&#39;</span><span class="p">],</span>
+                                 <span class="n">lowr_type</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lowr_type&#39;</span><span class="p">],</span>
+                                 <span class="n">operator</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">Ht_op</span><span class="p">))</span>
+
+        <span class="n">cost_instance</span> <span class="o">=</span> <span class="p">(</span><span class="n">sf_deconvolveCost</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">grad</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">],</span>
+                         <span class="n">wavelet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">lambda_lowr</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">],</span>
+                         <span class="n">positivity</span><span class="o">=</span><span class="ow">not</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;no_pos&#39;</span><span class="p">],</span>
+                         <span class="n">verbose</span><span class="o">=</span><span class="ow">not</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;quiet&#39;</span><span class="p">]))</span>
+
+    <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;sparse&#39;</span><span class="p">:</span>
+
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;prox_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Threshold</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;reweight&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">weights</span><span class="p">))</span>
+
+        <span class="n">cost_instance</span> <span class="o">=</span> <span class="p">(</span><span class="n">sf_deconvolveCost</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">grad</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">],</span>
+                         <span class="n">wavelet</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_op&#39;</span><span class="p">],</span>
+                         <span class="n">weights</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;reweight&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span>
+                         <span class="n">lambda_lowr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">mode</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">],</span>
+                         <span class="n">positivity</span><span class="o">=</span><span class="ow">not</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;no_pos&#39;</span><span class="p">],</span>
+                         <span class="n">verbose</span><span class="o">=</span><span class="ow">not</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;quiet&#39;</span><span class="p">]))</span>
+
+    <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;grad&#39;</span><span class="p">:</span>
+
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;prox_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Identity</span><span class="p">())</span>
+
+        <span class="n">cost_instance</span> <span class="o">=</span> <span class="p">(</span><span class="n">sf_deconvolveCost</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">grad</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">],</span>
+                         <span class="n">wavelet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">lambda_lowr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">],</span>
+                         <span class="n">positivity</span><span class="o">=</span><span class="ow">not</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;no_pos&#39;</span><span class="p">],</span>
+                         <span class="n">verbose</span><span class="o">=</span><span class="ow">not</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;quiet&#39;</span><span class="p">]))</span>
+
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;cost_op&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">costObj</span><span class="p">(</span><span class="n">cost_instance</span><span class="p">,</span>
+                         <span class="n">tolerance</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;convergence&#39;</span><span class="p">],</span>
+                         <span class="n">cost_interval</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;cost_window&#39;</span><span class="p">],</span>
+                         <span class="n">plot_output</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">],</span>
+                         <span class="n">verbose</span><span class="o">=</span><span class="ow">not</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;quiet&#39;</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">kwargs</span></div>
+
+
+<div class="viewcode-block" id="set_optimisation"><a class="viewcode-back" href="../../lib.deconvolve.html#lib.deconvolve.set_optimisation">[docs]</a><span class="k">def</span> <span class="nf">set_optimisation</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set the optimisation technique</span>
+
+<span class="sd">    This method sets the technique used for opttimising the problem</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict Updated keyword arguments</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Initalise an optimisation instance</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;opt_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;fwbw&#39;</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;optimisation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">ForwardBackward</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primal&#39;</span><span class="p">],</span>
+                                  <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;prox_op&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                                  <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;cost_op&#39;</span><span class="p">],</span> <span class="n">auto_iterate</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;opt_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;condat&#39;</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;optimisation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Condat</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primal&#39;</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dual&#39;</span><span class="p">],</span>
+                                  <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;prox_op&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                                  <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;prox_op&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_op&#39;</span><span class="p">],</span>
+                                  <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;cost_op&#39;</span><span class="p">],</span> <span class="n">rho</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;relax&#39;</span><span class="p">],</span>
+                                  <span class="n">sigma</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_sigma&#39;</span><span class="p">],</span>
+                                  <span class="n">tau</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_tau&#39;</span><span class="p">],</span>
+                                  <span class="n">auto_iterate</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;opt_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;gfwbw&#39;</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;optimisation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">GenForwardBackward</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primal&#39;</span><span class="p">],</span>
+                                  <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;prox_op&#39;</span><span class="p">],</span>
+                                  <span class="n">lambda_init</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">cost</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;cost_op&#39;</span><span class="p">],</span>
+                                  <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">],</span>
+                                  <span class="n">auto_iterate</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">kwargs</span></div>
+
+
+<div class="viewcode-block" id="perform_reweighting"><a class="viewcode-back" href="../../lib.deconvolve.html#lib.deconvolve.perform_reweighting">[docs]</a><span class="k">def</span> <span class="nf">perform_reweighting</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Perform reweighting</span>
+
+<span class="sd">    This method updates the weights used for thresholding in the sparse domain</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict Updated keyword arguments</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Loop through number of reweightings</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;n_reweights&#39;</span><span class="p">]):</span>
+
+        <span class="nb">print</span> <span class="s1">&#39; - REWEIGHT:&#39;</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="nb">print</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1"># Generate the new weights following reweighting persctiption</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;reweight&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reweight</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">op</span><span class="p">(</span>
+                                    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;optimisation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">x_new</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># Perform optimisation with new weights</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;optimisation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;n_iter&#39;</span><span class="p">])</span>
+
+        <span class="nb">print</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../lib.deconvolve.html#lib.deconvolve.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Run deconvolution</span>
+
+<span class="sd">    This method initialises the operator classes and runs the optimisation</span>
+<span class="sd">    algorithm</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : np.ndarray</span>
+<span class="sd">        Input data array, an array of 2D images</span>
+<span class="sd">    psf : np.ndarray</span>
+<span class="sd">        Input PSF array, a single 2D PSF or an array of 2D PSFs</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray decconvolved data</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># SET THE NOISE ESTIMATE</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">set_noise</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># SET THE GRADIENT OPERATOR</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">set_grad_op</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># SET THE LINEAR OPERATOR</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">set_linear_op</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># SET THE WEIGHTS IN THE SPARSE DOMAIN</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;sparse&#39;</span><span class="p">):</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="n">set_sparse_weights</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># SET THE CONDAT-VU PARAMETERS</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;opt_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;condat&#39;</span><span class="p">:</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="n">set_condat_param</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># SET THE LOW-RANK THRESHOLD</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;lowr&#39;</span><span class="p">):</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="n">set_lowr_thresh</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># SET THE INITIAL PRIMAL AND DUAL VARIABLES</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">set_primal_dual</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># SET THE PROXIMITY OPERATORS AND THE COST FUNCTION</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">set_prox_op_and_cost</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># SET THE OPTIMISATION METHOD</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">set_optimisation</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># PERFORM OPTIMISATION</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;optimisation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;n_iter&#39;</span><span class="p">])</span>
+
+    <span class="c1"># PERFORM REWEIGHTING FOR SPARSITY</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;sparse&#39;</span><span class="p">):</span>
+        <span class="n">perform_reweighting</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># PLOT THE COST FUNCTION</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;cost_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot_cost</span><span class="p">()</span>
+
+    <span class="c1"># FINISH AND RETURN RESULTS</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Final iteration number: &#39;</span> <span class="o">+</span>
+                       <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;cost_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_iteration</span><span class="p">))</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Final log10 cost value: &#39;</span> <span class="o">+</span>
+                       <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;cost_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cost</span><span class="p">)))</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Converged: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;optimisation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">converge</span><span class="p">))</span>
+
+    <span class="n">primal_res</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;optimisation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">x_final</span>
+
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;opt_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;condat&#39;</span><span class="p">:</span>
+        <span class="n">dual_res</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;optimisation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">y_final</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dual_res</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;psf_unknown&#39;</span><span class="p">:</span>
+        <span class="n">psf_res</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">_psf</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">psf_res</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">primal_res</span><span class="p">,</span> <span class="n">dual_res</span><span class="p">,</span> <span class="n">psf_res</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Samuel Farrens.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'3.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

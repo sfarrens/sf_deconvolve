@@ -1,0 +1,485 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sf_deconvolve &mdash; sf_deconvolve 3.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="sf_deconvolve 3.2 documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> sf_deconvolve
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">sf_deconvolve</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">sf_deconvolve</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>sf_deconvolve</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sf_deconvolve</h1><div class="highlight"><pre>
+<span></span><span class="ch">#! /usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;SF_DECONVOLVE</span>
+
+<span class="sd">This module is executable and contains methods for deconvolving a set of</span>
+<span class="sd">observed galaxy images.</span>
+
+<span class="sd">:Author: Samuel Farrens &lt;samuel.farrens@gmail.com&gt;</span>
+
+<span class="sd">:Version: 3.5</span>
+
+<span class="sd">:Date: 14/03/2017</span>
+
+<span class="sd">Notes</span>
+<span class="sd">-----</span>
+<span class="sd">This code implements equations 8 and 17 from [F2017]_.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">splitext</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">lib.args</span> <span class="k">import</span> <span class="n">get_opts</span>
+<span class="kn">from</span> <span class="nn">lib.file_io</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">lib.deconvolve</span> <span class="k">import</span> <span class="n">run</span>
+<span class="kn">from</span> <span class="nn">lib.tests</span> <span class="k">import</span> <span class="n">test_deconvolution</span><span class="p">,</span> <span class="n">test_psf_estimation</span>
+<span class="kn">from</span> <span class="nn">sf_tools.interface.errors</span> <span class="k">import</span> <span class="n">catch_error</span><span class="p">,</span> <span class="n">warn</span>
+<span class="kn">from</span> <span class="nn">sf_tools.interface.log</span> <span class="k">import</span> <span class="n">set_up_log</span><span class="p">,</span> <span class="n">close_log</span>
+
+
+<div class="viewcode-block" id="set_out_string"><a class="viewcode-back" href="../sf_deconvolve.html#sf_deconvolve.set_out_string">[docs]</a><span class="k">def</span> <span class="nf">set_out_string</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Set output string</span>
+
+<span class="sd">    This method checks if an output string has been specified and if not</span>
+<span class="sd">    creates and ouput string from the input string and the mode</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+        <span class="n">opts</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">splitext</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">input</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">mode</span></div>
+
+
+<div class="viewcode-block" id="check_psf"><a class="viewcode-back" href="../sf_deconvolve.html#sf_deconvolve.check_psf">[docs]</a><span class="k">def</span> <span class="nf">check_psf</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">log</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check PSF</span>
+
+<span class="sd">    This method checks that the input PSFs are properly normalised and updates</span>
+<span class="sd">    the opts namespace with the PSF type</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : np.ndarray</span>
+<span class="sd">        Input data array</span>
+<span class="sd">    log : logging.Logger</span>
+<span class="sd">        Log instance</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">psf_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span><span class="p">)))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">psf_sum</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">):</span>
+        <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Not all PSFs integrate to 1.0.&#39;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Not all PSFs integrate to 1.0.&#39;</span><span class="p">)</span>
+
+    <span class="n">opts_dict</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span>
+    <span class="n">opts_dict</span><span class="p">[</span><span class="s1">&#39;psf_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;obj_var&#39;</span>
+
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">opts_dict</span><span class="p">[</span><span class="s1">&#39;psf_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fixed&#39;</span></div>
+
+
+<div class="viewcode-block" id="run_script"><a class="viewcode-back" href="../sf_deconvolve.html#sf_deconvolve.run_script">[docs]</a><span class="k">def</span> <span class="nf">run_script</span><span class="p">(</span><span class="n">log</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Run script</span>
+
+<span class="sd">    This method runs the script.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log : logging.Logger</span>
+<span class="sd">        Log instance</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">h_line</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">70</span>
+    <span class="nb">print</span> <span class="n">h_line</span>
+
+    <span class="c1"># Begin log</span>
+    <span class="n">output_text</span> <span class="o">=</span> <span class="s1">&#39; Running SF_DECONVOLVE&#39;</span>
+    <span class="nb">print</span> <span class="n">output_text</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">output_text</span><span class="p">)</span>
+
+    <span class="nb">print</span> <span class="n">h_line</span>
+
+    <span class="c1">###########################################################################</span>
+    <span class="c1"># Read the input data files</span>
+    <span class="n">data_noisy</span><span class="p">,</span> <span class="n">psf_data</span><span class="p">,</span> <span class="n">primal</span> <span class="o">=</span> <span class="n">read_input_files</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">psf_file</span><span class="p">,</span>
+                                                    <span class="n">opts</span><span class="o">.</span><span class="n">current_res</span><span class="p">)</span>
+    <span class="n">check_psf</span><span class="p">(</span><span class="n">psf_data</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
+    <span class="c1">###########################################################################</span>
+
+    <span class="c1"># Log input options</span>
+    <span class="nb">print</span> <span class="s1">&#39; - Input File:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">input</span>
+    <span class="nb">print</span> <span class="s1">&#39; - PSF File:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">psf_file</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Input File: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - PSF File: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">psf_file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">current_res</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+        <span class="nb">print</span> <span class="s1">&#39; - Current Results:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">current_res</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Current Results: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">current_res</span><span class="p">)</span>
+
+    <span class="c1"># Log set-up options</span>
+    <span class="nb">print</span> <span class="s1">&#39; - Mode:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">mode</span>
+    <span class="nb">print</span> <span class="s1">&#39; - PSF Type:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">psf_type</span>
+    <span class="nb">print</span> <span class="s1">&#39; - Gradient Type: &#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">grad_type</span>
+    <span class="nb">print</span> <span class="s1">&#39; - Optimisation:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">opt_type</span>
+    <span class="nb">print</span> <span class="s1">&#39; - Positivity:&#39;</span><span class="p">,</span> <span class="ow">not</span> <span class="n">opts</span><span class="o">.</span><span class="n">no_pos</span>
+    <span class="nb">print</span> <span class="s1">&#39; - Number of Reweightings:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">n_reweights</span>
+    <span class="nb">print</span> <span class="s1">&#39; - Number of Iterations:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">n_iter</span>
+    <span class="nb">print</span> <span class="s1">&#39; - Cost Function Window:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">cost_window</span>
+    <span class="nb">print</span> <span class="s1">&#39; - Convergence Tolerance:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">convergence</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Mode: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - PSF Type: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">psf_type</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Gradient Type: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">grad_type</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Optimisation: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">opt_type</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Positivity: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="ow">not</span> <span class="n">opts</span><span class="o">.</span><span class="n">no_pos</span><span class="p">))</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Number of Reweightings: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">n_reweights</span><span class="p">))</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Number of Iterations: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">n_iter</span><span class="p">))</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Cost Function Window: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">cost_window</span><span class="p">))</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Convergence Tolerance: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">convergence</span><span class="p">))</span>
+
+    <span class="c1"># Log sparsity options</span>
+    <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;sparse&#39;</span><span class="p">):</span>
+        <span class="nb">print</span> <span class="s1">&#39; - Wavelet Type:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">wavelet_type</span>
+        <span class="nb">print</span> <span class="s1">&#39; - Wavelet Threshold Factor:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">wave_thresh_factor</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Wavelet Type: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">wavelet_type</span><span class="p">))</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Wavelet Threshold Factor: &#39;</span> <span class="o">+</span>
+                 <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">wave_thresh_factor</span><span class="p">))</span>
+
+    <span class="c1"># Log low-rank options</span>
+    <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;lowr&#39;</span><span class="p">):</span>
+        <span class="nb">print</span> <span class="s1">&#39; - Low Rank Threshold Factor:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">lowr_thresh_factor</span>
+        <span class="nb">print</span> <span class="s1">&#39; - Low Rank Threshold Type:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">lowr_thresh_type</span>
+        <span class="nb">print</span> <span class="s1">&#39; - Low Rank Type:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">lowr_type</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Low Rank Threshold Factor: &#39;</span> <span class="o">+</span>
+                 <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">lowr_thresh_factor</span><span class="p">))</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Low Rank Threshold Type: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">lowr_thresh_type</span><span class="p">))</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Low Rank Type: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">lowr_type</span><span class="p">))</span>
+
+    <span class="c1"># Log PSF estimation options</span>
+    <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">grad_type</span> <span class="o">==</span> <span class="s1">&#39;psf_unknown&#39;</span><span class="p">:</span>
+        <span class="nb">print</span> <span class="s1">&#39; - PSF Est. Control Parameter (Lambda):&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">lambda_psf</span>
+        <span class="nb">print</span> <span class="s1">&#39; - PSF Est. Gradient Step Size (Beta):&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">beta_psf</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - PSF Estimation Lambda: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">lambda_psf</span><span class="p">))</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - PSF Estimation Beta: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">beta_psf</span><span class="p">))</span>
+
+    <span class="nb">print</span> <span class="n">h_line</span>
+
+    <span class="c1">###########################################################################</span>
+    <span class="c1"># Perform deconvolution.</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">data_noisy</span><span class="p">,</span> <span class="n">psf_data</span><span class="p">,</span> <span class="n">primal</span><span class="o">=</span><span class="n">primal</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">,</span> <span class="o">**</span><span class="nb">vars</span><span class="p">(</span><span class="n">opts</span><span class="p">))</span>
+    <span class="c1">###########################################################################</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">clean_data</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+
+        <span class="nb">print</span> <span class="n">h_line</span>
+
+        <span class="c1">#######################################################################</span>
+        <span class="c1"># Test the deconvolution</span>
+        <span class="n">image_errors</span> <span class="o">=</span> <span class="n">test_deconvolution</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">opts</span><span class="o">.</span><span class="n">clean_data</span><span class="p">,</span>
+                                          <span class="n">opts</span><span class="o">.</span><span class="n">random_seed</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span>
+                                          <span class="n">opts</span><span class="o">.</span><span class="n">metric</span><span class="p">)</span>
+        <span class="c1">#######################################################################</span>
+
+        <span class="c1"># Log testing options</span>
+        <span class="nb">print</span> <span class="s1">&#39; - Clean Data:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">clean_data</span>
+        <span class="nb">print</span> <span class="s1">&#39; - Random Seed:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">random_seed</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Clean Data: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">clean_data</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Random Seed: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">random_seed</span><span class="p">))</span>
+
+        <span class="c1"># Log kernel options</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+            <span class="nb">print</span> <span class="s1">&#39; - Gaussian Kernel:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">kernel</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Gaussian Kernel: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">kernel</span><span class="p">))</span>
+
+        <span class="c1"># Log test results</span>
+        <span class="nb">print</span> <span class="s1">&#39; - Galaxy Pixel Error:&#39;</span><span class="p">,</span> <span class="n">image_errors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="nb">print</span> <span class="s1">&#39; - Galaxy Shape Error:&#39;</span><span class="p">,</span> <span class="n">image_errors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="nb">print</span> <span class="s1">&#39; - Galaxy PSNR:&#39;</span><span class="p">,</span> <span class="n">image_errors</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Galaxy Pixel Error: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">image_errors</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Galaxy Shape Error: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">image_errors</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Galaxy Shape Error: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">image_errors</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">true_psf</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span> <span class="ow">and</span>
+            <span class="n">opts</span><span class="o">.</span><span class="n">grad_type</span> <span class="o">==</span> <span class="s1">&#39;psf_unknown&#39;</span><span class="p">):</span>
+
+        <span class="c1">###################################################################</span>
+        <span class="c1"># Test the psf estimation</span>
+        <span class="n">psf_errors</span> <span class="o">=</span> <span class="n">test_psf_estimation</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">opts</span><span class="o">.</span><span class="n">true_psf</span><span class="p">,</span>
+                                         <span class="n">opts</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">metric</span><span class="p">)</span>
+        <span class="c1">###################################################################</span>
+
+        <span class="nb">print</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1"># Log testing options</span>
+        <span class="nb">print</span> <span class="s1">&#39; - True PSFs:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">true_psf</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - True PSFs: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">true_psf</span><span class="p">)</span>
+
+        <span class="c1"># Log test results</span>
+        <span class="nb">print</span> <span class="s1">&#39; - PSF Pixel Error:&#39;</span><span class="p">,</span> <span class="n">psf_errors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="nb">print</span> <span class="s1">&#39; - PSF Shape Error:&#39;</span><span class="p">,</span> <span class="n">psf_errors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="nb">print</span> <span class="s1">&#39; - PSF Shape Error:&#39;</span><span class="p">,</span> <span class="n">psf_errors</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - PSF Pixel Error: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">psf_errors</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - PSF Shape Error: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">psf_errors</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - PSF Shape Error: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">psf_errors</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+
+    <span class="nb">print</span> <span class="n">h_line</span>
+
+    <span class="c1">###########################################################################</span>
+    <span class="c1"># Save outputs to numpy binary files</span>
+    <span class="n">write_output_files</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dual_res</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                       <span class="n">psf_res</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">output_format</span><span class="o">=</span><span class="n">opts</span><span class="o">.</span><span class="n">output_format</span><span class="p">)</span>
+    <span class="c1">###########################################################################</span>
+
+    <span class="c1"># Log output options</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39; Output 1 saved to: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s1">&#39;_primal&#39;</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span>
+           <span class="n">opts</span><span class="o">.</span><span class="n">output_format</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Output 1 saved to: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s1">&#39;_primal&#39;</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span>
+             <span class="n">opts</span><span class="o">.</span><span class="n">output_format</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">opt_type</span> <span class="o">==</span> <span class="s1">&#39;condat&#39;</span><span class="p">:</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39; Output 2 saved to: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s1">&#39;_dual&#39;</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span>
+               <span class="n">opts</span><span class="o">.</span><span class="n">output_format</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Output 2 saved to: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s1">&#39;_dual&#39;</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span>
+                 <span class="n">opts</span><span class="o">.</span><span class="n">output_format</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">grad_type</span> <span class="o">==</span> <span class="s1">&#39;psf_unknown&#39;</span><span class="p">:</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39; Output 3 saved to: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s1">&#39;_psf&#39;</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span>
+               <span class="n">opts</span><span class="o">.</span><span class="n">output_format</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Output 3 saved to: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">output</span> <span class="o">+</span> <span class="s1">&#39;_psf&#39;</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span>
+                 <span class="n">opts</span><span class="o">.</span><span class="n">output_format</span><span class="p">)</span>
+
+    <span class="c1"># Close log</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Script successfully completed!&#39;</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">close_log</span><span class="p">(</span><span class="n">log</span><span class="p">)</span>
+
+    <span class="nb">print</span> <span class="n">h_line</span></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../sf_deconvolve.html#sf_deconvolve.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">global</span> <span class="n">opts</span>
+        <span class="n">opts</span> <span class="o">=</span> <span class="n">get_opts</span><span class="p">()</span>
+        <span class="n">set_out_string</span><span class="p">()</span>
+        <span class="n">log</span> <span class="o">=</span> <span class="n">set_up_log</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+        <span class="n">run_script</span><span class="p">(</span><span class="n">log</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">err</span><span class="p">:</span>
+        <span class="n">catch_error</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">1</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Samuel Farrens.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'3.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
