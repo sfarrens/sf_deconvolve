@@ -25,8 +25,7 @@ Contents
 
 This repository contains a Python code designed for PSF deconvolution and analysis.
 
-The directory ``lib`` contains all of the primary functions and classes used for optimisation and analysis. ``functions`` contains some additional generic functions and tools.
-
+The directory ``lib`` contains all of the primary functions and classes used for optimisation and analysis.
 ![](docs/images/example_image.png)
 
 <a name="depend_anchor"></a>
