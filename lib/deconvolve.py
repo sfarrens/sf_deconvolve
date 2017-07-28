@@ -71,14 +71,19 @@ def set_grad_op(data, psf, **kwargs):
 
     """
 
-    # Set the gradient operator with or without gradient descent
-    if kwargs['no_grad']:
-        kwargs['grad_op'] = StandardPSFnoGrad(data, psf,
-                                              psf_type=kwargs['psf_type'])
+    # Set the gradient operator
+    if kwargs['grad_type'] == 'psf_known':
+        kwargs['grad_op'] = GradKnownPSF(data, psf,
+                                         psf_type=kwargs['psf_type'])
 
-    else:
-        kwargs['grad_op'] = StandardPSF(data, psf,
-                                        psf_type=kwargs['psf_type'])
+    elif kwargs['grad_type'] == 'psf_unknown':
+        kwargs['grad_op'] = GradUnknownPSF(data, psf, Positive(),
+                                           psf_type=kwargs['psf_type'],
+                                           beta_reg=kwargs['beta_psf'],
+                                           lambda_reg=kwargs['lambda_psf'])
+
+    elif kwargs['grad_type'] == 'none':
+        kwargs['grad_op'] = GradNone(data, psf, psf_type=kwargs['psf_type'])
 
     print ' - Spectral Radius:', kwargs['grad_op'].spec_rad
     kwargs['log'].info(' - Spectral Radius: ' +
@@ -310,11 +315,6 @@ def set_primal_dual(data_shape, **kwargs):
     if isinstance(kwargs['primal'], type(None)):
         kwargs['primal'] = np.ones(data_shape)
 
-    ####
-    # Get the initial gradient value !!!CHECK THIS!!!
-    kwargs['grad_op'].get_grad(kwargs['primal'])
-    ####
-
     # Set the initial values of the dual variable
     if kwargs['mode'] == 'all':
         kwargs['dual'] = np.empty(2, dtype=np.ndarray)
@@ -372,12 +372,12 @@ def set_prox_op_and_cost(data, **kwargs):
                                   LowRankMatrix(kwargs['lambda'],
                                   thresh_type=kwargs['lowr_thresh_type'],
                                   lowr_type=kwargs['lowr_type'],
-                                  operator=kwargs['grad_op'].MtX)]))
+                                  operator=kwargs['grad_op'].Ht_op)]))
 
         cost_instance = (sf_deconvolveCost(data, grad=kwargs['grad_op'],
                          wavelet=kwargs['linear_op'].operators[0],
                          weights=kwargs['reweight'].weights,
-                         lambda_reg=kwargs['lambda'],
+                         lambda_lowr=kwargs['lambda'],
                          mode=kwargs['mode'],
                          positivity=not kwargs['no_pos'],
                          verbose=not kwargs['quiet']))
@@ -387,11 +387,11 @@ def set_prox_op_and_cost(data, **kwargs):
         kwargs['prox_op'].append(LowRankMatrix(kwargs['lambda'],
                                  thresh_type=kwargs['lowr_thresh_type'],
                                  lowr_type=kwargs['lowr_type'],
-                                 operator=kwargs['grad_op'].MtX))
+                                 operator=kwargs['grad_op'].Ht_op))
 
         cost_instance = (sf_deconvolveCost(data, grad=kwargs['grad_op'],
                          wavelet=None, weights=None,
-                         lambda_reg=kwargs['lambda'], mode=kwargs['mode'],
+                         lambda_lowr=kwargs['lambda'], mode=kwargs['mode'],
                          positivity=not kwargs['no_pos'],
                          verbose=not kwargs['quiet']))
 
@@ -402,7 +402,7 @@ def set_prox_op_and_cost(data, **kwargs):
         cost_instance = (sf_deconvolveCost(data, grad=kwargs['grad_op'],
                          wavelet=kwargs['linear_op'],
                          weights=kwargs['reweight'].weights,
-                         lambda_reg=None,
+                         lambda_lowr=None,
                          mode=kwargs['mode'],
                          positivity=not kwargs['no_pos'],
                          verbose=not kwargs['quiet']))
@@ -413,7 +413,7 @@ def set_prox_op_and_cost(data, **kwargs):
 
         cost_instance = (sf_deconvolveCost(data, grad=kwargs['grad_op'],
                          wavelet=None, weights=None,
-                         lambda_reg=None, mode=kwargs['mode'],
+                         lambda_lowr=None, mode=kwargs['mode'],
                          positivity=not kwargs['no_pos'],
                          verbose=not kwargs['quiet']))
 
@@ -482,16 +482,6 @@ def perform_reweighting(**kwargs):
         # Generate the new weights following reweighting persctiption
         kwargs['reweight'].reweight(kwargs['linear_op'].op(
                                     kwargs['optimisation'].x_new)[0])
-
-        # Update the weights in the proximity operator
-        if kwargs['mode'] == 'all':
-            (kwargs['prox_op'][1].operators[0].update_weights(
-             kwargs['reweight'].weights))
-        else:
-            kwargs['prox_op'][1].update_weights(kwargs['reweight'].weights)
-
-        # Update the weights in the cost function
-        kwargs['cost_op'].update_weights(kwargs['reweight'].weights)
 
         # Perform optimisation with new weights
         kwargs['optimisation'].iterate(max_iter=kwargs['n_iter'])
@@ -565,8 +555,16 @@ def run(data, psf, **kwargs):
                        str(np.log10(kwargs['cost_op'].cost)))
     kwargs['log'].info(' - Converged: ' + str(kwargs['optimisation'].converge))
 
-    if kwargs['opt_type'] == 'condat':
-        return kwargs['optimisation'].x_final, kwargs['optimisation'].y_final
+    primal_res = kwargs['optimisation'].x_final
 
+    if kwargs['opt_type'] == 'condat':
+        dual_res = kwargs['optimisation'].y_final
     else:
-        return kwargs['optimisation'].x_final, None
+        dual_res = None
+
+    if kwargs['grad_type'] == 'psf_unknown':
+        psf_res = kwargs['grad_op']._psf
+    else:
+        psf_res = None
+
+    return primal_res, dual_res, psf_res

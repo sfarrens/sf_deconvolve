@@ -80,6 +80,7 @@ def get_opts():
     optimisation = parser.add_argument_group(' * Optimisation')
     lowrank = parser.add_argument_group(' * Low-Rank Aproximation')
     sparsity = parser.add_argument_group(' * Sparsity')
+    psfest = parser.add_argument_group(' * PSF Estimation')
     condat = parser.add_argument_group(' * Condat Algorithm')
     testing = parser.add_argument_group(' * Testing')
 
@@ -132,8 +133,9 @@ def get_opts():
     optimisation.add_argument('--no_pos', action='store_true',
                               help='Option to turn off postivity constraint.')
 
-    optimisation.add_argument('--no_grad', action='store_true',
-                              help='Option to turn off gradinet calculation.')
+    optimisation.add_argument('--grad_type', default='psf_known',
+                              choices=('psf_known', 'psf_unknown', 'none'),
+                              help='Option to specify the type of gradient.')
 
     lowrank.add_argument('--lowr_thresh_factor', type=float, default=1,
                          help='Low rank threshold factor.')
@@ -154,6 +156,13 @@ def get_opts():
     sparsity.add_argument('--n_reweights', type=int, default=1,
                           help='Number of reweightings.')
 
+    psfest.add_argument('--lambda_psf', type=float, default=1.0,
+                        help='Regularisation control parameter for PSF '
+                        'estimation')
+
+    psfest.add_argument('--beta_psf', type=float, default=1.0,
+                        help='Gradient step for PSF estimation')
+
     condat.add_argument('--relax', type=float, default=0.8,
                         help='Relaxation parameter (rho_n).')
 
@@ -166,6 +175,8 @@ def get_opts():
     testing.add_argument('-c', '--clean_data', help='Clean data file name.')
 
     testing.add_argument('-r', '--random_seed', type=int, help='Random seed.')
+
+    testing.add_argument('--true_psf', help='True PSFs file name.')
 
     testing.add_argument('--kernel', type=float,
                          help='Sigma value for Gaussian kernel.')

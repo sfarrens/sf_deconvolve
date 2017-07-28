@@ -33,8 +33,10 @@ class sf_deconvolveCost(object):
         Wavelet operator class ("sparse" mode only)
     weights : np.ndarray, optional
         Array of wavelet thresholding weights ("sparse" mode only)
-    lambda_reg : float, optional
+    lambda_lowr : float, optional
         Low-rank regularization parameter ("lowr" mode only)
+    lambda_psf : float, optional
+        PSF estimate regularization parameter ("psf_unknown" grad_type only)
     mode : str {'lowr', 'sparse'}, optional
         Deconvolution mode (default is "lowr")
     positivity : bool, optional
@@ -44,34 +46,21 @@ class sf_deconvolveCost(object):
 
     """
 
-    def __init__(self, y, grad, wavelet=None, weights=None, lambda_reg=None,
-                 mode='lowr', positivity=True, verbose=True):
+    def __init__(self, y, grad, wavelet=None, weights=None, lambda_lowr=None,
+                 lambda_psf=1, mode='lowr', positivity=True, verbose=True):
 
         self.y = y
         self.grad = grad
         self.wavelet = wavelet
-        self.lambda_reg = lambda_reg
+        self.weights = weights
+        self.lambda_lowr = lambda_lowr
+        self.lambda_psf = lambda_psf
         self.mode = mode
         self.positivity = positivity
         self.verbose = verbose
-        self.update_weights(weights)
 
-    def update_weights(self, weights):
-        """Update weights
-
-        Update the values of the wavelet threshold weights ("sparse" mode only)
-
-        Parameters
-        ----------
-        weights : np.ndarray
-            Array of wavelet thresholding weights
-
-        """
-
-        self.weights = weights
-
-    def l2norm(self, x):
-        """Calculate l2 norm
+    def grad_comp(self, x):
+        """Calculate gradient component of the cost
 
         This method returns the l2 norm error of the difference between the
         original data and the data obtained after optimisation
@@ -83,19 +72,19 @@ class sf_deconvolveCost(object):
 
         Returns
         -------
-        float l2 norm value
+        float gradient cost component
 
         """
 
-        l2_norm = np.linalg.norm(self.y - self.grad.op(x))
+        l2_norm = np.linalg.norm(self.y - self.grad.H_op(x))
 
         if self.verbose:
-            print ' - L2 NORM:', l2_norm
+            print ' - L2 NORM (Grad):', l2_norm
 
         return l2_norm
 
-    def l1norm(self, x):
-        """Calculate l1 norm
+    def sparse_comp(self, x):
+        """Calculate sparsity component of the cost
 
         This method returns the l1 norm error of the weighted wavelet
         coefficients
@@ -107,7 +96,7 @@ class sf_deconvolveCost(object):
 
         Returns
         -------
-        float l1 norm value
+        float sparsity cost component
 
         """
 
@@ -120,8 +109,8 @@ class sf_deconvolveCost(object):
 
         return l1_norm
 
-    def nucnorm(self, x):
-        """Calculate nuclear norm
+    def lowr_comp(self, x):
+        """Calculate low-rank component of the cost
 
         This method returns the nuclear norm error of the deconvolved data in
         matrix form
@@ -133,7 +122,7 @@ class sf_deconvolveCost(object):
 
         Returns
         -------
-        float nuclear norm value
+        float low-rank cost component
 
         """
 
@@ -144,7 +133,26 @@ class sf_deconvolveCost(object):
         if self.verbose:
             print ' - NUCLEAR NORM:', nuc_norm
 
-        return nuc_norm
+        return self.lambda_lowr * nuc_norm
+
+    def psf_comp(self):
+        """Calculate PSF estimation component of the cost
+
+        This method returns the l2 norm error of the difference between the
+        initial PSF and the estimated PSF
+
+        Returns
+        -------
+        float PSF cost component
+
+        """
+
+        l2_norm = np.linalg.norm(self.grad._psf - self.grad._psf0)
+
+        if self.verbose:
+            print ' - L2 NORM (PSF):', l2_norm
+
+        return self.lambda_psf * l2_norm
 
     def calc_cost(self, *args):
         """Get cost function
@@ -167,18 +175,15 @@ class sf_deconvolveCost(object):
         if self.positivity and self.verbose:
             print ' - MIN(X):', np.min(x)
 
-        if self.mode == 'all':
-            cost = (0.5 * self.l2norm(x) ** 2 + self.l1norm(x) +
-                    self.nucnorm(x))
+        cost = 0.5 * self.grad_comp(x) ** 2
 
-        elif self.mode == 'sparse':
-            cost = 0.5 * self.l2norm(x) ** 2 + self.l1norm(x)
+        if self.mode in ('sparse', 'all'):
+            cost += self.sparse_comp(x)
 
-        elif self.mode == 'lowr':
-            cost = (0.5 * self.l2norm(x) ** 2 + self.lambda_reg *
-                    self.nucnorm(x))
+        elif self.mode in ('lowr', 'all'):
+            cost += self.lowr_comp(x)
 
-        elif self.mode == 'grad':
-            cost = 0.5 * self.l2norm(x) ** 2
+        if self.grad.grad_type == 'psf_unknown':
+            cost += self.psf_comp()
 
         return cost
