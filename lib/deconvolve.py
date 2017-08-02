@@ -82,6 +82,10 @@ def set_grad_op(data, psf, **kwargs):
                                            beta_reg=kwargs['beta_psf'],
                                            lambda_reg=kwargs['lambda_psf'])
 
+    elif kwargs['grad_type'] == 'shape':
+        kwargs['grad_op'] = GradShape(data, psf, psf_type=kwargs['psf_type'],
+                                      lambda_reg=kwargs['lambda_shape'])
+
     elif kwargs['grad_type'] == 'none':
         kwargs['grad_op'] = GradNone(data, psf, psf_type=kwargs['psf_type'])
 
@@ -204,31 +208,27 @@ def set_condat_param(**kwargs):
 
     """
 
-    # Define a metho for calculating sigma and/or tau
+    # Define a method for calculating sigma and/or tau
     def get_sig_tau():
         return 1.0 / (kwargs['grad_op'].spec_rad + kwargs['linear_l1norm'])
 
     # Calulate tau if not provided
     if isinstance(kwargs['condat_tau'], type(None)):
-        condat_tau = get_sig_tau()
-    else:
-        condat_tau = kwargs['condat_tau']
+        kwargs['condat_tau'] = get_sig_tau()
 
     # Calculate sigma if not provided
     if isinstance(kwargs['condat_sigma'], type(None)):
-        condat_sigma = get_sig_tau()
-    else:
-        condat_sigma = kwargs['condat_sigma']
+        kwargs['condat_sigma'] = get_sig_tau()
 
-    print ' - tau:', condat_tau
-    print ' - sigma:', condat_sigma
+    print ' - tau:', kwargs['condat_tau']
+    print ' - sigma:', kwargs['condat_sigma']
     print ' - rho:', kwargs['relax']
-    kwargs['log'].info(' - tau: ' + str(condat_tau))
-    kwargs['log'].info(' - sigma: ' + str(condat_sigma))
+    kwargs['log'].info(' - tau: ' + str(kwargs['condat_tau']))
+    kwargs['log'].info(' - sigma: ' + str(kwargs['condat_sigma']))
     kwargs['log'].info(' - rho: ' + str(kwargs['relax']))
 
     # Test combination of sigma and tau
-    sig_tau_test = (1.0 / condat_tau - condat_sigma *
+    sig_tau_test = (1.0 / kwargs['condat_tau'] - kwargs['condat_sigma'] *
                     kwargs['linear_l1norm'] ** 2 >=
                     kwargs['grad_op'].spec_rad / 2.0)
 
