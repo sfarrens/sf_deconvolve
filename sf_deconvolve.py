@@ -147,10 +147,16 @@ def run_script(log):
 
     # Log PSF estimation options
     if opts.grad_type == 'psf_unknown':
-        print ' - PSF Est. Control Parameter (Lambda):', opts.lambda_psf
-        print ' - PSF Est. Gradient Step Size (Beta):', opts.beta_psf
+        print ' - PSF Estimation Control Parameter (Lambda):', opts.lambda_psf
+        print ' - PSF Estimation Gradient Step Size (Beta):', opts.beta_psf
         log.info(' - PSF Estimation Lambda: ' + str(opts.lambda_psf))
         log.info(' - PSF Estimation Beta: ' + str(opts.beta_psf))
+
+    # Log PSF estimation options
+    if opts.grad_type == 'shape':
+        print ' - Shape Constraint Control Parameter (Lambda):', \
+               opts.lambda_shape
+        log.info(' - Shape Constraint Lambda: ' + str(opts.lambda_shape))
 
     print h_line
 

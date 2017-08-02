@@ -81,6 +81,7 @@ def get_opts():
     lowrank = parser.add_argument_group(' * Low-Rank Aproximation')
     sparsity = parser.add_argument_group(' * Sparsity')
     psfest = parser.add_argument_group(' * PSF Estimation')
+    shape = parser.add_argument_group(' * Shape Constraint')
     condat = parser.add_argument_group(' * Condat Algorithm')
     testing = parser.add_argument_group(' * Testing')
 
@@ -134,7 +135,8 @@ def get_opts():
                               help='Option to turn off postivity constraint.')
 
     optimisation.add_argument('--grad_type', default='psf_known',
-                              choices=('psf_known', 'psf_unknown', 'none'),
+                              choices=('psf_known', 'psf_unknown', 'shape',
+                                       'none'),
                               help='Option to specify the type of gradient.')
 
     lowrank.add_argument('--lowr_thresh_factor', type=float, default=1,
@@ -162,6 +164,10 @@ def get_opts():
 
     psfest.add_argument('--beta_psf', type=float, default=1.0,
                         help='Gradient step for PSF estimation')
+
+    shape.add_argument('--lambda_shape', type=float, default=1.0,
+                       help='Regularisation control parameter for shape '
+                       'constraint')
 
     condat.add_argument('--relax', type=float, default=0.8,
                         help='Relaxation parameter (rho_n).')

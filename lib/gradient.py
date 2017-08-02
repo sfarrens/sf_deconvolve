@@ -16,7 +16,9 @@ gradients.
 import numpy as np
 from sf_tools.signal.gradient import GradBasic
 from sf_tools.math.matrix import PowerMethod
+from sf_tools.base.transform import cube2matrix, matrix2cube
 from sf_tools.image.convolve import psf_convolve, convolve_stack
+from sf_tools.image.shape import shape_project
 
 
 class GradPSF(PowerMethod):
@@ -217,6 +219,84 @@ class GradUnknownPSF(GradPSF):
 
         self._update_psf(x)
         self.grad = self._calc_grad(x)
+
+
+class GradShape(GradPSF):
+    """Gradient class for shape constraint
+
+    This class calculates the gradient including shape constraint
+
+    Parameters
+    ----------
+    data : np.ndarray
+        Input data array, an array of 2D observed images (i.e. with noise)
+    psf : np.ndarray
+        PSF, a single 2D PSF or an array of 2D PSFs
+    psf_type : str {'fixed', 'obj_var'}
+        PSF type (defualt is 'fixed')
+    lambda_reg : float
+        Regularisation control parameter
+
+    Notes
+    -----
+    The properties of `GradPSF` are inherited in this class
+
+    """
+
+    def __init__(self, data, psf, psf_type='fixed', lambda_reg=1):
+
+        self.grad_type = 'shape'
+        self._y = np.copy(data)
+        self._psf = np.copy(psf)
+        self._psf_type = psf_type
+        self.lambda_reg = lambda_reg
+        self._St = cube2matrix(shape_project(data.shape[1:]))
+        self._S = self._St.T
+
+        def func(x):
+
+            HX = cube2matrix(self.H_op(x))
+
+            StSHX = self._St.dot(self._S.dot(HX))
+
+            return (self.Ht_op(self.H_op(x)) + self.lambda_reg *
+                    self.Ht_op(matrix2cube(StSHX, x[0].shape)))
+
+        PowerMethod.__init__(self, func, self._y.shape)
+
+    def _calc_shape_grad(self, x):
+        """Get the gradient of the shape constraint component
+
+        This method calculates the gradient value of the shape constraint
+        component
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Input data array, an array of recovered 2D images
+
+        """
+
+        HXY = cube2matrix(self.H_op(x) - self._y)
+
+        StSHXY = self._St.dot(self._S.dot(HXY))
+
+        return self.Ht_op(matrix2cube(StSHXY, x[0].shape))
+
+    def get_grad(self, x):
+        """Get the gradient at the given iteration
+
+        This method calculates the gradient value from the input data
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Input data array, an array of recovered 2D images
+
+        """
+
+        self.grad = (self._calc_grad(x) + self.lambda_reg *
+                     self._calc_shape_grad(x))
 
 
 class GradNone(GradPSF):
