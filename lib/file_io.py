@@ -143,11 +143,11 @@ def read_input_files(data_file_name, psf_file_name, current_file_name=None):
     input_data = read_file(data_file_name)
 
     if input_data.ndim == 2:
-        input_data = data.reshape(1, *input_data.shape)
+        input_data = input_data.reshape(1, *input_data.shape)
 
     psf_data = read_file(psf_file_name)
 
-    if input_data.shape[0] < psf_data.shape[0]:
+    if psf_data.ndim == 3 and input_data.shape[0] < psf_data.shape[0]:
         raise ValueError('The number of input images must be greater than or '
                          'or equal to the number of PSF images.')
 
