@@ -193,7 +193,7 @@ def run_script(log):
         print ' - Galaxy PSNR:', image_errors[2]
         log.info(' - Galaxy Pixel Error: ' + str(image_errors[0]))
         log.info(' - Galaxy Shape Error: ' + str(image_errors[1]))
-        log.info(' - Galaxy Shape Error: ' + str(image_errors[2]))
+        log.info(' - Galaxy PSNR: ' + str(image_errors[2]))
 
     if (not isinstance(opts.true_psf, type(None)) and
             opts.grad_type == 'psf_unknown'):
@@ -213,10 +213,10 @@ def run_script(log):
         # Log test results
         print ' - PSF Pixel Error:', psf_errors[0]
         print ' - PSF Shape Error:', psf_errors[1]
-        print ' - PSF Shape Error:', psf_errors[2]
+        print ' - PSF PSNR:', psf_errors[2]
         log.info(' - PSF Pixel Error: ' + str(psf_errors[0]))
         log.info(' - PSF Shape Error: ' + str(psf_errors[1]))
-        log.info(' - PSF Shape Error: ' + str(psf_errors[2]))
+        log.info(' - PSF PSNR: ' + str(psf_errors[2]))
 
     print h_line
 
