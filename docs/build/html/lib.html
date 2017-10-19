@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="index.html"/>
         <link rel="up" title="sf_deconvolve" href="modules.html"/>
         <link rel="next" title="lib.algorithms module" href="lib.algorithms.html"/>
@@ -42,6 +47,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -82,10 +88,13 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">sf_deconvolve</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="functions.html">functions package</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">lib package</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">lib package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="lib.algorithms.html">lib.algorithms module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.convolve.html">lib.convolve module</a></li>
@@ -110,7 +119,7 @@
 <li class="toctree-l4"><a class="reference internal" href="lib.wavelet.html">lib.wavelet module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-lib">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sf_deconvolve.html">sf_deconvolve module</a></li>
@@ -128,8 +137,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">sf_deconvolve</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">sf_deconvolve</a>
+        
       </nav>
 
 
@@ -142,21 +153,38 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
           <li><a href="modules.html">sf_deconvolve</a> &raquo;</li>
-      
-    <li>lib package</li>
+        
+      <li>lib package</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/lib.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/lib.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -192,22 +220,39 @@
 </ul>
 </div>
 </div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-lib"></span></div>
+<div class="section" id="module-lib">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lib" title="Permalink to this headline">¶</a></h2>
+<p>SF DECONVOLVE LIBRARY</p>
+<p>This module contains submodules for implementing sf_deconvolve.py.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Samuel Farrens &lt;<a class="reference external" href="mailto:samuel&#46;farrens&#37;&#52;&#48;gmail&#46;com">samuel<span>&#46;</span>farrens<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Version:</th><td class="field-body">1.0</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">06/04/2017</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 
+           </div>
+           <div class="articleComments">
+            
            </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="lib.algorithms.html" class="btn btn-neutral float-right" title="lib.algorithms module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="lib.algorithms.html" class="btn btn-neutral float-right" title="lib.algorithms module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="functions.types.html" class="btn btn-neutral" title="functions.types module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="functions.types.html" class="btn btn-neutral" title="functions.types module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -241,7 +286,8 @@
             VERSION:'3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

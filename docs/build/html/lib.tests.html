@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="index.html"/>
         <link rel="up" title="lib package" href="lib.html"/>
         <link rel="next" title="lib.transform module" href="lib.transform.html"/>
@@ -42,6 +47,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -82,7 +88,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">sf_deconvolve</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="functions.html">functions package</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="lib.html">lib package</a><ul class="current">
@@ -105,12 +114,12 @@
 <li class="toctree-l4"><a class="reference internal" href="lib.sf_deconvolve_args.html">lib.sf_deconvolve_args module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.shape.html">lib.shape module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.svd.html">lib.svd module</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="">lib.tests module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">lib.tests module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.transform.html">lib.transform module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.wavelet.html">lib.wavelet module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="lib.html#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.html#module-lib">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sf_deconvolve.html">sf_deconvolve module</a></li>
@@ -128,8 +137,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">sf_deconvolve</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">sf_deconvolve</a>
+        
       </nav>
 
 
@@ -142,23 +153,40 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
           <li><a href="modules.html">sf_deconvolve</a> &raquo;</li>
-      
+        
           <li><a href="lib.html">lib package</a> &raquo;</li>
-      
-    <li>lib.tests module</li>
+        
+      <li>lib.tests module</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/lib.tests.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/lib.tests.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -190,36 +218,85 @@ a given stack of deconvolved images</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>deconv_data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Deconvolved data, 3D array</p>
-</div></blockquote>
-<p><strong>clean_data_file</strong> : str</p>
-<blockquote>
-<div><p>Clean data file name</p>
-</div></blockquote>
-<p><strong>random_seed</strong> : int, optional</p>
-<blockquote>
-<div><p>Random seed</p>
-</div></blockquote>
-<p><strong>kernel</strong> : int, optional</p>
-<blockquote>
-<div><p>Standard deviation of Gaussian kernel</p>
-</div></blockquote>
-<p><strong>metric</strong> : str {mean, median}, optional</p>
-<blockquote>
-<div><p>Metric for averaging results (default is &#8216;mean&#8217;)</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>deconv_data</strong> (<em>np.ndarray</em>) &#8211; Deconvolved data, 3D array</li>
+<li><strong>clean_data_file</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Clean data file name</li>
+<li><strong>random_seed</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Random seed</li>
+<li><strong>kernel</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Standard deviation of Gaussian kernel</li>
+<li><strong>metric</strong> (<em>str {mean</em><em>, </em><em>median}</em><em>, </em><em>optional</em>) &#8211; Metric for averaging results (default is &#8216;mean&#8217;)</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">np.ndarray pixel errors, np.ndarray ellipticity errors</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError</strong></p>
-<blockquote class="last">
-<div><p>If the number of clean images does not match the number of deconvolved
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">np.ndarray pixel errors, np.ndarray ellipticity errors</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the number of clean images does not match the number of deconvolved
 images</p>
-</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.tests.test_images">
+<code class="descclassname">lib.tests.</code><code class="descname">test_images</code><span class="sig-paren">(</span><em>results</em>, <em>truth</em>, <em>kernel=None</em>, <em>metric='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/tests.html#test_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.tests.test_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test Image Results</p>
+<p>This method tests the quality of the recovered images</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>results</strong> (<em>np.ndarray</em>) &#8211; Resulting images, 3D array</li>
+<li><strong>truth</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; True images, 3D array</li>
+<li><strong>kernel</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Standard deviation of Gaussian kernel</li>
+<li><strong>metric</strong> (<em>str {mean</em><em>, </em><em>median}</em><em>, </em><em>optional</em>) &#8211; Metric for averaging results (default is &#8216;mean&#8217;)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">np.ndarray pixel errors, ellipticity errors, PSNR</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the number of clean images does not match the number of deconvolved
+images</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="lib.tests.test_psf_estimation">
+<code class="descclassname">lib.tests.</code><code class="descname">test_psf_estimation</code><span class="sig-paren">(</span><em>psf_data</em>, <em>true_psf_file</em>, <em>kernel=None</em>, <em>metric='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/tests.html#test_psf_estimation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.tests.test_psf_estimation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test PSF Estimation</p>
+<p>This method tests the quality of the estimated PSFs</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>psf_data</strong> (<em>np.ndarray</em>) &#8211; Estimated PSFs, 3D array</li>
+<li><strong>true_psf_file</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; True PSFs file name</li>
+<li><strong>kernel</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Standard deviation of Gaussian kernel</li>
+<li><strong>metric</strong> (<em>str {mean</em><em>, </em><em>median}</em><em>, </em><em>optional</em>) &#8211; Metric for averaging results (default is &#8216;mean&#8217;)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">np.ndarray pixel errors, np.ndarray ellipticity errors</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the number of clean images does not match the number of deconvolved
+images</p>
 </td>
 </tr>
 </tbody>
@@ -230,15 +307,18 @@ images</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="lib.transform.html" class="btn btn-neutral float-right" title="lib.transform module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="lib.transform.html" class="btn btn-neutral float-right" title="lib.transform module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="lib.svd.html" class="btn btn-neutral" title="lib.svd module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="lib.svd.html" class="btn btn-neutral" title="lib.svd module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -272,7 +352,8 @@ images</p>
             VERSION:'3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

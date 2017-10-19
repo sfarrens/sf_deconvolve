@@ -3,7 +3,7 @@ SF_DECONVOLVE
 
 > Author: **Samuel Farrens**  
 > Year: **2017**  
-> Version: **3.2**  
+> Version: **4.0**  
 > Email: [samuel.farrens@gmail.com](mailto:samuel.farrens@gmail.com)  
 > Website: [sfarrens.github.io](https://sfarrens.github.io/)  
 > Reference Paper: [arXiv:1703.02305](https://arxiv.org/abs/1703.02305)
@@ -25,8 +25,7 @@ Contents
 
 This repository contains a Python code designed for PSF deconvolution and analysis.
 
-The directory ``lib`` contains all of the primary functions and classes used for optimisation and analysis. ``functions`` contains some additional generic functions and tools.
-
+The directory ``lib`` contains all of the primary functions and classes used for optimisation and analysis.
 ![](docs/images/example_image.png)
 
 <a name="depend_anchor"></a>
@@ -47,6 +46,8 @@ In order to run the code in this repository the following packages must be insta
 
 * **[Termcolor](https://pypi.python.org/pypi/termcolor)** [Tested with v 1.1.0]
 
+* **[sf_tools](https://sfarrens.github.io/sf_tools/)**
+
 * The current implementation of wavelet transformations additionally requires the **mr_transform.cc** C++ script from the Sparse2D library in the **[iSap](http://www.cosmostat.org/software/isap/)** package [Tested with v 3.1]. These C++ scripts will be need to be compiled in order to run (see [iSap Documentation](http://www.cosmostat.org/wp-content/uploads/2014/12/doc_iSAP.pdf) for details).
 
 The low-rank approximation method can be run purely in Python.
@@ -66,10 +67,17 @@ The input files should have the following format:
 - Input PSF(s): This should be either a Numpy binary or a FITS file containing a 2D array (for a fixed PSF) or a 3D array (for a spatially varying PSF) of PSF images. For the spatially varying case the number of PSF images must match the number of corresponding galaxy images. *e.g.* For a sample of 10 images the codes expects 10 PSFs.
 
 See the files provides in the `examples` directory for reference.
+<<<<<<< HEAD
 
 <a name="py_ex"></a>
 ### Running the executable script
 
+=======
+
+<a name="py_ex"></a>
+### Running the executable script
+
+>>>>>>> sf_tools
 The code can be run in a terminal (not in a Python session) as follows:
 
 ```bash
@@ -163,7 +171,7 @@ The example can also be run with the FITS files provided.
 
 * **--no_pos:** Option to turn off positivity constraint.
 
-* **--no_grad:** Option to turn off gradient calculation.
+* **--grad_type:** Option to specify the type of gradient [psf_known, psf_unknown, none]. *psf_known* implements deconvolution with PSFs provided, *psf_unknown* simultaneously improves the PSF while performing the deconvolution, *none* implements deconvolution without gradient descent (for testing purposes only). (default: psf_known)
 
 *Low-Rank Aproximation:*
 
@@ -181,6 +189,11 @@ The example can also be run with the FITS files provided.
 
 * **--n_reweights:** Number of reweightings. (default: 1)
 
+*PSF Estimation*
+
+* **--lambda_psf:** Regularisation control parameter for PSF estimation. (default: 1.0)
+* **--beta_psf:** Gradient step for PSF estimation. (default: 1.0)
+
 *Condat Algorithm:*
 
 * **--relax:** Relaxation parameter (rho_n in Condat-Vu method). (default: 0.8)
@@ -194,6 +207,8 @@ The example can also be run with the FITS files provided.
 * **-c, --clean_data:** Clean data file name.
 
 * **-r, --random_seed:** Random seed. Use this option if the input data is a randomly selected subset (with known seed) of the full sample of clean data.
+
+* **--true_psf:** True PSFs file name.
 
 * **--kernel:** Standard deviation of pixels for Gaussian kernel. This option will multiply the deconvolution results by a Gaussian kernel.
 

@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="index.html"/>
         <link rel="up" title="lib package" href="lib.html"/>
         <link rel="next" title="lib.other_methods module" href="lib.other_methods.html"/>
@@ -42,6 +47,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -82,7 +88,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">sf_deconvolve</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="functions.html">functions package</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="lib.html">lib package</a><ul class="current">
@@ -96,7 +105,7 @@
 <li class="toctree-l4"><a class="reference internal" href="lib.gradient.html">lib.gradient module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.linear.html">lib.linear module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.noise.html">lib.noise module</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="">lib.optimisation module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">lib.optimisation module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.other_methods.html">lib.other_methods module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.plotting.html">lib.plotting module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.proximity.html">lib.proximity module</a></li>
@@ -110,7 +119,7 @@
 <li class="toctree-l4"><a class="reference internal" href="lib.wavelet.html">lib.wavelet module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="lib.html#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.html#module-lib">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sf_deconvolve.html">sf_deconvolve module</a></li>
@@ -128,8 +137,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">sf_deconvolve</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">sf_deconvolve</a>
+        
       </nav>
 
 
@@ -142,23 +153,40 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
           <li><a href="modules.html">sf_deconvolve</a> &raquo;</li>
-      
+        
           <li><a href="lib.html">lib package</a> &raquo;</li>
-      
-    <li>lib.optimisation module</li>
+        
+      <li>lib.optimisation module</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/lib.optimisation.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/lib.optimisation.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -196,78 +224,38 @@ and Engineering, 2011, Chapter 10. (B2010)
 </ul>
 <dl class="class">
 <dt id="lib.optimisation.Condat">
-<em class="property">class </em><code class="descclassname">lib.optimisation.</code><code class="descname">Condat</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>grad</em>, <em>prox</em>, <em>prox_dual</em>, <em>linear</em>, <em>cost</em>, <em>rho</em>, <em>sigma</em>, <em>tau</em>, <em>rho_update=None</em>, <em>sigma_update=None</em>, <em>tau_update=None</em>, <em>auto_iterate=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/optimisation.html#Condat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.optimisation.Condat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<em class="property">class </em><code class="descclassname">lib.optimisation.</code><code class="descname">Condat</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>grad</em>, <em>prox</em>, <em>prox_dual</em>, <em>linear</em>, <em>cost</em>, <em>rho</em>, <em>sigma</em>, <em>tau</em>, <em>rho_update=None</em>, <em>sigma_update=None</em>, <em>tau_update=None</em>, <em>auto_iterate=True</em><span class="sig-paren">)</span><a class="headerlink" href="#lib.optimisation.Condat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>Condat optimisation</p>
 <p>This class implements algorithm 10.7 from C2013</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Initial guess for the primal variable</p>
-</div></blockquote>
-<p><strong>y</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Initial guess for the dual variable</p>
-</div></blockquote>
-<p><strong>grad</strong> : class</p>
-<blockquote>
-<div><p>Gradient operator class</p>
-</div></blockquote>
-<p><strong>prox</strong> : class</p>
-<blockquote>
-<div><p>Proximity primal operator class</p>
-</div></blockquote>
-<p><strong>prox_dual</strong> : class</p>
-<blockquote>
-<div><p>Proximity dual operator class</p>
-</div></blockquote>
-<p><strong>linear</strong> : class</p>
-<blockquote>
-<div><p>Linear operator class</p>
-</div></blockquote>
-<p><strong>cost</strong> : class</p>
-<blockquote>
-<div><p>Cost function class</p>
-</div></blockquote>
-<p><strong>rho</strong> : float</p>
-<blockquote>
-<div><p>Relaxation parameter</p>
-</div></blockquote>
-<p><strong>sigma</strong> : float</p>
-<blockquote>
-<div><p>Proximal dual parameter</p>
-</div></blockquote>
-<p><strong>tau</strong> : float</p>
-<blockquote>
-<div><p>Proximal primal paramater</p>
-</div></blockquote>
-<p><strong>rho_update :</strong></p>
-<blockquote>
-<div><p>Relaxation parameter update method</p>
-</div></blockquote>
-<p><strong>sigma_update :</strong></p>
-<blockquote>
-<div><p>Proximal dual parameter update method</p>
-</div></blockquote>
-<p><strong>tau_update :</strong></p>
-<blockquote>
-<div><p>Proximal primal parameter update method</p>
-</div></blockquote>
-<p><strong>auto_iterate</strong> : bool</p>
-<blockquote class="last">
-<div><p>Option to automatically begin iterations upon initialisation (default
-is &#8216;True&#8217;)</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>np.ndarray</em>) &#8211; Initial guess for the primal variable</li>
+<li><strong>y</strong> (<em>np.ndarray</em>) &#8211; Initial guess for the dual variable</li>
+<li><strong>grad</strong> (<em>class</em>) &#8211; Gradient operator class</li>
+<li><strong>prox</strong> (<em>class</em>) &#8211; Proximity primal operator class</li>
+<li><strong>prox_dual</strong> (<em>class</em>) &#8211; Proximity dual operator class</li>
+<li><strong>linear</strong> (<em>class</em>) &#8211; Linear operator class</li>
+<li><strong>cost</strong> (<em>class</em>) &#8211; Cost function class</li>
+<li><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Relaxation parameter</li>
+<li><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Proximal dual parameter</li>
+<li><strong>tau</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Proximal primal paramater</li>
+<li><strong>rho_update</strong> &#8211; Relaxation parameter update method</li>
+<li><strong>sigma_update</strong> &#8211; Proximal dual parameter update method</li>
+<li><strong>tau_update</strong> &#8211; Proximal primal parameter update method</li>
+<li><strong>auto_iterate</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Option to automatically begin iterations upon initialisation (default
+is &#8216;True&#8217;)</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
 <dt id="lib.optimisation.Condat.iterate">
-<code class="descname">iterate</code><span class="sig-paren">(</span><em>max_iter=150</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/optimisation.html#Condat.iterate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.optimisation.Condat.iterate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">iterate</code><span class="sig-paren">(</span><em>max_iter=150</em><span class="sig-paren">)</span><a class="headerlink" href="#lib.optimisation.Condat.iterate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterate</p>
 <p>This method calls update until either convergence criteria is met or
 the maximum number of iterations is reached</p>
@@ -275,11 +263,7 @@ the maximum number of iterations is reached</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>max_iter</strong> : int, optional</p>
-<blockquote class="last">
-<div><p>Maximum number of iterations (default is &#8216;150&#8217;)</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>max_iter</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Maximum number of iterations (default is &#8216;150&#8217;)</td>
 </tr>
 </tbody>
 </table>
@@ -287,7 +271,7 @@ the maximum number of iterations is reached</p>
 
 <dl class="method">
 <dt id="lib.optimisation.Condat.update">
-<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/optimisation.html#Condat.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.optimisation.Condat.update" title="Permalink to this definition">¶</a></dt>
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.optimisation.Condat.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update</p>
 <p>This method updates the current reconstruction</p>
 <p class="rubric">Notes</p>
@@ -299,7 +283,7 @@ the maximum number of iterations is reached</p>
 
 <dl class="method">
 <dt id="lib.optimisation.Condat.update_param">
-<code class="descname">update_param</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/optimisation.html#Condat.update_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.optimisation.Condat.update_param" title="Permalink to this definition">¶</a></dt>
+<code class="descname">update_param</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.optimisation.Condat.update_param" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update parameters</p>
 <p>This method updates the values of rho, sigma and tau with the methods
 provided</p>
@@ -309,39 +293,31 @@ provided</p>
 
 <dl class="class">
 <dt id="lib.optimisation.FISTA">
-<em class="property">class </em><code class="descclassname">lib.optimisation.</code><code class="descname">FISTA</code><span class="sig-paren">(</span><em>lambda_init=None</em>, <em>active=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/optimisation.html#FISTA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.optimisation.FISTA" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<em class="property">class </em><code class="descclassname">lib.optimisation.</code><code class="descname">FISTA</code><span class="sig-paren">(</span><em>lambda_init=None</em>, <em>active=True</em><span class="sig-paren">)</span><a class="headerlink" href="#lib.optimisation.FISTA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>This class is inhereited by optimisation classes to speed up convergence</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>lambda_init</strong> : float</p>
-<blockquote>
-<div><p>Initial value of the relaxation parameter</p>
-</div></blockquote>
-<p><strong>active</strong> : bool</p>
-<blockquote class="last">
-<div><p>Option to activate FISTA convergence speed-up (default is &#8216;True&#8217;)</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>lambda_init</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Initial value of the relaxation parameter</li>
+<li><strong>active</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Option to activate FISTA convergence speed-up (default is &#8216;True&#8217;)</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
 <dt id="lib.optimisation.FISTA.speed_switch">
-<code class="descname">speed_switch</code><span class="sig-paren">(</span><em>turn_on=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/optimisation.html#FISTA.speed_switch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.optimisation.FISTA.speed_switch" title="Permalink to this definition">¶</a></dt>
+<code class="descname">speed_switch</code><span class="sig-paren">(</span><em>turn_on=True</em><span class="sig-paren">)</span><a class="headerlink" href="#lib.optimisation.FISTA.speed_switch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Speed swicth</p>
 <p>This method turns on or off the speed-up</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>turn_on</strong> : bool</p>
-<blockquote class="last">
-<div><p>Option to turn on speed-up (default is &#8216;True&#8217;)</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>turn_on</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Option to turn on speed-up (default is &#8216;True&#8217;)</td>
 </tr>
 </tbody>
 </table>
@@ -349,14 +325,14 @@ provided</p>
 
 <dl class="method">
 <dt id="lib.optimisation.FISTA.speed_up">
-<code class="descname">speed_up</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/optimisation.html#FISTA.speed_up"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.optimisation.FISTA.speed_up" title="Permalink to this definition">¶</a></dt>
+<code class="descname">speed_up</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.optimisation.FISTA.speed_up" title="Permalink to this definition">¶</a></dt>
 <dd><p>speed-up</p>
 <p>This method returns the update if the speed-up is active</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lib.optimisation.FISTA.update_lambda">
-<code class="descname">update_lambda</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/optimisation.html#FISTA.update_lambda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.optimisation.FISTA.update_lambda" title="Permalink to this definition">¶</a></dt>
+<code class="descname">update_lambda</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.optimisation.FISTA.update_lambda" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update lambda</p>
 <p>This method updates the value of lambda</p>
 <p class="rubric">Notes</p>
@@ -367,7 +343,7 @@ provided</p>
 
 <dl class="class">
 <dt id="lib.optimisation.ForwardBackward">
-<em class="property">class </em><code class="descclassname">lib.optimisation.</code><code class="descname">ForwardBackward</code><span class="sig-paren">(</span><em>x</em>, <em>grad</em>, <em>prox</em>, <em>cost=None</em>, <em>lambda_init=None</em>, <em>lambda_update=None</em>, <em>use_fista=True</em>, <em>auto_iterate=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/optimisation.html#ForwardBackward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.optimisation.ForwardBackward" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lib.optimisation.</code><code class="descname">ForwardBackward</code><span class="sig-paren">(</span><em>x</em>, <em>grad</em>, <em>prox</em>, <em>cost=None</em>, <em>lambda_init=None</em>, <em>lambda_update=None</em>, <em>use_fista=True</em>, <em>auto_iterate=True</em><span class="sig-paren">)</span><a class="headerlink" href="#lib.optimisation.ForwardBackward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#lib.optimisation.FISTA" title="lib.optimisation.FISTA"><code class="xref py py-class docutils literal"><span class="pre">lib.optimisation.FISTA</span></code></a></p>
 <p>Forward-Backward optimisation</p>
 <p>This class implements standard forward-backward optimisation with an the
@@ -376,46 +352,24 @@ option to use the FISTA speed-up</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Initial guess for the primal variable</p>
-</div></blockquote>
-<p><strong>grad</strong> : class</p>
-<blockquote>
-<div><p>Gradient operator class</p>
-</div></blockquote>
-<p><strong>prox</strong> : class</p>
-<blockquote>
-<div><p>Proximity operator class</p>
-</div></blockquote>
-<p><strong>cost</strong> : class</p>
-<blockquote>
-<div><p>Cost function class</p>
-</div></blockquote>
-<p><strong>lambda_init</strong> : float</p>
-<blockquote>
-<div><p>Initial value of the relaxation parameter</p>
-</div></blockquote>
-<p><strong>lambda_update :</strong></p>
-<blockquote>
-<div><p>Relaxation parameter update method</p>
-</div></blockquote>
-<p><strong>use_fista</strong> : bool</p>
-<blockquote>
-<div><p>Option to use FISTA (default is &#8216;True&#8217;)</p>
-</div></blockquote>
-<p><strong>auto_iterate</strong> : bool</p>
-<blockquote class="last">
-<div><p>Option to automatically begin iterations upon initialisation (default
-is &#8216;True&#8217;)</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>np.ndarray</em>) &#8211; Initial guess for the primal variable</li>
+<li><strong>grad</strong> (<em>class</em>) &#8211; Gradient operator class</li>
+<li><strong>prox</strong> (<em>class</em>) &#8211; Proximity operator class</li>
+<li><strong>cost</strong> (<em>class</em>) &#8211; Cost function class</li>
+<li><strong>lambda_init</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Initial value of the relaxation parameter</li>
+<li><strong>lambda_update</strong> &#8211; Relaxation parameter update method</li>
+<li><strong>use_fista</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Option to use FISTA (default is &#8216;True&#8217;)</li>
+<li><strong>auto_iterate</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Option to automatically begin iterations upon initialisation (default
+is &#8216;True&#8217;)</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
 <dt id="lib.optimisation.ForwardBackward.iterate">
-<code class="descname">iterate</code><span class="sig-paren">(</span><em>max_iter=150</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/optimisation.html#ForwardBackward.iterate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.optimisation.ForwardBackward.iterate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">iterate</code><span class="sig-paren">(</span><em>max_iter=150</em><span class="sig-paren">)</span><a class="headerlink" href="#lib.optimisation.ForwardBackward.iterate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterate</p>
 <p>This method calls update until either convergence criteria is met or
 the maximum number of iterations is reached</p>
@@ -423,11 +377,7 @@ the maximum number of iterations is reached</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>max_iter</strong> : int, optional</p>
-<blockquote class="last">
-<div><p>Maximum number of iterations (default is &#8216;150&#8217;)</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>max_iter</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Maximum number of iterations (default is &#8216;150&#8217;)</td>
 </tr>
 </tbody>
 </table>
@@ -435,7 +385,7 @@ the maximum number of iterations is reached</p>
 
 <dl class="method">
 <dt id="lib.optimisation.ForwardBackward.update">
-<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/optimisation.html#ForwardBackward.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.optimisation.ForwardBackward.update" title="Permalink to this definition">¶</a></dt>
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.optimisation.ForwardBackward.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update</p>
 <p>This method updates the current reconstruction</p>
 <p class="rubric">Notes</p>
@@ -446,54 +396,32 @@ the maximum number of iterations is reached</p>
 
 <dl class="class">
 <dt id="lib.optimisation.GenForwardBackward">
-<em class="property">class </em><code class="descclassname">lib.optimisation.</code><code class="descname">GenForwardBackward</code><span class="sig-paren">(</span><em>x</em>, <em>grad</em>, <em>prox_list</em>, <em>cost=None</em>, <em>lambda_init=1.0</em>, <em>lambda_update=None</em>, <em>weights=None</em>, <em>auto_iterate=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/optimisation.html#GenForwardBackward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.optimisation.GenForwardBackward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<em class="property">class </em><code class="descclassname">lib.optimisation.</code><code class="descname">GenForwardBackward</code><span class="sig-paren">(</span><em>x</em>, <em>grad</em>, <em>prox_list</em>, <em>cost=None</em>, <em>lambda_init=1.0</em>, <em>lambda_update=None</em>, <em>weights=None</em>, <em>auto_iterate=True</em><span class="sig-paren">)</span><a class="headerlink" href="#lib.optimisation.GenForwardBackward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>Generalized Forward-Backward optimisation</p>
 <p>This class implements algorithm 1 from R2012</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Initial guess for the primal variable</p>
-</div></blockquote>
-<p><strong>grad</strong> : class</p>
-<blockquote>
-<div><p>Gradient operator class</p>
-</div></blockquote>
-<p><strong>prox_list</strong> : list</p>
-<blockquote>
-<div><p>List of proximity operator classes</p>
-</div></blockquote>
-<p><strong>cost</strong> : class</p>
-<blockquote>
-<div><p>Cost function class</p>
-</div></blockquote>
-<p><strong>lambda_init</strong> : float</p>
-<blockquote>
-<div><p>Initial value of the relaxation parameter</p>
-</div></blockquote>
-<p><strong>lambda_update :</strong></p>
-<blockquote>
-<div><p>Relaxation parameter update method</p>
-</div></blockquote>
-<p><strong>weights</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Proximity operator weights</p>
-</div></blockquote>
-<p><strong>auto_iterate</strong> : bool</p>
-<blockquote class="last">
-<div><p>Option to automatically begin iterations upon initialisation (default
-is &#8216;True&#8217;)</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>np.ndarray</em>) &#8211; Initial guess for the primal variable</li>
+<li><strong>grad</strong> (<em>class</em>) &#8211; Gradient operator class</li>
+<li><strong>prox_list</strong> (<em>list</em>) &#8211; List of proximity operator classes</li>
+<li><strong>cost</strong> (<em>class</em>) &#8211; Cost function class</li>
+<li><strong>lambda_init</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Initial value of the relaxation parameter</li>
+<li><strong>lambda_update</strong> &#8211; Relaxation parameter update method</li>
+<li><strong>weights</strong> (<em>np.ndarray</em>) &#8211; Proximity operator weights</li>
+<li><strong>auto_iterate</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Option to automatically begin iterations upon initialisation (default
+is &#8216;True&#8217;)</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
 <dt id="lib.optimisation.GenForwardBackward.iterate">
-<code class="descname">iterate</code><span class="sig-paren">(</span><em>max_iter=150</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/optimisation.html#GenForwardBackward.iterate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.optimisation.GenForwardBackward.iterate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">iterate</code><span class="sig-paren">(</span><em>max_iter=150</em><span class="sig-paren">)</span><a class="headerlink" href="#lib.optimisation.GenForwardBackward.iterate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterate</p>
 <p>This method calls update until either convergence criteria is met or
 the maximum number of iterations is reached</p>
@@ -501,11 +429,7 @@ the maximum number of iterations is reached</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>max_iter</strong> : int, optional</p>
-<blockquote class="last">
-<div><p>Maximum number of iterations (default is &#8216;150&#8217;)</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>max_iter</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Maximum number of iterations (default is &#8216;150&#8217;)</td>
 </tr>
 </tbody>
 </table>
@@ -513,7 +437,7 @@ the maximum number of iterations is reached</p>
 
 <dl class="method">
 <dt id="lib.optimisation.GenForwardBackward.update">
-<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/optimisation.html#GenForwardBackward.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.optimisation.GenForwardBackward.update" title="Permalink to this definition">¶</a></dt>
+<code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.optimisation.GenForwardBackward.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update</p>
 <p>This method updates the current reconstruction</p>
 <p class="rubric">Notes</p>
@@ -526,15 +450,18 @@ the maximum number of iterations is reached</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="lib.other_methods.html" class="btn btn-neutral float-right" title="lib.other_methods module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="lib.other_methods.html" class="btn btn-neutral float-right" title="lib.other_methods module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="lib.noise.html" class="btn btn-neutral" title="lib.noise module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="lib.noise.html" class="btn btn-neutral" title="lib.noise module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -568,7 +495,8 @@ the maximum number of iterations is reached</p>
             VERSION:'3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="index.html"/>
         <link rel="up" title="sf_deconvolve" href="modules.html"/>
         <link rel="prev" title="lib.wavelet module" href="lib.wavelet.html"/> 
@@ -41,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -81,11 +87,14 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">sf_deconvolve</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="functions.html">functions package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lib.html">lib package</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">sf_deconvolve module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">sf_deconvolve module</a></li>
 </ul>
 </li>
 </ul>
@@ -100,8 +109,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">sf_deconvolve</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">sf_deconvolve</a>
+        
       </nav>
 
 
@@ -114,21 +125,38 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
           <li><a href="modules.html">sf_deconvolve</a> &raquo;</li>
-      
-    <li>sf_deconvolve module</li>
+        
+      <li>sf_deconvolve module</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/sf_deconvolve.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/sf_deconvolve.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -145,22 +173,14 @@ observed galaxy images.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Samuel Farrens &lt;<a class="reference external" href="mailto:samuel&#46;farrens&#37;&#52;&#48;gmail&#46;com">samuel<span>&#46;</span>farrens<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Version:</th><td class="field-body">3.4</td>
+<tr class="field-even field"><th class="field-name">Version:</th><td class="field-body">3.5</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">14/03/2017</td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="f2017" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[F2017]</a></td><td>Farrens et al., Space variant deconvolution of galaxy survey images,
-2017, A&amp;A. [<a class="reference external" href="https://arxiv.org/abs/1703.02305">https://arxiv.org/abs/1703.02305</a>]</td></tr>
-</tbody>
-</table>
 <p class="rubric">Notes</p>
-<p>This code implements equations 8 and 17 from <a class="reference internal" href="#f2017" id="id1">[F2017]</a>.</p>
+<p>This code implements equations 8 and 17 from [F2017].</p>
 <dl class="function">
 <dt id="sf_deconvolve.check_psf">
 <code class="descclassname">sf_deconvolve.</code><code class="descname">check_psf</code><span class="sig-paren">(</span><em>data</em>, <em>log</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sf_deconvolve.html#check_psf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sf_deconvolve.check_psf" title="Permalink to this definition">¶</a></dt>
@@ -171,14 +191,10 @@ the opts namespace with the PSF type</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data array</p>
-</div></blockquote>
-<p><strong>log</strong> : logging.Logger</p>
-<blockquote class="last">
-<div><p>Log instance</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> (<em>np.ndarray</em>) &#8211; Input data array</li>
+<li><strong>log</strong> (<a class="reference external" href="https://docs.python.org/2/library/logging.html#logging.Logger" title="(in Python v2.7)"><em>logging.Logger</em></a>) &#8211; Log instance</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -199,11 +215,7 @@ the opts namespace with the PSF type</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>log</strong> : logging.Logger</p>
-<blockquote class="last">
-<div><p>Log instance</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>log</strong> (<a class="reference external" href="https://docs.python.org/2/library/logging.html#logging.Logger" title="(in Python v2.7)"><em>logging.Logger</em></a>) &#8211; Log instance</td>
 </tr>
 </tbody>
 </table>
@@ -221,13 +233,16 @@ creates and ouput string from the input string and the mode</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="lib.wavelet.html" class="btn btn-neutral" title="lib.wavelet module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="lib.wavelet.html" class="btn btn-neutral" title="lib.wavelet module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -261,7 +276,8 @@ creates and ouput string from the input string and the mode</p>
             VERSION:'3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

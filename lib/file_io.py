@@ -147,7 +147,7 @@ def read_input_files(data_file_name, psf_file_name, current_file_name=None):
 
     psf_data = read_file(psf_file_name)
 
-    if input_data.shape[0] < psf_data.shape[0]:
+    if psf_data.ndim == 3 and input_data.shape[0] < psf_data.shape[0]:
         raise ValueError('The number of input images must be greater than or '
                          'or equal to the number of PSF images.')
 
@@ -165,7 +165,7 @@ def read_input_files(data_file_name, psf_file_name, current_file_name=None):
 
 
 def write_output_files(output_file_name, primal_res, dual_res=None,
-                       output_format='npy'):
+                       psf_res=None, output_format='npy'):
 
     """Write output files
 
@@ -179,6 +179,8 @@ def write_output_files(output_file_name, primal_res, dual_res=None,
         Array of primal output results
     dual_res : np.ndarray, optional
         Array of dual output results
+    psf_res : np.ndarray, optional
+        Array of PSF output results
     output_format : str, optional
         Output file format (numpy binary or FITS)
 
@@ -190,8 +192,14 @@ def write_output_files(output_file_name, primal_res, dual_res=None,
         if not isinstance(dual_res, type(None)):
             write_to_fits(output_file_name + '_dual.fits', dual_res)
 
+        if not isinstance(psf_res, type(None)):
+            write_to_fits(output_file_name + '_psf.fits', psf_res)
+
     else:
         np.save(output_file_name + '_primal', primal_res)
 
         if not isinstance(dual_res, type(None)):
             np.save(output_file_name + '_dual', dual_res)
+
+        if not isinstance(psf_res, type(None)):
+            np.save(output_file_name + '_psf', psf_res)

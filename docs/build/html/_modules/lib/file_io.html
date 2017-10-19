@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
@@ -40,6 +45,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -80,7 +86,10 @@
           
             
             
-                <ul>
+              
+            
+            
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">sf_deconvolve</a></li>
 </ul>
 
@@ -94,8 +103,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../index.html">sf_deconvolve</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">sf_deconvolve</a>
+        
       </nav>
 
 
@@ -108,19 +119,36 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      
-    <li>lib.file_io</li>
+        
+      <li>lib.file_io</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
+            
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -142,8 +170,8 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="k">import</span> <span class="n">fits</span>
 
 
 <div class="viewcode-block" id="check_data_format"><a class="viewcode-back" href="../../lib.file_io.html#lib.file_io.check_data_format">[docs]</a><span class="k">def</span> <span class="nf">check_data_format</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">):</span>
@@ -242,7 +270,7 @@
     <span class="k">return</span> <span class="n">data</span></div>
 
 
-<div class="viewcode-block" id="read_input_files"><a class="viewcode-back" href="../../lib.file_io.html#lib.file_io.read_input_files">[docs]</a><span class="k">def</span> <span class="nf">read_input_files</span><span class="p">(</span><span class="n">data_file_name</span><span class="p">,</span> <span class="n">psf_file_name</span><span class="p">,</span> <span class="n">current_file_name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="read_input_files"><a class="viewcode-back" href="../../lib.file_io.html#lib.file_io.read_input_files">[docs]</a><span class="k">def</span> <span class="nf">read_input_files</span><span class="p">(</span><span class="n">data_file_name</span><span class="p">,</span> <span class="n">psf_file_name</span><span class="p">,</span> <span class="n">current_file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read input files</span>
 
 <span class="sd">    This method reads image array data from the specified input files.</span>
@@ -280,7 +308,7 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number of input images must be greater than or &#39;</span>
                          <span class="s1">&#39;or equal to the number of PSF images.&#39;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current_file_name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current_file_name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
         <span class="n">current_data</span> <span class="o">=</span> <span class="n">read_file</span><span class="p">(</span><span class="n">current_file_name</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">current_data</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
@@ -288,13 +316,13 @@
                              <span class="s1">&#39;must match the number of input images.&#39;</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">current_data</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">current_data</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">return</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">psf_data</span><span class="p">,</span> <span class="n">current_data</span></div>
 
 
-<div class="viewcode-block" id="write_output_files"><a class="viewcode-back" href="../../lib.file_io.html#lib.file_io.write_output_files">[docs]</a><span class="k">def</span> <span class="nf">write_output_files</span><span class="p">(</span><span class="n">output_file_name</span><span class="p">,</span> <span class="n">primal_res</span><span class="p">,</span> <span class="n">dual_res</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                       <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;npy&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="write_output_files"><a class="viewcode-back" href="../../lib.file_io.html#lib.file_io.write_output_files">[docs]</a><span class="k">def</span> <span class="nf">write_output_files</span><span class="p">(</span><span class="n">output_file_name</span><span class="p">,</span> <span class="n">primal_res</span><span class="p">,</span> <span class="n">dual_res</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">psf_res</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;npy&#39;</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Write output files</span>
 
@@ -308,6 +336,8 @@
 <span class="sd">        Array of primal output results</span>
 <span class="sd">    dual_res : np.ndarray, optional</span>
 <span class="sd">        Array of dual output results</span>
+<span class="sd">    psf_res : np.ndarray, optional</span>
+<span class="sd">        Array of PSF output results</span>
 <span class="sd">    output_format : str, optional</span>
 <span class="sd">        Output file format (numpy binary or FITS)</span>
 
@@ -316,16 +346,25 @@
     <span class="k">if</span> <span class="n">output_format</span> <span class="o">==</span> <span class="s1">&#39;fits&#39;</span><span class="p">:</span>
         <span class="n">write_to_fits</span><span class="p">(</span><span class="n">output_file_name</span> <span class="o">+</span> <span class="s1">&#39;_primal.fits&#39;</span><span class="p">,</span> <span class="n">primal_res</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dual_res</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dual_res</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
             <span class="n">write_to_fits</span><span class="p">(</span><span class="n">output_file_name</span> <span class="o">+</span> <span class="s1">&#39;_dual.fits&#39;</span><span class="p">,</span> <span class="n">dual_res</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">psf_res</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+            <span class="n">write_to_fits</span><span class="p">(</span><span class="n">output_file_name</span> <span class="o">+</span> <span class="s1">&#39;_psf.fits&#39;</span><span class="p">,</span> <span class="n">psf_res</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">output_file_name</span> <span class="o">+</span> <span class="s1">&#39;_primal&#39;</span><span class="p">,</span> <span class="n">primal_res</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dual_res</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">output_file_name</span> <span class="o">+</span> <span class="s1">&#39;_dual&#39;</span><span class="p">,</span> <span class="n">dual_res</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dual_res</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">output_file_name</span> <span class="o">+</span> <span class="s1">&#39;_dual&#39;</span><span class="p">,</span> <span class="n">dual_res</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">psf_res</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">output_file_name</span> <span class="o">+</span> <span class="s1">&#39;_psf&#39;</span><span class="p">,</span> <span class="n">psf_res</span><span class="p">)</span></div>
 </pre></div>
 
+           </div>
+           <div class="articleComments">
+            
            </div>
           </div>
           <footer>
@@ -360,7 +399,8 @@
             VERSION:'3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../../_static/jquery.js"></script>

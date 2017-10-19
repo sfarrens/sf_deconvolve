@@ -14,9 +14,9 @@ Hao Shan and Fred Ngole
 """
 
 import numpy as np
-from convolve import convolve
-from functions.matrix import rotate
-from functions.signal import *
+from sf_tools.image.convolve import convolve
+from sf_tools.math.matrix import rotate
+from sf_tools.signal.filter import *
 
 
 def get_dir_filters(shape, angle_num, sigma):

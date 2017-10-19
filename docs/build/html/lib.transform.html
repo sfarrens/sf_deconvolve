@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="index.html"/>
         <link rel="up" title="lib package" href="lib.html"/>
         <link rel="next" title="lib.wavelet module" href="lib.wavelet.html"/>
@@ -42,6 +47,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -82,7 +88,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">sf_deconvolve</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="functions.html">functions package</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="lib.html">lib package</a><ul class="current">
@@ -106,11 +115,11 @@
 <li class="toctree-l4"><a class="reference internal" href="lib.shape.html">lib.shape module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.svd.html">lib.svd module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.tests.html">lib.tests module</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="">lib.transform module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">lib.transform module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.wavelet.html">lib.wavelet module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="lib.html#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.html#module-lib">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sf_deconvolve.html">sf_deconvolve module</a></li>
@@ -128,8 +137,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">sf_deconvolve</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">sf_deconvolve</a>
+        
       </nav>
 
 
@@ -142,235 +153,63 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
           <li><a href="modules.html">sf_deconvolve</a> &raquo;</li>
-      
+        
           <li><a href="lib.html">lib package</a> &raquo;</li>
-      
-    <li>lib.transform module</li>
+        
+      <li>lib.transform module</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/lib.transform.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/lib.transform.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-lib.transform">
-<span id="lib-transform-module"></span><h1>lib.transform module<a class="headerlink" href="#module-lib.transform" title="Permalink to this headline">¶</a></h1>
-<p>DATA TRANSFORM ROUTINES</p>
-<p>This module contains methods for transforming data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Samuel Farrens &lt;<a class="reference external" href="mailto:samuel&#46;farrens&#37;&#52;&#48;gmail&#46;com">samuel<span>&#46;</span>farrens<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Version:</th><td class="field-body">1.1</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">06/01/2017</td>
-</tr>
-</tbody>
-</table>
-<dl class="function">
-<dt id="lib.transform.cube2map">
-<code class="descclassname">lib.transform.</code><code class="descname">cube2map</code><span class="sig-paren">(</span><em>data_cube</em>, <em>layout</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/transform.html#cube2map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.transform.cube2map" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cube to Map</p>
-<p>This method transforms the input data from a 3D cube to a 2D map with a
-specified layout</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data_cube</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data cube, 3D array of 2D images</p>
-</div></blockquote>
-<p><strong>Layout</strong> : tuple</p>
-<blockquote>
-<div><p>2D layout of 2D images</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">np.ndarray 2D map</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError</strong></p>
-<blockquote class="last">
-<div><p>For invalid layout</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="lib.transform.cube2matrix">
-<code class="descclassname">lib.transform.</code><code class="descname">cube2matrix</code><span class="sig-paren">(</span><em>data_cube</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/transform.html#cube2matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.transform.cube2matrix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cube to Matrix</p>
-<p>This method transforms a 3D cube to a 2D matrix</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data_cube</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data cube, 3D array</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray 2D matrix</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="lib.transform.map2cube">
-<code class="descclassname">lib.transform.</code><code class="descname">map2cube</code><span class="sig-paren">(</span><em>data_map</em>, <em>layout</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/transform.html#map2cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.transform.map2cube" title="Permalink to this definition">¶</a></dt>
-<dd><p>Map to cube</p>
-<p>This method transforms the input data from a 2D map with given layout to
-a 3D cube</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data_map</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data map, 2D array</p>
-</div></blockquote>
-<p><strong>layout</strong> : tuple</p>
-<blockquote>
-<div><p>2D layout of 2D images</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">np.ndarray 3D cube</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError</strong></p>
-<blockquote class="last">
-<div><p>For invalid layout</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="lib.transform.map2matrix">
-<code class="descclassname">lib.transform.</code><code class="descname">map2matrix</code><span class="sig-paren">(</span><em>data_map</em>, <em>layout</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/transform.html#map2matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.transform.map2matrix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Map to Matrix</p>
-<p>This method transforms a 2D map to a 2D matrix</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data_map</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data map, 2D array</p>
-</div></blockquote>
-<p><strong>layout</strong> : tuple</p>
-<blockquote>
-<div><p>2D layout of 2D images</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">np.ndarray 2D matrix</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError</strong></p>
-<blockquote class="last">
-<div><p>For invalid layout</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="lib.transform.matrix2cube">
-<code class="descclassname">lib.transform.</code><code class="descname">matrix2cube</code><span class="sig-paren">(</span><em>data_matrix</em>, <em>im_shape</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/transform.html#matrix2cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.transform.matrix2cube" title="Permalink to this definition">¶</a></dt>
-<dd><p>Matrix to Cube</p>
-<p>This method transforms a 2D matrix to a 3D cube</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data_matrix</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data cube, 2D array</p>
-</div></blockquote>
-<p><strong>im_shape</strong> : tuple</p>
-<blockquote>
-<div><p>2D shape of the individual images</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray 3D cube</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="lib.transform.matrix2map">
-<code class="descclassname">lib.transform.</code><code class="descname">matrix2map</code><span class="sig-paren">(</span><em>data_matrix</em>, <em>map_shape</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/transform.html#matrix2map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.transform.matrix2map" title="Permalink to this definition">¶</a></dt>
-<dd><p>Matrix to Map</p>
-<p>This method transforms a 2D matrix to a 2D map</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data_matrix</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data matrix, 2D array</p>
-</div></blockquote>
-<p><strong>map_shape</strong> : tuple</p>
-<blockquote>
-<div><p>2D shape of the output map</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">np.ndarray 2D map</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError</strong></p>
-<blockquote class="last">
-<div><p>For invalid layout</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+  <div class="section" id="lib-transform-module">
+<h1>lib.transform module<a class="headerlink" href="#lib-transform-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
+           </div>
+           <div class="articleComments">
+            
            </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="lib.wavelet.html" class="btn btn-neutral float-right" title="lib.wavelet module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="lib.wavelet.html" class="btn btn-neutral float-right" title="lib.wavelet module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="lib.tests.html" class="btn btn-neutral" title="lib.tests module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="lib.tests.html" class="btn btn-neutral" title="lib.tests module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -404,7 +243,8 @@ a 3D cube</p>
             VERSION:'3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

@@ -14,8 +14,59 @@ a given stack of deconvolved images
 """
 
 from file_io import read_file
-from quality import *
-from functions.stats import gaussian_kernel, psnr_stack
+from sf_tools.image.quality import *
+from sf_tools.math.stats import gaussian_kernel, psnr_stack
+
+
+def test_images(results, truth, kernel=None, metric='mean'):
+    """Test Image Results
+
+    This method tests the quality of the recovered images
+
+    Parameters
+    ----------
+    results : np.ndarray
+        Resulting images, 3D array
+    truth : str
+        True images, 3D array
+    kernel : int, optional
+        Standard deviation of Gaussian kernel
+    metric : str {mean, median}, optional
+        Metric for averaging results (default is 'mean')
+
+    Returns
+    -------
+    np.ndarray pixel errors, ellipticity errors, PSNR
+
+    Raises
+    ------
+    ValueError
+        If the number of clean images does not match the number of deconvolved
+        images
+
+    """
+
+    if not isinstance(kernel, type(None)):
+
+        def add_weights(data, weight):
+
+            return np.array([x * weight for x in data])
+
+        gk = gaussian_kernel(truth[0].shape, kernel)
+
+        results = add_weights(results, gk)
+        truth = add_weights(truth, gk)
+
+    if metric == 'median':
+        metric = np.median
+    else:
+        metric = np.mean
+
+    px_err = nmse(truth, results, metric)
+    ellip_err = e_error(truth, results, metric)
+    psnr = psnr_stack(truth, results, metric)
+
+    return (px_err, ellip_err, psnr)
 
 
 def test_deconvolution(deconv_data, clean_data_file,
@@ -60,24 +111,41 @@ def test_deconvolution(deconv_data, clean_data_file,
         raise ValueError('The number of clean images must match the number '
                          'deconvolved images.')
 
-    if not isinstance(kernel, type(None)):
+    return test_images(deconv_data, clean_data, kernel, metric)
 
-        def add_weights(data, weight):
 
-            return np.array([x * weight for x in data])
+def test_psf_estimation(psf_data, true_psf_file, kernel=None, metric='mean'):
+    """Test PSF Estimation
 
-        gk = gaussian_kernel(clean_data[0].shape, kernel)
+    This method tests the quality of the estimated PSFs
 
-        deconv_data = add_weights(deconv_data, gk)
-        clean_data = add_weights(clean_data, gk)
+    Parameters
+    ----------
+    psf_data : np.ndarray
+        Estimated PSFs, 3D array
+    true_psf_file : str
+        True PSFs file name
+    kernel : int, optional
+        Standard deviation of Gaussian kernel
+    metric : str {mean, median}, optional
+        Metric for averaging results (default is 'mean')
 
-    if metric == 'median':
-        metric = np.median
-    else:
-        metric = np.mean
+    Returns
+    -------
+    np.ndarray pixel errors, np.ndarray ellipticity errors
 
-    px_err = nmse(clean_data, deconv_data, metric)
-    ellip_err = e_error(clean_data, deconv_data, metric)
-    psnr = psnr_stack(clean_data, deconv_data, metric)
+    Raises
+    ------
+    ValueError
+        If the number of clean images does not match the number of deconvolved
+        images
 
-    return (px_err, ellip_err, psnr)
+    """
+
+    true_psf = read_file(true_psf_file)
+
+    if true_psf.shape != psf_data.shape:
+        raise ValueError('The number of true PSF images must match the number '
+                         'estimated PSF images.')
+
+    return test_images(psf_data, true_psf, kernel, metric)

@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
@@ -40,6 +45,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -80,7 +86,10 @@
           
             
             
-                <ul>
+              
+            
+            
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">sf_deconvolve</a></li>
 </ul>
 
@@ -94,8 +103,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../index.html">sf_deconvolve</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">sf_deconvolve</a>
+        
       </nav>
 
 
@@ -108,19 +119,36 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      
-    <li>lib.tests</li>
+        
+      <li>lib.tests</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
+            
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -142,13 +170,64 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">file_io</span> <span class="kn">import</span> <span class="n">read_file</span>
-<span class="kn">from</span> <span class="nn">quality</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">functions.stats</span> <span class="kn">import</span> <span class="n">gaussian_kernel</span><span class="p">,</span> <span class="n">psnr_stack</span>
+<span class="kn">from</span> <span class="nn">file_io</span> <span class="k">import</span> <span class="n">read_file</span>
+<span class="kn">from</span> <span class="nn">sf_tools.image.quality</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">sf_tools.math.stats</span> <span class="k">import</span> <span class="n">gaussian_kernel</span><span class="p">,</span> <span class="n">psnr_stack</span>
+
+
+<div class="viewcode-block" id="test_images"><a class="viewcode-back" href="../../lib.tests.html#lib.tests.test_images">[docs]</a><span class="k">def</span> <span class="nf">test_images</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Test Image Results</span>
+
+<span class="sd">    This method tests the quality of the recovered images</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    results : np.ndarray</span>
+<span class="sd">        Resulting images, 3D array</span>
+<span class="sd">    truth : str</span>
+<span class="sd">        True images, 3D array</span>
+<span class="sd">    kernel : int, optional</span>
+<span class="sd">        Standard deviation of Gaussian kernel</span>
+<span class="sd">    metric : str {mean, median}, optional</span>
+<span class="sd">        Metric for averaging results (default is &#39;mean&#39;)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray pixel errors, ellipticity errors, PSNR</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the number of clean images does not match the number of deconvolved</span>
+<span class="sd">        images</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+
+        <span class="k">def</span> <span class="nf">add_weights</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
+
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span> <span class="o">*</span> <span class="n">weight</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])</span>
+
+        <span class="n">gk</span> <span class="o">=</span> <span class="n">gaussian_kernel</span><span class="p">(</span><span class="n">truth</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">kernel</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="n">add_weights</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">gk</span><span class="p">)</span>
+        <span class="n">truth</span> <span class="o">=</span> <span class="n">add_weights</span><span class="p">(</span><span class="n">truth</span><span class="p">,</span> <span class="n">gk</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s1">&#39;median&#39;</span><span class="p">:</span>
+        <span class="n">metric</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">metric</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span>
+
+    <span class="n">px_err</span> <span class="o">=</span> <span class="n">nmse</span><span class="p">(</span><span class="n">truth</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
+    <span class="n">ellip_err</span> <span class="o">=</span> <span class="n">e_error</span><span class="p">(</span><span class="n">truth</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
+    <span class="n">psnr</span> <span class="o">=</span> <span class="n">psnr_stack</span><span class="p">(</span><span class="n">truth</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">px_err</span><span class="p">,</span> <span class="n">ellip_err</span><span class="p">,</span> <span class="n">psnr</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_deconvolution"><a class="viewcode-back" href="../../lib.tests.html#lib.tests.test_deconvolution">[docs]</a><span class="k">def</span> <span class="nf">test_deconvolution</span><span class="p">(</span><span class="n">deconv_data</span><span class="p">,</span> <span class="n">clean_data_file</span><span class="p">,</span>
-                       <span class="n">random_seed</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">):</span>
+                       <span class="n">random_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Test deconvolution</span>
 
 <span class="sd">    This method tests the quality of the deconvolved images</span>
@@ -178,7 +257,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">random_seed</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">random_seed</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">random_seed</span><span class="p">)</span>
         <span class="n">clean_data</span> <span class="o">=</span> <span class="n">read_file</span><span class="p">(</span><span class="n">clean_data_file</span><span class="p">)</span>
         <span class="n">clean_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">clean_data</span><span class="p">)[:</span><span class="n">deconv_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
@@ -189,29 +268,49 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number of clean images must match the number &#39;</span>
                          <span class="s1">&#39;deconvolved images.&#39;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">None</span><span class="p">)):</span>
+    <span class="k">return</span> <span class="n">test_images</span><span class="p">(</span><span class="n">deconv_data</span><span class="p">,</span> <span class="n">clean_data</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span></div>
 
-        <span class="k">def</span> <span class="nf">add_weights</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
 
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span> <span class="o">*</span> <span class="n">weight</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])</span>
+<div class="viewcode-block" id="test_psf_estimation"><a class="viewcode-back" href="../../lib.tests.html#lib.tests.test_psf_estimation">[docs]</a><span class="k">def</span> <span class="nf">test_psf_estimation</span><span class="p">(</span><span class="n">psf_data</span><span class="p">,</span> <span class="n">true_psf_file</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Test PSF Estimation</span>
 
-        <span class="n">gk</span> <span class="o">=</span> <span class="n">gaussian_kernel</span><span class="p">(</span><span class="n">clean_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">kernel</span><span class="p">)</span>
+<span class="sd">    This method tests the quality of the estimated PSFs</span>
 
-        <span class="n">deconv_data</span> <span class="o">=</span> <span class="n">add_weights</span><span class="p">(</span><span class="n">deconv_data</span><span class="p">,</span> <span class="n">gk</span><span class="p">)</span>
-        <span class="n">clean_data</span> <span class="o">=</span> <span class="n">add_weights</span><span class="p">(</span><span class="n">clean_data</span><span class="p">,</span> <span class="n">gk</span><span class="p">)</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    psf_data : np.ndarray</span>
+<span class="sd">        Estimated PSFs, 3D array</span>
+<span class="sd">    true_psf_file : str</span>
+<span class="sd">        True PSFs file name</span>
+<span class="sd">    kernel : int, optional</span>
+<span class="sd">        Standard deviation of Gaussian kernel</span>
+<span class="sd">    metric : str {mean, median}, optional</span>
+<span class="sd">        Metric for averaging results (default is &#39;mean&#39;)</span>
 
-    <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s1">&#39;median&#39;</span><span class="p">:</span>
-        <span class="n">metric</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">metric</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray pixel errors, np.ndarray ellipticity errors</span>
 
-    <span class="n">px_err</span> <span class="o">=</span> <span class="n">nmse</span><span class="p">(</span><span class="n">clean_data</span><span class="p">,</span> <span class="n">deconv_data</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
-    <span class="n">ellip_err</span> <span class="o">=</span> <span class="n">e_error</span><span class="p">(</span><span class="n">clean_data</span><span class="p">,</span> <span class="n">deconv_data</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
-    <span class="n">psnr</span> <span class="o">=</span> <span class="n">psnr_stack</span><span class="p">(</span><span class="n">clean_data</span><span class="p">,</span> <span class="n">deconv_data</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the number of clean images does not match the number of deconvolved</span>
+<span class="sd">        images</span>
 
-    <span class="k">return</span> <span class="p">(</span><span class="n">px_err</span><span class="p">,</span> <span class="n">ellip_err</span><span class="p">,</span> <span class="n">psnr</span><span class="p">)</span></div>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">true_psf</span> <span class="o">=</span> <span class="n">read_file</span><span class="p">(</span><span class="n">true_psf_file</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">true_psf</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">psf_data</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number of true PSF images must match the number &#39;</span>
+                         <span class="s1">&#39;estimated PSF images.&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">test_images</span><span class="p">(</span><span class="n">psf_data</span><span class="p">,</span> <span class="n">true_psf</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span></div>
 </pre></div>
 
+           </div>
+           <div class="articleComments">
+            
            </div>
           </div>
           <footer>
@@ -246,7 +345,8 @@
             VERSION:'3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../../_static/jquery.js"></script>

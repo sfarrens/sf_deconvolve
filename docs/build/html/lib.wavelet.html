@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="index.html"/>
         <link rel="up" title="lib package" href="lib.html"/>
         <link rel="next" title="sf_deconvolve module" href="sf_deconvolve.html"/>
@@ -42,6 +47,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -82,7 +88,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">sf_deconvolve</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="functions.html">functions package</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="lib.html">lib package</a><ul class="current">
@@ -107,10 +116,10 @@
 <li class="toctree-l4"><a class="reference internal" href="lib.svd.html">lib.svd module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.tests.html">lib.tests module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.transform.html">lib.transform module</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="">lib.wavelet module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">lib.wavelet module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="lib.html#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.html#module-lib">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sf_deconvolve.html">sf_deconvolve module</a></li>
@@ -128,8 +137,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">sf_deconvolve</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">sf_deconvolve</a>
+        
       </nav>
 
 
@@ -142,181 +153,63 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
           <li><a href="modules.html">sf_deconvolve</a> &raquo;</li>
-      
+        
           <li><a href="lib.html">lib package</a> &raquo;</li>
-      
-    <li>lib.wavelet module</li>
+        
+      <li>lib.wavelet module</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/lib.wavelet.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/lib.wavelet.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-lib.wavelet">
-<span id="lib-wavelet-module"></span><h1>lib.wavelet module<a class="headerlink" href="#module-lib.wavelet" title="Permalink to this headline">¶</a></h1>
-<p>WAVELET MODULE</p>
-<p>This module contains methods for performing wavelet transformations using iSAP</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Samuel Farrens &lt;<a class="reference external" href="mailto:samuel&#46;farrens&#37;&#52;&#48;gmail&#46;com">samuel<span>&#46;</span>farrens<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Version:</th><td class="field-body">1.1</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">06/01/2017</td>
-</tr>
-</tbody>
-</table>
-<dl class="function">
-<dt id="lib.wavelet.call_mr_transform">
-<code class="descclassname">lib.wavelet.</code><code class="descname">call_mr_transform</code><span class="sig-paren">(</span><em>data</em>, <em>opt=None</em>, <em>path='./'</em>, <em>remove_files=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/wavelet.html#call_mr_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.wavelet.call_mr_transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call mr_transform</p>
-<p>This method calls the iSAP module mr_transform</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data, 2D array</p>
-</div></blockquote>
-<p><strong>opt</strong> : list, optional</p>
-<blockquote>
-<div><p>List of additonal mr_transform options</p>
-</div></blockquote>
-<p><strong>path</strong> : str, optional</p>
-<blockquote>
-<div><p>Path for output files (default is &#8216;./&#8217;)</p>
-</div></blockquote>
-<p><strong>remove_files</strong> : bool, optional</p>
-<blockquote>
-<div><p>Option to remove output files (default is &#8216;True&#8217;)</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray results of transform</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="lib.wavelet.filter_convolve">
-<code class="descclassname">lib.wavelet.</code><code class="descname">filter_convolve</code><span class="sig-paren">(</span><em>data</em>, <em>filters</em>, <em>filter_rot=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/wavelet.html#filter_convolve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.wavelet.filter_convolve" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter convolve</p>
-<p>This method convolves the input image with the wavelet filters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data, 2D array</p>
-</div></blockquote>
-<p><strong>filters</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Wavelet filters, 3D array</p>
-</div></blockquote>
-<p><strong>filter_rot</strong> : bool, optional</p>
-<blockquote>
-<div><p>Option to rotate wavelet filters (default is &#8216;False&#8217;)</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray convolved data</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="lib.wavelet.filter_convolve_stack">
-<code class="descclassname">lib.wavelet.</code><code class="descname">filter_convolve_stack</code><span class="sig-paren">(</span><em>data</em>, <em>filters</em>, <em>filter_rot=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/wavelet.html#filter_convolve_stack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.wavelet.filter_convolve_stack" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter convolve</p>
-<p>This method convolves the a stack of input images with the wavelet filters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data, 3D array</p>
-</div></blockquote>
-<p><strong>filters</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Wavelet filters, 3D array</p>
-</div></blockquote>
-<p><strong>filter_rot</strong> : bool, optional</p>
-<blockquote>
-<div><p>Option to rotate wavelet filters (default is &#8216;False&#8217;)</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray convolved data</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="lib.wavelet.get_mr_filters">
-<code class="descclassname">lib.wavelet.</code><code class="descname">get_mr_filters</code><span class="sig-paren">(</span><em>data_shape</em>, <em>opt=None</em>, <em>coarse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/wavelet.html#get_mr_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.wavelet.get_mr_filters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get mr_transform filters</p>
-<p>This method obtains wavelet filters by calling mr_transform</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data_shape</strong> : tuple</p>
-<blockquote>
-<div><p>2D data shape</p>
-</div></blockquote>
-<p><strong>opt</strong> : list, optional</p>
-<blockquote>
-<div><p>List of additonal mr_transform options</p>
-</div></blockquote>
-<p><strong>coarse</strong> : bool, optional</p>
-<blockquote>
-<div><p>Option to keep coarse scale (default is &#8216;False&#8217;)</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray 3D array of wavelet filters</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+  <div class="section" id="lib-wavelet-module">
+<h1>lib.wavelet module<a class="headerlink" href="#lib-wavelet-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
+           </div>
+           <div class="articleComments">
+            
            </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="sf_deconvolve.html" class="btn btn-neutral float-right" title="sf_deconvolve module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="sf_deconvolve.html" class="btn btn-neutral float-right" title="sf_deconvolve module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="lib.transform.html" class="btn btn-neutral" title="lib.transform module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="lib.transform.html" class="btn btn-neutral" title="lib.transform module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -350,7 +243,8 @@
             VERSION:'3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="index.html"/>
         <link rel="up" title="lib package" href="lib.html"/>
         <link rel="next" title="lib.noise module" href="lib.noise.html"/>
@@ -42,6 +47,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -82,7 +88,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">sf_deconvolve</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="functions.html">functions package</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="lib.html">lib package</a><ul class="current">
@@ -94,7 +103,7 @@
 <li class="toctree-l4"><a class="reference internal" href="lib.directional.html">lib.directional module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.file_io.html">lib.file_io module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.gradient.html">lib.gradient module</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="">lib.linear module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">lib.linear module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.noise.html">lib.noise module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.optimisation.html">lib.optimisation module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.other_methods.html">lib.other_methods module</a></li>
@@ -110,7 +119,7 @@
 <li class="toctree-l4"><a class="reference internal" href="lib.wavelet.html">lib.wavelet module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="lib.html#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.html#module-lib">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sf_deconvolve.html">sf_deconvolve module</a></li>
@@ -128,8 +137,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">sf_deconvolve</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">sf_deconvolve</a>
+        
       </nav>
 
 
@@ -142,252 +153,63 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
           <li><a href="modules.html">sf_deconvolve</a> &raquo;</li>
-      
+        
           <li><a href="lib.html">lib package</a> &raquo;</li>
-      
-    <li>lib.linear module</li>
+        
+      <li>lib.linear module</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/lib.linear.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/lib.linear.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-lib.linear">
-<span id="lib-linear-module"></span><h1>lib.linear module<a class="headerlink" href="#module-lib.linear" title="Permalink to this headline">¶</a></h1>
-<p>LINEAR OPERATORS</p>
-<p>This module contains linear operator classes.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Samuel Farrens &lt;<a class="reference external" href="mailto:samuel&#46;farrens&#37;&#52;&#48;gmail&#46;com">samuel<span>&#46;</span>farrens<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Version:</th><td class="field-body">1.2</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">04/01/2017</td>
-</tr>
-</tbody>
-</table>
-<dl class="class">
-<dt id="lib.linear.Identity">
-<em class="property">class </em><code class="descclassname">lib.linear.</code><code class="descname">Identity</code><a class="reference internal" href="_modules/lib/linear.html#Identity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.linear.Identity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>Identity operator class</p>
-<p>This is a dummy class that can be used in the optimisation classes</p>
-<dl class="method">
-<dt id="lib.linear.Identity.adj_op">
-<code class="descname">adj_op</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/linear.html#Identity.adj_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.linear.Identity.adj_op" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adjoint operator</p>
-<p>Returns the input data unchanged</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data array</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray input data</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="lib.linear.Identity.op">
-<code class="descname">op</code><span class="sig-paren">(</span><em>data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/linear.html#Identity.op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.linear.Identity.op" title="Permalink to this definition">¶</a></dt>
-<dd><p>Operator</p>
-<p>Returns the input data unchanged</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data array</p>
-</div></blockquote>
-<p><strong>**kwargs</strong></p>
-<blockquote>
-<div><p>Arbitrary keyword arguments</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray input data</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="lib.linear.LinearCombo">
-<em class="property">class </em><code class="descclassname">lib.linear.</code><code class="descname">LinearCombo</code><span class="sig-paren">(</span><em>operators</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/linear.html#LinearCombo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.linear.LinearCombo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>Linear combination class</p>
-<p>This class defines a combination of linear transform operators</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>operators</strong> : list</p>
-<blockquote>
-<div><p>List of linear operator class instances</p>
-</div></blockquote>
-<p><strong>weights</strong> : list, optional</p>
-<blockquote class="last">
-<div><p>List of weights for combining the linear adjoint operator results</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="lib.linear.LinearCombo.adj_op">
-<code class="descname">adj_op</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/linear.html#LinearCombo.adj_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.linear.LinearCombo.adj_op" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adjoint operator</p>
-<p>This method returns the combination of the result of all of the
-adjoint operators. If weights are provided the comibination is the sum
-of the weighted results, otherwise the combination is the mean.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data array, an array of coefficients</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray adjoint operation results</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="lib.linear.LinearCombo.op">
-<code class="descname">op</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/linear.html#LinearCombo.op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.linear.LinearCombo.op" title="Permalink to this definition">¶</a></dt>
-<dd><p>Operator</p>
-<p>This method returns the input data operated on by all of the operators</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data array, a 2D image</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray linear operation results</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="lib.linear.Wavelet">
-<em class="property">class </em><code class="descclassname">lib.linear.</code><code class="descname">Wavelet</code><span class="sig-paren">(</span><em>data</em>, <em>wavelet_opt=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/linear.html#Wavelet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.linear.Wavelet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>Wavelet class</p>
-<p>This class defines the wavelet transform operators</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data array, normally an array of 2D images</p>
-</div></blockquote>
-<p><strong>wavelet_opt: str, optional</strong></p>
-<blockquote class="last">
-<div><p>Additional options for <cite>mr_transform</cite></p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="lib.linear.Wavelet.adj_op">
-<code class="descname">adj_op</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/linear.html#Wavelet.adj_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.linear.Wavelet.adj_op" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adjoint operator</p>
-<p>This method returns the input data convolved with the wavelet filters
-rotated by 180 degrees</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data array, a 3D of wavelet coefficients</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray wavelet convolved data</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="lib.linear.Wavelet.op">
-<code class="descname">op</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/linear.html#Wavelet.op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.linear.Wavelet.op" title="Permalink to this definition">¶</a></dt>
-<dd><p>Operator</p>
-<p>This method returns the input data convolved with the wavelet filters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data array, a 2D image</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray wavelet convolved data</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
+  <div class="section" id="lib-linear-module">
+<h1>lib.linear module<a class="headerlink" href="#lib-linear-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
+           </div>
+           <div class="articleComments">
+            
            </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="lib.noise.html" class="btn btn-neutral float-right" title="lib.noise module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="lib.noise.html" class="btn btn-neutral float-right" title="lib.noise module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="lib.gradient.html" class="btn btn-neutral" title="lib.gradient module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="lib.gradient.html" class="btn btn-neutral" title="lib.gradient module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -421,7 +243,8 @@ rotated by 180 degrees</p>
             VERSION:'3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

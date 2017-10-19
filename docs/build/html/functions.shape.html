@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="index.html"/>
         <link rel="up" title="functions package" href="functions.html"/>
         <link rel="next" title="functions.signal module" href="functions.signal.html"/>
@@ -42,6 +47,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -82,7 +88,10 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">sf_deconvolve</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="functions.html">functions package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="functions.html#submodules">Submodules</a><ul class="current">
@@ -97,7 +106,7 @@
 <li class="toctree-l4"><a class="reference internal" href="functions.log.html">functions.log module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="functions.matrix.html">functions.matrix module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="functions.np_adjust.html">functions.np_adjust module</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="">functions.shape module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">functions.shape module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="functions.signal.html">functions.signal module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="functions.stats.html">functions.stats module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="functions.string.html">functions.string module</a></li>
@@ -105,7 +114,7 @@
 <li class="toctree-l4"><a class="reference internal" href="functions.types.html">functions.types module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="functions.html#module-functions">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="functions.html#module-contents">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="lib.html">lib package</a></li>
@@ -124,8 +133,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">sf_deconvolve</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">sf_deconvolve</a>
+        
       </nav>
 
 
@@ -138,98 +149,63 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
           <li><a href="modules.html">sf_deconvolve</a> &raquo;</li>
-      
+        
           <li><a href="functions.html">functions package</a> &raquo;</li>
-      
-    <li>functions.shape module</li>
+        
+      <li>functions.shape module</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/functions.shape.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/functions.shape.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-functions.shape">
-<span id="functions-shape-module"></span><h1>functions.shape module<a class="headerlink" href="#module-functions.shape" title="Permalink to this headline">¶</a></h1>
-<p>SHAPE ESTIMATION ROUTINES</p>
-<p>This module contains methods and classes for estimating galaxy shapes.</p>
-<p class="rubric">Notes</p>
-<p>Some of the methods in this module are based on work by Fred Ngole.</p>
-<p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="c2013" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[C2013]</td><td>Cropper et al., Defining a Weak Lensing Experiment in Space, 2013,
-MNRAS, 431, 3103C. [<a class="reference external" href="https://arxiv.org/abs/1210.7691">https://arxiv.org/abs/1210.7691</a>]</td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="bm2007" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[BM2007]</td><td>Baker and Moallem, Iteratively weighted centroiding for
-Shack-Hartman wave-front sensors, 2007n, Optics Express, 15, 8, 5147.
-[<a class="reference external" href="https://www.osapublishing.org/oe/abstract.cfm?uri=oe-15-8-5147">https://www.osapublishing.org/oe/abstract.cfm?uri=oe-15-8-5147</a>]</td></tr>
-</tbody>
-</table>
-<dl class="class">
-<dt id="functions.shape.Ellipticity">
-<em class="property">class </em><code class="descclassname">functions.shape.</code><code class="descname">Ellipticity</code><span class="sig-paren">(</span><em>data</em>, <em>sigma</em>, <em>centroid=None</em>, <em>moments=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/functions/shape.html#Ellipticity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#functions.shape.Ellipticity" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="functions.shape.Ellipticity.get_centroid">
-<code class="descname">get_centroid</code><span class="sig-paren">(</span><em>n_iter=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/functions/shape.html#Ellipticity.get_centroid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#functions.shape.Ellipticity.get_centroid" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="functions.shape.Ellipticity.get_ellipse">
-<code class="descname">get_ellipse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/functions/shape.html#Ellipticity.get_ellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#functions.shape.Ellipticity.get_ellipse" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="functions.shape.Ellipticity.get_moments">
-<code class="descname">get_moments</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/functions/shape.html#Ellipticity.get_moments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#functions.shape.Ellipticity.get_moments" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="functions.shape.Ellipticity.update_centroid">
-<code class="descname">update_centroid</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/functions/shape.html#Ellipticity.update_centroid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#functions.shape.Ellipticity.update_centroid" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="functions.shape.Ellipticity.update_weights">
-<code class="descname">update_weights</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/functions/shape.html#Ellipticity.update_weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#functions.shape.Ellipticity.update_weights" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="functions.shape.Ellipticity.update_xy">
-<code class="descname">update_xy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/functions/shape.html#Ellipticity.update_xy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#functions.shape.Ellipticity.update_xy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+  <div class="section" id="functions-shape-module">
+<h1>functions.shape module<a class="headerlink" href="#functions-shape-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
+           </div>
+           <div class="articleComments">
+            
            </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="functions.signal.html" class="btn btn-neutral float-right" title="functions.signal module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="functions.signal.html" class="btn btn-neutral float-right" title="functions.signal module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="functions.np_adjust.html" class="btn btn-neutral" title="functions.np_adjust module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="functions.np_adjust.html" class="btn btn-neutral" title="functions.np_adjust module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -263,7 +239,8 @@ Shack-Hartman wave-front sensors, 2007n, Optics Express, 15, 8, 5147.
             VERSION:'3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

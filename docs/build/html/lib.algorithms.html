@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="index.html"/>
         <link rel="up" title="lib package" href="lib.html"/>
         <link rel="next" title="lib.convolve module" href="lib.convolve.html"/>
@@ -42,6 +47,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -82,12 +88,15 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">sf_deconvolve</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="functions.html">functions package</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="lib.html">lib package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="lib.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4 current"><a class="current reference internal" href="">lib.algorithms module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">lib.algorithms module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.convolve.html">lib.convolve module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.cost.html">lib.cost module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.deconvolve.html">lib.deconvolve module</a></li>
@@ -110,7 +119,7 @@
 <li class="toctree-l4"><a class="reference internal" href="lib.wavelet.html">lib.wavelet module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="lib.html#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.html#module-lib">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sf_deconvolve.html">sf_deconvolve module</a></li>
@@ -128,8 +137,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">sf_deconvolve</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">sf_deconvolve</a>
+        
       </nav>
 
 
@@ -142,23 +153,40 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
           <li><a href="modules.html">sf_deconvolve</a> &raquo;</li>
-      
+        
           <li><a href="lib.html">lib package</a> &raquo;</li>
-      
-    <li>lib.algorithms module</li>
+        
+      <li>lib.algorithms module</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/lib.algorithms.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/lib.algorithms.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -182,8 +210,8 @@
 </table>
 <dl class="class">
 <dt id="lib.algorithms.PowerMethod">
-<em class="property">class </em><code class="descclassname">lib.algorithms.</code><code class="descname">PowerMethod</code><span class="sig-paren">(</span><em>operator</em>, <em>data_shape</em>, <em>auto_run=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/algorithms.html#PowerMethod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.algorithms.PowerMethod" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<em class="property">class </em><code class="descclassname">lib.algorithms.</code><code class="descname">PowerMethod</code><span class="sig-paren">(</span><em>operator</em>, <em>data_shape</em>, <em>auto_run=True</em><span class="sig-paren">)</span><a class="headerlink" href="#lib.algorithms.PowerMethod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>Power method class</p>
 <p>This method performs implements power method to calculate the spectral
 radius of the input data</p>
@@ -191,40 +219,29 @@ radius of the input data</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>operator</strong> : class</p>
-<blockquote>
-<div><p>Operator class instance</p>
-</div></blockquote>
-<p><strong>data_shape</strong> : tuple</p>
-<blockquote>
-<div><p>Shape of the data array</p>
-</div></blockquote>
-<p><strong>auto_run</strong> : bool</p>
-<blockquote class="last">
-<div><p>Option to automatically calcualte the spectral radius upon
-initialisation</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>operator</strong> (<em>class</em>) &#8211; Operator class instance</li>
+<li><strong>data_shape</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; Shape of the data array</li>
+<li><strong>auto_run</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Option to automatically calcualte the spectral radius upon
+initialisation</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
 <dt id="lib.algorithms.PowerMethod.get_spec_rad">
-<code class="descname">get_spec_rad</code><span class="sig-paren">(</span><em>tolerance=1e-06</em>, <em>max_iter=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/algorithms.html#PowerMethod.get_spec_rad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.algorithms.PowerMethod.get_spec_rad" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_spec_rad</code><span class="sig-paren">(</span><em>tolerance=1e-06</em>, <em>max_iter=10</em><span class="sig-paren">)</span><a class="headerlink" href="#lib.algorithms.PowerMethod.get_spec_rad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get spectral radius</p>
 <p>This method calculates the spectral radius</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>tolerance</strong> : float, optional</p>
-<blockquote>
-<div><p>Tolerance threshold for convergence (default is &#8220;1e-6&#8221;)</p>
-</div></blockquote>
-<p><strong>max_iter</strong> : int, optional</p>
-<blockquote class="last">
-<div><p>Maximum number of iterations</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>tolerance</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Tolerance threshold for convergence (default is &#8220;1e-6&#8221;)</li>
+<li><strong>max_iter</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) &#8211; Maximum number of iterations</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -233,7 +250,7 @@ initialisation</p>
 
 <dl class="method">
 <dt id="lib.algorithms.PowerMethod.set_initial_x">
-<code class="descname">set_initial_x</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/algorithms.html#PowerMethod.set_initial_x"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.algorithms.PowerMethod.set_initial_x" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_initial_x</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lib.algorithms.PowerMethod.set_initial_x" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set initial value of x</p>
 <p>This method sets the initial value of x to an arrray of random values</p>
 </dd></dl>
@@ -244,15 +261,18 @@ initialisation</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="lib.convolve.html" class="btn btn-neutral float-right" title="lib.convolve module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="lib.convolve.html" class="btn btn-neutral float-right" title="lib.convolve module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="lib.html" class="btn btn-neutral" title="lib package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="lib.html" class="btn btn-neutral" title="lib package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -286,7 +306,8 @@ initialisation</p>
             VERSION:'3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

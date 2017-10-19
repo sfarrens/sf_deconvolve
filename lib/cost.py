@@ -1,60 +1,25 @@
 # -*- coding: utf-8 -*-
 
-"""COST FUNCTIONS
+"""COST FUNCTION
 
-This module contains classes of different cost functions for optimization.
+This module the class for the sf_deconvolveCost cost function.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 1.2
+:Version: 1.0
 
-:Date: 13/03/2017
+:Date: 24/07/2017
 
 """
 
 import numpy as np
-from functions.matrix import nuclear_norm
-from transform import cube2matrix
-from plotting import plotCost
+from sf_tools.math.matrix import nuclear_norm
+from sf_tools.base.transform import cube2matrix
 
 
-class costTest(object):
-    """Test cost function class
+class sf_deconvolveCost(object):
 
-    This class implements a simple l2 norm test
-
-    Parameters
-    ----------
-    y : np.ndarray
-        Input original data array
-    operator : class
-        Degredation operator class
-
-    """
-
-    def __init__(self, y, operator):
-
-        self.y = y
-        self.op = operator
-
-    def get_cost(self, x):
-        """Get cost function
-
-        This method returns the l2 norm error of the difference between the
-        original data and the data obtained after optimisation
-
-        Parameters
-        ----------
-        x : np.ndarray
-            Input optimised data array
-
-        """
-
-        return np.linalg.norm(self.y - self.op(x))
-
-
-class costFunction(object):
-    """Cost function class
+    """Cost function class for sf_deonvolve
 
     This class implements the cost function for deconvolution
 
@@ -68,65 +33,34 @@ class costFunction(object):
         Wavelet operator class ("sparse" mode only)
     weights : np.ndarray, optional
         Array of wavelet thresholding weights ("sparse" mode only)
-    lambda_reg : float, optional
+    lambda_lowr : float, optional
         Low-rank regularization parameter ("lowr" mode only)
+    lambda_psf : float, optional
+        PSF estimate regularization parameter ("psf_unknown" grad_type only)
     mode : str {'lowr', 'sparse'}, optional
         Deconvolution mode (default is "lowr")
     positivity : bool, optional
         Option to test positivity contraint (defult is "True")
-    tolerance : float, optional
-        Tolerance threshold for convergence (default is "1e-4")
-    window : int, optional
-        Iteration interval to test for convergence (default is "5")
-    print_cost : bool, optional
-        Option to print cost function value at each iteration (default is
-        "True")
-    residual : bool, optional
-        Option to calculate the residual (default is
-        "False")
-    output : str, optional
-        Output file name for cost function plot
+    verbose : bool
+        Option for verbose output (default is "True")
 
     """
 
-    def __init__(self, y, operator, wavelet=None, weights=None,
-                 lambda_reg=None, mode='lowr',
-                 positivity=True, tolerance=1e-4, window=1, print_cost=True,
-                 residual=False, output=None):
+    def __init__(self, y, grad, wavelet=None, weights=None, lambda_lowr=None,
+                 lambda_psf=1, mode='lowr', positivity=True, verbose=True):
 
         self.y = y
         self.op = operator
         self.wavelet = wavelet
-        self.lambda_reg = lambda_reg
+        self.weights = weights
+        self.lambda_lowr = lambda_lowr
+        self.lambda_psf = lambda_psf
         self.mode = mode
         self.positivity = positivity
-        self.update_weights(weights)
-        self.cost = 1e6
-        self.cost_list = []
-        self.tolerance = tolerance
-        self.print_cost = print_cost
-        self.residual = residual
-        self.iteration = 1
-        self.output = output
-        self.window = window
-        self.test_list = []
+        self.verbose = verbose
 
-    def update_weights(self, weights):
-        """Update weights
-
-        Update the values of the wavelet threshold weights ("sparse" mode only)
-
-        Parameters
-        ----------
-        weights : np.ndarray
-            Array of wavelet thresholding weights
-
-        """
-
-        self.weights = weights
-
-    def l2norm(self, x):
-        """Calculate l2 norm
+    def grad_comp(self, x):
+        """Calculate gradient component of the cost
 
         This method returns the l2 norm error of the difference between the
         original data and the data obtained after optimisation
@@ -138,19 +72,19 @@ class costFunction(object):
 
         Returns
         -------
-        float l2 norm value
+        float gradient cost component
 
         """
 
-        l2_norm = np.linalg.norm(self.y - self.op(x))
+        l2_norm = np.linalg.norm(self.y - self.grad.H_op(x))
 
-        if self.print_cost:
-            print ' - L2 NORM:', l2_norm
+        if self.verbose:
+            print ' - L2 NORM (Grad):', l2_norm
 
         return l2_norm
 
-    def l1norm(self, x):
-        """Calculate l1 norm
+    def sparse_comp(self, x):
+        """Calculate sparsity component of the cost
 
         This method returns the l1 norm error of the weighted wavelet
         coefficients
@@ -162,7 +96,7 @@ class costFunction(object):
 
         Returns
         -------
-        float l1 norm value
+        float sparsity cost component
 
         """
 
@@ -170,13 +104,13 @@ class costFunction(object):
 
         l1_norm = np.sum(np.abs(x))
 
-        if self.print_cost:
+        if self.verbose:
             print ' - L1 NORM:', l1_norm
 
         return l1_norm
 
-    def nucnorm(self, x):
-        """Calculate nuclear norm
+    def lowr_comp(self, x):
+        """Calculate low-rank component of the cost
 
         This method returns the nuclear norm error of the deconvolved data in
         matrix form
@@ -188,7 +122,7 @@ class costFunction(object):
 
         Returns
         -------
-        float nuclear norm value
+        float low-rank cost component
 
         """
 
@@ -196,73 +130,34 @@ class costFunction(object):
 
         nuc_norm = nuclear_norm(x_prime)
 
-        if self.print_cost:
+        if self.verbose:
             print ' - NUCLEAR NORM:', nuc_norm
 
-        return nuc_norm
+        return self.lambda_lowr * nuc_norm
 
-    def check_cost(self, x):
-        """Check cost function
+    def psf_comp(self):
+        """Calculate PSF estimation component of the cost
 
-        This method tests the cost function for convergence in the specified
-        interval of iterations
-
-        Parameters
-        ----------
-        x : np.ndarray
-            Deconvolved data array
+        This method returns the l2 norm error of the difference between the
+        initial PSF and the estimated PSF
 
         Returns
         -------
-        bool result of the convergence test
+        float PSF cost component
 
         """
 
-        if self.iteration % (4 * self.window):
+        l2_norm = np.linalg.norm(self.grad._psf - self.grad._psf0)
 
-            self.test_list.append(self.cost)
+        if self.verbose:
+            print ' - L2 NORM (PSF):', l2_norm
 
-            return False
+        return self.lambda_psf * l2_norm
 
-        else:
-
-            self.test_list.append(self.cost)
-
-            t1 = np.average(self.test_list[-4:-2], axis=0)
-            t2 = np.average(self.test_list[-2:], axis=0)
-            self.test_list = []
-
-            test = (np.linalg.norm(t1 - t2) / np.linalg.norm(t1))
-
-            if self.print_cost:
-                print ' - CONVERGENCE TEST:', test
-                print ''
-
-            return test <= self.tolerance
-
-    def check_residual(self, x):
-        """Check residual
-
-        This method calculates the residual between the deconvolution and the
-        observed data
-
-        Parameters
-        ----------
-        x : np.ndarray
-            Deconvolved data array
-
-        """
-
-        self.res = np.std(self.y - self.op(x)) / np.linalg.norm(self.y)
-
-        if self.print_cost:
-            print ' - STD RESIDUAL:', self.res
-
-    def get_cost(self, x):
+    def calc_cost(self, *args):
         """Get cost function
 
-        This method calculates the full cost function and checks the result for
-        convergence
+        This method calculates the cost
 
         Parameters
         ----------
@@ -271,58 +166,24 @@ class costFunction(object):
 
         Returns
         -------
-        bool result of the convergence test
+        float cost
 
         """
 
-        if self.iteration % self.window:
+        x = args[0]
 
-            test = False
+        if self.positivity and self.verbose:
+            print ' - MIN(X):', np.min(x)
 
-        else:
+        cost = 0.5 * self.grad_comp(x) ** 2
 
-            if self.print_cost:
-                print ' - ITERATION:', self.iteration
+        if self.mode in ('sparse', 'all'):
+            cost += self.sparse_comp(x)
 
-            self.cost_old = self.cost
+        elif self.mode in ('lowr', 'all'):
+            cost += self.lowr_comp(x)
 
-            if self.residual:
-                self.check_residual(x)
+        if self.grad.grad_type == 'psf_unknown':
+            cost += self.psf_comp()
 
-            if self.positivity and self.print_cost:
-                print ' - MIN(X):', np.min(x)
-
-            if self.mode == 'all':
-                self.cost = (0.5 * self.l2norm(x) ** 2 + self.l1norm(x) +
-                             self.nucnorm(x))
-
-            elif self.mode == 'sparse':
-                self.cost = 0.5 * self.l2norm(x) ** 2 + self.l1norm(x)
-
-            elif self.mode == 'lowr':
-                self.cost = (0.5 * self.l2norm(x) ** 2 + self.lambda_reg *
-                             self.nucnorm(x))
-
-            elif self.mode == 'grad':
-                self.cost = 0.5 * self.l2norm(x) ** 2
-
-            self.cost_list.append(self.cost)
-
-            if self.print_cost:
-                print ' - Log10 COST:', np.log10(self.cost)
-                print ''
-
-            test = self.check_cost(x)
-
-        self.iteration += 1
-
-        return test
-
-    def plot_cost(self):
-        """Plot cost function
-
-        This method plots the cost function as function of iteration number
-
-        """
-
-        plotCost(self.cost_list, self.output)
+        return cost

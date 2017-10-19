@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="index.html"/>
         <link rel="up" title="lib package" href="lib.html"/>
         <link rel="next" title="lib.deconvolve module" href="lib.deconvolve.html"/>
@@ -42,6 +47,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -82,14 +88,17 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">sf_deconvolve</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="functions.html">functions package</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="lib.html">lib package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="lib.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="lib.algorithms.html">lib.algorithms module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.convolve.html">lib.convolve module</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="">lib.cost module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">lib.cost module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.deconvolve.html">lib.deconvolve module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.directional.html">lib.directional module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.file_io.html">lib.file_io module</a></li>
@@ -110,7 +119,7 @@
 <li class="toctree-l4"><a class="reference internal" href="lib.wavelet.html">lib.wavelet module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="lib.html#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.html#module-lib">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sf_deconvolve.html">sf_deconvolve module</a></li>
@@ -128,8 +137,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">sf_deconvolve</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">sf_deconvolve</a>
+        
       </nav>
 
 
@@ -142,23 +153,40 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
           <li><a href="modules.html">sf_deconvolve</a> &raquo;</li>
-      
+        
           <li><a href="lib.html">lib package</a> &raquo;</li>
-      
-    <li>lib.cost module</li>
+        
+      <li>lib.cost module</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/lib.cost.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/lib.cost.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -166,284 +194,137 @@
             
   <div class="section" id="module-lib.cost">
 <span id="lib-cost-module"></span><h1>lib.cost module<a class="headerlink" href="#module-lib.cost" title="Permalink to this headline">¶</a></h1>
-<p>COST FUNCTIONS</p>
-<p>This module contains classes of different cost functions for optimization.</p>
+<p>COST FUNCTION</p>
+<p>This module the class for the sf_deconvolveCost cost function.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Samuel Farrens &lt;<a class="reference external" href="mailto:samuel&#46;farrens&#37;&#52;&#48;gmail&#46;com">samuel<span>&#46;</span>farrens<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Version:</th><td class="field-body">1.2</td>
+<tr class="field-even field"><th class="field-name">Version:</th><td class="field-body">1.0</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">13/03/2017</td>
+<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">24/07/2017</td>
 </tr>
 </tbody>
 </table>
 <dl class="class">
-<dt id="lib.cost.costFunction">
-<em class="property">class </em><code class="descclassname">lib.cost.</code><code class="descname">costFunction</code><span class="sig-paren">(</span><em>y</em>, <em>grad</em>, <em>wavelet=None</em>, <em>weights=None</em>, <em>lambda_reg=None</em>, <em>mode='lowr'</em>, <em>positivity=True</em>, <em>tolerance=0.0001</em>, <em>window=1</em>, <em>print_cost=True</em>, <em>residual=False</em>, <em>output=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/cost.html#costFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.cost.costFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>Cost function class</p>
+<dt id="lib.cost.sf_deconvolveCost">
+<em class="property">class </em><code class="descclassname">lib.cost.</code><code class="descname">sf_deconvolveCost</code><span class="sig-paren">(</span><em>y</em>, <em>grad</em>, <em>wavelet=None</em>, <em>weights=None</em>, <em>lambda_lowr=None</em>, <em>lambda_psf=1</em>, <em>mode='lowr'</em>, <em>positivity=True</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/cost.html#sf_deconvolveCost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.cost.sf_deconvolveCost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Cost function class for sf_deonvolve</p>
 <p>This class implements the cost function for deconvolution</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>y</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input original data array</p>
-</div></blockquote>
-<p><strong>grad</strong> : class</p>
-<blockquote>
-<div><p>Gradient operator class</p>
-</div></blockquote>
-<p><strong>wavelet</strong> : class, optional</p>
-<blockquote>
-<div><p>Wavelet operator class (&#8220;sparse&#8221; mode only)</p>
-</div></blockquote>
-<p><strong>weights</strong> : np.ndarray, optional</p>
-<blockquote>
-<div><p>Array of wavelet thresholding weights (&#8220;sparse&#8221; mode only)</p>
-</div></blockquote>
-<p><strong>lambda_reg</strong> : float, optional</p>
-<blockquote>
-<div><p>Low-rank regularization parameter (&#8220;lowr&#8221; mode only)</p>
-</div></blockquote>
-<p><strong>mode</strong> : str {&#8216;lowr&#8217;, &#8216;sparse&#8217;}, optional</p>
-<blockquote>
-<div><p>Deconvolution mode (default is &#8220;lowr&#8221;)</p>
-</div></blockquote>
-<p><strong>positivity</strong> : bool, optional</p>
-<blockquote>
-<div><p>Option to test positivity contraint (defult is &#8220;True&#8221;)</p>
-</div></blockquote>
-<p><strong>tolerance</strong> : float, optional</p>
-<blockquote>
-<div><p>Tolerance threshold for convergence (default is &#8220;1e-4&#8221;)</p>
-</div></blockquote>
-<p><strong>window</strong> : int, optional</p>
-<blockquote>
-<div><p>Iteration interval to test for convergence (default is &#8220;5&#8221;)</p>
-</div></blockquote>
-<p><strong>print_cost</strong> : bool, optional</p>
-<blockquote>
-<div><p>Option to print cost function value at each iteration (default is
-&#8220;True&#8221;)</p>
-</div></blockquote>
-<p><strong>residual</strong> : bool, optional</p>
-<blockquote>
-<div><p>Option to calculate the residual (default is
-&#8220;False&#8221;)</p>
-</div></blockquote>
-<p><strong>output</strong> : str, optional</p>
-<blockquote class="last">
-<div><p>Output file name for cost function plot</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>y</strong> (<em>np.ndarray</em>) &#8211; Input original data array</li>
+<li><strong>grad</strong> (<em>class</em>) &#8211; Gradient operator class</li>
+<li><strong>wavelet</strong> (<em>class</em><em>, </em><em>optional</em>) &#8211; Wavelet operator class (&#8220;sparse&#8221; mode only)</li>
+<li><strong>weights</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) &#8211; Array of wavelet thresholding weights (&#8220;sparse&#8221; mode only)</li>
+<li><strong>lambda_lowr</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; Low-rank regularization parameter (&#8220;lowr&#8221; mode only)</li>
+<li><strong>lambda_psf</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) &#8211; PSF estimate regularization parameter (&#8220;psf_unknown&#8221; grad_type only)</li>
+<li><strong>mode</strong> (<em>str {'lowr'</em><em>, </em><em>'sparse'}</em><em>, </em><em>optional</em>) &#8211; Deconvolution mode (default is &#8220;lowr&#8221;)</li>
+<li><strong>positivity</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) &#8211; Option to test positivity contraint (defult is &#8220;True&#8221;)</li>
+<li><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Option for verbose output (default is &#8220;True&#8221;)</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="lib.cost.costFunction.check_cost">
-<code class="descname">check_cost</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/cost.html#costFunction.check_cost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.cost.costFunction.check_cost" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check cost function</p>
-<p>This method tests the cost function for convergence in the specified
-interval of iterations</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Deconvolved data array</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool result of the convergence test</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="lib.cost.costFunction.check_residual">
-<code class="descname">check_residual</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/cost.html#costFunction.check_residual"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.cost.costFunction.check_residual" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check residual</p>
-<p>This method calculates the residual between the deconvolution and the
-observed data</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : np.ndarray</p>
-<blockquote class="last">
-<div><p>Deconvolved data array</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="lib.cost.costFunction.get_cost">
-<code class="descname">get_cost</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/cost.html#costFunction.get_cost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.cost.costFunction.get_cost" title="Permalink to this definition">¶</a></dt>
+<dt id="lib.cost.sf_deconvolveCost.calc_cost">
+<code class="descname">calc_cost</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/cost.html#sf_deconvolveCost.calc_cost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.cost.sf_deconvolveCost.calc_cost" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get cost function</p>
-<p>This method calculates the full cost function and checks the result for
-convergence</p>
+<p>This method calculates the cost</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Deconvolved data array</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>np.ndarray</em>) &#8211; Deconvolved data array</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool result of the convergence test</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float cost</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="lib.cost.costFunction.l1norm">
-<code class="descname">l1norm</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/cost.html#costFunction.l1norm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.cost.costFunction.l1norm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate l1 norm</p>
-<p>This method returns the l1 norm error of the weighted wavelet
-coefficients</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Deconvolved data array</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">float l1 norm value</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="lib.cost.costFunction.l2norm">
-<code class="descname">l2norm</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/cost.html#costFunction.l2norm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.cost.costFunction.l2norm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate l2 norm</p>
+<dt id="lib.cost.sf_deconvolveCost.grad_comp">
+<code class="descname">grad_comp</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/cost.html#sf_deconvolveCost.grad_comp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.cost.sf_deconvolveCost.grad_comp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate gradient component of the cost</p>
 <p>This method returns the l2 norm error of the difference between the
 original data and the data obtained after optimisation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Deconvolved data array</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>np.ndarray</em>) &#8211; Deconvolved data array</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">float l2 norm value</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float gradient cost component</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="lib.cost.costFunction.nucnorm">
-<code class="descname">nucnorm</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/cost.html#costFunction.nucnorm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.cost.costFunction.nucnorm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate nuclear norm</p>
+<dt id="lib.cost.sf_deconvolveCost.lowr_comp">
+<code class="descname">lowr_comp</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/cost.html#sf_deconvolveCost.lowr_comp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.cost.sf_deconvolveCost.lowr_comp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate low-rank component of the cost</p>
 <p>This method returns the nuclear norm error of the deconvolved data in
 matrix form</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Deconvolved data array</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>np.ndarray</em>) &#8211; Deconvolved data array</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">float nuclear norm value</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float low-rank cost component</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="lib.cost.costFunction.plot_cost">
-<code class="descname">plot_cost</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/cost.html#costFunction.plot_cost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.cost.costFunction.plot_cost" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot cost function</p>
-<p>This method plots the cost function as function of iteration number</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="lib.cost.costFunction.update_weights">
-<code class="descname">update_weights</code><span class="sig-paren">(</span><em>weights</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/cost.html#costFunction.update_weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.cost.costFunction.update_weights" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update weights</p>
-<p>Update the values of the wavelet threshold weights (&#8220;sparse&#8221; mode only)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>weights</strong> : np.ndarray</p>
-<blockquote class="last">
-<div><p>Array of wavelet thresholding weights</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="lib.cost.costTest">
-<em class="property">class </em><code class="descclassname">lib.cost.</code><code class="descname">costTest</code><span class="sig-paren">(</span><em>y</em>, <em>operator</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/cost.html#costTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.cost.costTest" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>Test cost function class</p>
-<p>This class implements a simple l2 norm test</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>y</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input original data array</p>
-</div></blockquote>
-<p><strong>operator</strong> : class</p>
-<blockquote class="last">
-<div><p>Degredation operator class</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="lib.cost.costTest.get_cost">
-<code class="descname">get_cost</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/cost.html#costTest.get_cost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.cost.costTest.get_cost" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get cost function</p>
+<dt id="lib.cost.sf_deconvolveCost.psf_comp">
+<code class="descname">psf_comp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/cost.html#sf_deconvolveCost.psf_comp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.cost.sf_deconvolveCost.psf_comp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate PSF estimation component of the cost</p>
 <p>This method returns the l2 norm error of the difference between the
-original data and the data obtained after optimisation</p>
+initial PSF and the estimated PSF</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : np.ndarray</p>
-<blockquote class="last">
-<div><p>Input optimised data array</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float PSF cost component</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lib.cost.sf_deconvolveCost.sparse_comp">
+<code class="descname">sparse_comp</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/cost.html#sf_deconvolveCost.sparse_comp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.cost.sf_deconvolveCost.sparse_comp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate sparsity component of the cost</p>
+<p>This method returns the l1 norm error of the weighted wavelet
+coefficients</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>np.ndarray</em>) &#8211; Deconvolved data array</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float sparsity cost component</td>
 </tr>
 </tbody>
 </table>
@@ -455,15 +336,18 @@ original data and the data obtained after optimisation</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="lib.deconvolve.html" class="btn btn-neutral float-right" title="lib.deconvolve module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="lib.deconvolve.html" class="btn btn-neutral float-right" title="lib.deconvolve module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="lib.convolve.html" class="btn btn-neutral" title="lib.convolve module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="lib.convolve.html" class="btn btn-neutral" title="lib.convolve module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -497,7 +381,8 @@ original data and the data obtained after optimisation</p>
             VERSION:'3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
