@@ -33,16 +33,16 @@ The directory ``lib`` contains all of the primary functions and classes used for
 
 In order to run the code in this repository the following packages must be installed:
 
-* **[Python 2.7](https://www.python.org/download/releases/2.7/)</a>**
-[Tested with v 2.7.11]
+* **[Python](https://www.python.org/)</a>**
+[Tested with v 2.7.11 and 3.6.3]
 
-* **[Numpy](http://www.numpy.org/)** [Tested with v 1.11.3]
+* **[Numpy](http://www.numpy.org/)** [Tested with v 1.13.3]
 
 * **[Scipy](http://www.scipy.org/)** [Tested with v 0.18.1]
 
-* **[Astropy](http://www.astropy.org/)** [Tested with v 1.1.2]
+* **[Astropy](http://www.astropy.org/)** [Tested with v 1.3]
 
-* **[Matplotlib](http://matplotlib.org/)** [Tested with v 1.5.3]
+* **[Matplotlib](http://matplotlib.org/)** [Tested with v 2.0.2]
 
 * **[Termcolor](https://pypi.python.org/pypi/termcolor)** [Tested with v 1.1.0]
 
