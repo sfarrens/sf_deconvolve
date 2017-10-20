@@ -117,7 +117,7 @@ The following example can be run on the sample data provided in the ``example`` 
 This example takes a sample of 100 galaxy images (with PSF effects and added noise) and the corresponding PSFs, and recovers the original images using low-rank approximation via Condat-Vu optimisation.
 
 ```bash
-$ sf_deconvolve.py -i example_image_stack.npy -p example_psf.npy -o example_output --mode lowr
+$ sf_deconvolve.py -i example_image_stack.npy -p example_psfs.npy -o example_output --mode lowr
 ```
 
 The example can also be run using the configuration file provided.

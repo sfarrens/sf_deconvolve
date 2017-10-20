@@ -8,9 +8,9 @@ observed galaxy images.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 3.5
+:Version: 4.1
 
-:Date: 14/03/2017
+:Date: 20/10/2017
 
 Notes
 -----
@@ -18,6 +18,7 @@ This code implements equations 8 and 17 from [F2017]_.
 
 """
 
+from __future__ import print_function
 import numpy as np
 from os.path import splitext
 from lib.args import get_opts
@@ -81,14 +82,14 @@ def run_script(log):
     """
 
     h_line = ' ' + '-' * 70
-    print h_line
+    print(h_line)
 
     # Begin log
     output_text = ' Running SF_DECONVOLVE'
-    print output_text
+    print(output_text)
     log.info(output_text)
 
-    print h_line
+    print(h_line)
 
     ###########################################################################
     # Read the input data files
@@ -98,24 +99,24 @@ def run_script(log):
     ###########################################################################
 
     # Log input options
-    print ' - Input File:', opts.input
-    print ' - PSF File:', opts.psf_file
+    print(' - Input File:', opts.input)
+    print(' - PSF File:', opts.psf_file)
     log.info(' - Input File: ' + opts.input)
     log.info(' - PSF File: ' + opts.psf_file)
     if not isinstance(opts.current_res, type(None)):
-        print ' - Current Results:', opts.current_res
+        print(' - Current Results:', opts.current_res)
         log.info(' - Current Results: ' + opts.current_res)
 
     # Log set-up options
-    print ' - Mode:', opts.mode
-    print ' - PSF Type:', opts.psf_type
-    print ' - Gradient Type: ', opts.grad_type
-    print ' - Optimisation:', opts.opt_type
-    print ' - Positivity:', not opts.no_pos
-    print ' - Number of Reweightings:', opts.n_reweights
-    print ' - Number of Iterations:', opts.n_iter
-    print ' - Cost Function Window:', opts.cost_window
-    print ' - Convergence Tolerance:', opts.convergence
+    print(' - Mode:', opts.mode)
+    print(' - PSF Type:', opts.psf_type)
+    print(' - Gradient Type: ', opts.grad_type)
+    print(' - Optimisation:', opts.opt_type)
+    print(' - Positivity:', not opts.no_pos)
+    print(' - Number of Reweightings:', opts.n_reweights)
+    print(' - Number of Iterations:', opts.n_iter)
+    print(' - Cost Function Window:', opts.cost_window)
+    print(' - Convergence Tolerance:', opts.convergence)
     log.info(' - Mode: ' + opts.mode)
     log.info(' - PSF Type: ' + opts.psf_type)
     log.info(' - Gradient Type: ' + opts.grad_type)
@@ -128,17 +129,17 @@ def run_script(log):
 
     # Log sparsity options
     if opts.mode in ('all', 'sparse'):
-        print ' - Wavelet Type:', opts.wavelet_type
-        print ' - Wavelet Threshold Factor:', opts.wave_thresh_factor
+        print(' - Wavelet Type:', opts.wavelet_type)
+        print(' - Wavelet Threshold Factor:', opts.wave_thresh_factor)
         log.info(' - Wavelet Type: ' + str(opts.wavelet_type))
         log.info(' - Wavelet Threshold Factor: ' +
                  str(opts.wave_thresh_factor))
 
     # Log low-rank options
     if opts.mode in ('all', 'lowr'):
-        print ' - Low Rank Threshold Factor:', opts.lowr_thresh_factor
-        print ' - Low Rank Threshold Type:', opts.lowr_thresh_type
-        print ' - Low Rank Type:', opts.lowr_type
+        print(' - Low Rank Threshold Factor:', opts.lowr_thresh_factor)
+        print(' - Low Rank Threshold Type:', opts.lowr_thresh_type)
+        print(' - Low Rank Type:', opts.lowr_type)
         log.info(' - Low Rank Threshold Factor: ' +
                  str(opts.lowr_thresh_factor))
         log.info(' - Low Rank Threshold Type: ' + str(opts.lowr_thresh_type))
@@ -146,18 +147,18 @@ def run_script(log):
 
     # Log PSF estimation options
     if opts.grad_type == 'psf_unknown':
-        print ' - PSF Estimation Control Parameter (Lambda):', opts.lambda_psf
-        print ' - PSF Estimation Gradient Step Size (Beta):', opts.beta_psf
+        print(' - PSF Estimation Control Parameter (Lambda):', opts.lambda_psf)
+        print(' - PSF Estimation Gradient Step Size (Beta):', opts.beta_psf)
         log.info(' - PSF Estimation Lambda: ' + str(opts.lambda_psf))
         log.info(' - PSF Estimation Beta: ' + str(opts.beta_psf))
 
     # Log PSF estimation options
     if opts.grad_type == 'shape':
-        print ' - Shape Constraint Control Parameter (Lambda):', \
-               opts.lambda_shape
+        print(' - Shape Constraint Control Parameter (Lambda):',
+              opts.lambda_shape)
         log.info(' - Shape Constraint Lambda: ' + str(opts.lambda_shape))
 
-    print h_line
+    print(h_line)
 
     ###########################################################################
     # Perform deconvolution.
@@ -166,7 +167,7 @@ def run_script(log):
 
     if not isinstance(opts.clean_data, type(None)):
 
-        print h_line
+        print(h_line)
 
         #######################################################################
         # Test the deconvolution
@@ -176,20 +177,20 @@ def run_script(log):
         #######################################################################
 
         # Log testing options
-        print ' - Clean Data:', opts.clean_data
-        print ' - Random Seed:', opts.random_seed
+        print(' - Clean Data:', opts.clean_data)
+        print(' - Random Seed:', opts.random_seed)
         log.info(' - Clean Data: ' + opts.clean_data)
         log.info(' - Random Seed: ' + str(opts.random_seed))
 
         # Log kernel options
         if not isinstance(opts.kernel, type(None)):
-            print ' - Gaussian Kernel:', opts.kernel
+            print(' - Gaussian Kernel:', opts.kernel)
             log.info(' - Gaussian Kernel: ' + str(opts.kernel))
 
         # Log test results
-        print ' - Galaxy Pixel Error:', image_errors[0]
-        print ' - Galaxy Shape Error:', image_errors[1]
-        print ' - Galaxy PSNR:', image_errors[2]
+        print(' - Galaxy Pixel Error:', image_errors[0])
+        print(' - Galaxy Shape Error:', image_errors[1])
+        print(' - Galaxy PSNR:', image_errors[2])
         log.info(' - Galaxy Pixel Error: ' + str(image_errors[0]))
         log.info(' - Galaxy Shape Error: ' + str(image_errors[1]))
         log.info(' - Galaxy PSNR: ' + str(image_errors[2]))
@@ -203,21 +204,21 @@ def run_script(log):
                                          opts.kernel, opts.metric)
         ###################################################################
 
-        print ''
+        print('')
 
         # Log testing options
-        print ' - True PSFs:', opts.true_psf
+        print(' - True PSFs:', opts.true_psf)
         log.info(' - True PSFs: ' + opts.true_psf)
 
         # Log test results
-        print ' - PSF Pixel Error:', psf_errors[0]
-        print ' - PSF Shape Error:', psf_errors[1]
-        print ' - PSF PSNR:', psf_errors[2]
+        print(' - PSF Pixel Error:', psf_errors[0])
+        print(' - PSF Shape Error:', psf_errors[1])
+        print(' - PSF PSNR:', psf_errors[2])
         log.info(' - PSF Pixel Error: ' + str(psf_errors[0]))
         log.info(' - PSF Shape Error: ' + str(psf_errors[1]))
         log.info(' - PSF PSNR: ' + str(psf_errors[2]))
 
-    print h_line
+    print(h_line)
 
     ###########################################################################
     # Save outputs to numpy binary files
@@ -226,18 +227,18 @@ def run_script(log):
     ###########################################################################
 
     # Log output options
-    print (' Output 1 saved to: ' + opts.output + '_primal' + '.' +
-           opts.output_format)
+    print(' Output 1 saved to: ' + opts.output + '_primal' + '.' +
+          opts.output_format)
     log.info('Output 1 saved to: ' + opts.output + '_primal' + '.' +
              opts.output_format)
     if opts.opt_type == 'condat':
-        print (' Output 2 saved to: ' + opts.output + '_dual' + '.' +
-               opts.output_format)
+        print(' Output 2 saved to: ' + opts.output + '_dual' + '.' +
+              opts.output_format)
         log.info('Output 2 saved to: ' + opts.output + '_dual' + '.' +
                  opts.output_format)
     if opts.grad_type == 'psf_unknown':
-        print (' Output 3 saved to: ' + opts.output + '_psf' + '.' +
-               opts.output_format)
+        print(' Output 3 saved to: ' + opts.output + '_psf' + '.' +
+              opts.output_format)
         log.info('Output 3 saved to: ' + opts.output + '_psf' + '.' +
                  opts.output_format)
 
@@ -246,7 +247,7 @@ def run_script(log):
     log.info('')
     close_log(log)
 
-    print h_line
+    print(h_line)
 
 
 def main():
@@ -258,7 +259,7 @@ def main():
         log = set_up_log(opts.output)
         run_script(log)
 
-    except Exception, err:
+    except Exception as err:
         catch_error(err, log)
         return 1
 

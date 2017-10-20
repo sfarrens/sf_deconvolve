@@ -6,12 +6,14 @@ This module deconvolves a set of galaxy images with a known object-variant PSF.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 6.0
+:Version: 6.1
 
-:Date: 10/03/2017
+:Date: 20/10/2017
 
 """
 
+from __future__ import print_function
+from builtins import range, zip
 from scipy.linalg import norm
 from sf_tools.signal.optimisation import *
 from sf_tools.math.stats import sigma_mad
@@ -46,7 +48,7 @@ def set_noise(data, **kwargs):
     if isinstance(kwargs['noise_est'], type(None)):
         kwargs['noise_est'] = sigma_mad(data)
 
-    print ' - Noise Estimate:', kwargs['noise_est']
+    print(' - Noise Estimate:', kwargs['noise_est'])
     kwargs['log'].info(' - Noise Estimate: ' + str(kwargs['noise_est']))
 
     return kwargs
@@ -89,7 +91,7 @@ def set_grad_op(data, psf, **kwargs):
     elif kwargs['grad_type'] == 'none':
         kwargs['grad_op'] = GradNone(data, psf, psf_type=kwargs['psf_type'])
 
-    print ' - Spectral Radius:', kwargs['grad_op'].spec_rad
+    print(' - Spectral Radius:', kwargs['grad_op'].spec_rad)
     kwargs['log'].info(' - Spectral Radius: ' +
                        str(kwargs['grad_op'].spec_rad))
 
@@ -172,7 +174,7 @@ def set_sparse_weights(data_shape, psf, **kwargs):
                                 kwargs['wave_thresh_factor'])])
 
         filter_norm = np.array([filter_norm for i in
-                                xrange(data_shape[0])])
+                                range(data_shape[0])])
 
     else:
 
@@ -220,9 +222,9 @@ def set_condat_param(**kwargs):
     if isinstance(kwargs['condat_sigma'], type(None)):
         kwargs['condat_sigma'] = get_sig_tau()
 
-    print ' - tau:', kwargs['condat_tau']
-    print ' - sigma:', kwargs['condat_sigma']
-    print ' - rho:', kwargs['relax']
+    print(' - tau:', kwargs['condat_tau'])
+    print(' - sigma:', kwargs['condat_sigma'])
+    print(' - rho:', kwargs['relax'])
     kwargs['log'].info(' - tau: ' + str(kwargs['condat_tau']))
     kwargs['log'].info(' - sigma: ' + str(kwargs['condat_sigma']))
     kwargs['log'].info(' - rho: ' + str(kwargs['relax']))
@@ -232,7 +234,7 @@ def set_condat_param(**kwargs):
                     kwargs['linear_l1norm'] ** 2 >=
                     kwargs['grad_op'].spec_rad / 2.0)
 
-    print ' - 1/tau - sigma||L||^2 >= beta/2:', sig_tau_test
+    print(' - 1/tau - sigma||L||^2 >= beta/2:', sig_tau_test)
     kwargs['log'].info(' - 1/tau - sigma||L||^2 >= beta/2: ' +
                        str(sig_tau_test))
 
@@ -289,7 +291,7 @@ def set_lowr_thresh(data_shape, **kwargs):
     elif kwargs['lowr_type'] == 'ngole':
         kwargs['lambda'] = (kwargs['lowr_thresh_factor'] * kwargs['noise_est'])
 
-    print ' - lambda:', kwargs['lambda']
+    print(' - lambda:', kwargs['lambda'])
     kwargs['log'].info(' - lambda: ' + str(kwargs['lambda']))
 
     return kwargs
@@ -327,9 +329,9 @@ def set_primal_dual(data_shape, **kwargs):
     elif kwargs['mode'] == 'sparse':
         kwargs['dual'] = np.ones(kwargs['dual_shape'])
 
-    print ' - Primal Variable Shape:', kwargs['primal'].shape
-    print ' - Dual Variable Shape:', kwargs['dual'].shape
-    print ' ' + '-' * 70
+    print(' - Primal Variable Shape:', kwargs['primal'].shape)
+    print(' - Dual Variable Shape:', kwargs['dual'].shape)
+    print(' ' + '-' * 70)
     kwargs['log'].info(' - Primal Variable Shape: ' +
                        str(kwargs['primal'].shape))
     kwargs['log'].info(' - Dual Variable Shape: ' +
@@ -474,10 +476,10 @@ def perform_reweighting(**kwargs):
     """
 
     # Loop through number of reweightings
-    for i in xrange(kwargs['n_reweights']):
+    for i in range(kwargs['n_reweights']):
 
-        print ' - REWEIGHT:', i + 1
-        print ''
+        print(' - REWEIGHT:', i + 1)
+        print('')
 
         # Generate the new weights following reweighting persctiption
         kwargs['reweight'].reweight(kwargs['linear_op'].op(
@@ -486,7 +488,7 @@ def perform_reweighting(**kwargs):
         # Perform optimisation with new weights
         kwargs['optimisation'].iterate(max_iter=kwargs['n_iter'])
 
-        print ''
+        print('')
 
 
 def run(data, psf, **kwargs):

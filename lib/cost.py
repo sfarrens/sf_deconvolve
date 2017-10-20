@@ -6,12 +6,13 @@ This module the class for the sf_deconvolveCost cost function.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 1.0
+:Version: 1.1
 
-:Date: 24/07/2017
+:Date: 20/10/2017
 
 """
 
+from __future__ import print_function
 import numpy as np
 from sf_tools.math.matrix import nuclear_norm
 from sf_tools.base.transform import cube2matrix
@@ -79,7 +80,7 @@ class sf_deconvolveCost(object):
         l2_norm = np.linalg.norm(self.y - self.grad.H_op(x))
 
         if self.verbose:
-            print ' - L2 NORM (Grad):', l2_norm
+            print(' - L2 NORM (Grad):', l2_norm)
 
         return l2_norm
 
@@ -105,7 +106,7 @@ class sf_deconvolveCost(object):
         l1_norm = np.sum(np.abs(x))
 
         if self.verbose:
-            print ' - L1 NORM:', l1_norm
+            print(' - L1 NORM:', l1_norm)
 
         return l1_norm
 
@@ -131,7 +132,7 @@ class sf_deconvolveCost(object):
         nuc_norm = nuclear_norm(x_prime)
 
         if self.verbose:
-            print ' - NUCLEAR NORM:', nuc_norm
+            print(' - NUCLEAR NORM:', nuc_norm)
 
         return self.lambda_lowr * nuc_norm
 
@@ -150,7 +151,7 @@ class sf_deconvolveCost(object):
         l2_norm = np.linalg.norm(self.grad._psf - self.grad._psf0)
 
         if self.verbose:
-            print ' - L2 NORM (PSF):', l2_norm
+            print(' - L2 NORM (PSF):', l2_norm)
 
         return self.lambda_psf * l2_norm
 
@@ -173,7 +174,7 @@ class sf_deconvolveCost(object):
         x = args[0]
 
         if self.positivity and self.verbose:
-            print ' - MIN(X):', np.min(x)
+            print(' - MIN(X):', np.min(x))
 
         cost = 0.5 * self.grad_comp(x) ** 2
 
