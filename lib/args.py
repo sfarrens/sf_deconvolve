@@ -6,9 +6,9 @@ This module sets the arguments for sf_deconvolve.py.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 2.1
+:Version: 2.2
 
-:Date: 14/03/2017
+:Date: 20/10/2017
 
 """
 
@@ -90,7 +90,7 @@ def get_opts():
                           help='show this help message and exit')
 
     optional.add_argument('-v', '--version', action='version',
-                          version='%(prog)s v3.2')
+                          version='%(prog)s v4.1')
 
     optional.add_argument('-q', '--quiet', action='store_true',
                           help='Suppress verbose.')
