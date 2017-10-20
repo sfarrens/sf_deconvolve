@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
@@ -40,6 +45,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -80,7 +86,10 @@
           
             
             
-                <ul>
+              
+            
+            
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">sf_deconvolve</a></li>
 </ul>
 
@@ -94,8 +103,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../index.html">sf_deconvolve</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">sf_deconvolve</a>
+        
       </nav>
 
 
@@ -108,19 +119,36 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      
-    <li>lib.gradient</li>
+        
+      <li>lib.gradient</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
+            
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -131,85 +159,320 @@
 
 <span class="sd">&quot;&quot;&quot;GRADIENT CLASSES</span>
 
-<span class="sd">This module contains classses for defining algorithm gradients.</span>
-<span class="sd">Based on work by Yinghao Ge and Fred Ngole.</span>
+<span class="sd">This module contains classses for defining PSF deconvolution specific</span>
+<span class="sd">gradients.</span>
 
 <span class="sd">:Author: Samuel Farrens &lt;samuel.farrens@gmail.com&gt;</span>
 
-<span class="sd">:Version: 1.2</span>
+<span class="sd">:Version: 1.0</span>
 
-<span class="sd">:Date: 04/01/2017</span>
+<span class="sd">:Date: 19/07/2017</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">algorithms</span> <span class="kn">import</span> <span class="n">PowerMethod</span>
-<span class="kn">from</span> <span class="nn">convolve</span> <span class="kn">import</span> <span class="n">psf_convolve</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sf_tools.signal.gradient</span> <span class="k">import</span> <span class="n">GradBasic</span>
+<span class="kn">from</span> <span class="nn">sf_tools.math.matrix</span> <span class="k">import</span> <span class="n">PowerMethod</span>
+<span class="kn">from</span> <span class="nn">sf_tools.base.transform</span> <span class="k">import</span> <span class="n">cube2matrix</span><span class="p">,</span> <span class="n">matrix2cube</span>
+<span class="kn">from</span> <span class="nn">sf_tools.image.convolve</span> <span class="k">import</span> <span class="n">psf_convolve</span><span class="p">,</span> <span class="n">convolve_stack</span>
+<span class="kn">from</span> <span class="nn">sf_tools.image.shape</span> <span class="k">import</span> <span class="n">shape_project</span>
 
 
-<div class="viewcode-block" id="GradBasic"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradBasic">[docs]</a><span class="k">class</span> <span class="nc">GradBasic</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Basic gradient class</span>
+<div class="viewcode-block" id="GradPSF"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradPSF">[docs]</a><span class="k">class</span> <span class="nc">GradPSF</span><span class="p">(</span><span class="n">PowerMethod</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gradient class for PSF convolution</span>
 
-<span class="sd">    This class defines the basic methods that will be inherited by specific</span>
-<span class="sd">    gradient classes</span>
+<span class="sd">    This class defines the operators for a fixed or object variant PSF</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : np.ndarray</span>
+<span class="sd">        Input data array, an array of 2D observed images (i.e. with noise)</span>
+<span class="sd">    psf : np.ndarray</span>
+<span class="sd">        PSF, a single 2D PSF or an array of 2D PSFs</span>
+<span class="sd">    psf_type : str {&#39;fixed&#39;, &#39;obj_var&#39;}</span>
+<span class="sd">        PSF type (defualt is &#39;fixed&#39;)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The properties of `PowerMethod` are inherited in this class</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="GradBasic.MtMX"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradBasic.MtMX">[docs]</a>    <span class="k">def</span> <span class="nf">MtMX</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;M^T M X</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">psf_type</span><span class="o">=</span><span class="s1">&#39;fixed&#39;</span><span class="p">):</span>
 
-<span class="sd">        This method calculates the action of the transpose of the matrix M on</span>
-<span class="sd">        the action of the matrix M on the data X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_psf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">psf</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_psf_type</span> <span class="o">=</span> <span class="n">psf_type</span>
+
+        <span class="n">PowerMethod</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ht_op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H_op</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GradPSF.H_op"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradPSF.H_op">[docs]</a>    <span class="k">def</span> <span class="nf">H_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;H matrix operation</span>
+
+<span class="sd">        This method calculates the action of the matrix H on the input data, in</span>
+<span class="sd">        this case the convolution of the the input data with the PSF</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        x : np.ndarray</span>
-<span class="sd">            Input data array</span>
+<span class="sd">            Input data array, an array of recovered 2D images</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        np.ndarray result</span>
 
-<span class="sd">        Notes</span>
-<span class="sd">        -----</span>
-<span class="sd">        Calculates  M^T (MX)</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">MtX</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MX</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="n">psf_convolve</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_psf</span><span class="p">,</span> <span class="n">psf_rot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">psf_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_psf_type</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GradBasic.get_grad"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradBasic.get_grad">[docs]</a>    <span class="k">def</span> <span class="nf">get_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get the gradient step</span>
+<div class="viewcode-block" id="GradPSF.Ht_op"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradPSF.Ht_op">[docs]</a>    <span class="k">def</span> <span class="nf">Ht_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Ht matrix operation</span>
 
-<span class="sd">        This method calculates the gradient step from the input data</span>
+<span class="sd">        This method calculates the action of the transpose of the matrix H on</span>
+<span class="sd">        the input data, in this case the convolution of the the input data with</span>
+<span class="sd">        the rotated PSF</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        x : np.ndarray</span>
-<span class="sd">            Input data array</span>
+<span class="sd">            Input data array, an array of recovered 2D images</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        np.ndarray gradient value</span>
-
-<span class="sd">        Notes</span>
-<span class="sd">        -----</span>
-
-<span class="sd">        Calculates M^T (MX - Y)</span>
+<span class="sd">        np.ndarray result</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MtX</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MX</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">psf_convolve</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_psf</span><span class="p">,</span> <span class="n">psf_rot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">psf_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_psf_type</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_calc_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ht_op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H_op</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="GradZero"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradZero">[docs]</a><span class="k">class</span> <span class="nc">GradZero</span><span class="p">(</span><span class="n">GradBasic</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Zero gradient class</span>
+<div class="viewcode-block" id="GradKnownPSF"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradKnownPSF">[docs]</a><span class="k">class</span> <span class="nc">GradKnownPSF</span><span class="p">(</span><span class="n">GradPSF</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gradient class for a known PSF</span>
 
-<span class="sd">    This is a dummy class that returns an array of zeroes for the gradient</span>
+<span class="sd">    This class calculates the gradient when the PSF is known</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : np.ndarray</span>
+<span class="sd">        Input data array, an array of 2D observed images (i.e. with noise)</span>
+<span class="sd">    psf : np.ndarray</span>
+<span class="sd">        PSF, a single 2D PSF or an array of 2D PSFs</span>
+<span class="sd">    psf_type : str {&#39;fixed&#39;, &#39;obj_var&#39;}</span>
+<span class="sd">        PSF type (defualt is &#39;fixed&#39;)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The properties of `GradPSF` are inherited in this class</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="GradZero.get_grad"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradZero.get_grad">[docs]</a>    <span class="k">def</span> <span class="nf">get_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">psf_type</span><span class="o">=</span><span class="s1">&#39;fixed&#39;</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">grad_type</span> <span class="o">=</span> <span class="s1">&#39;psf_known&#39;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GradKnownPSF</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">psf_type</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GradKnownPSF.get_grad"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradKnownPSF.get_grad">[docs]</a>    <span class="k">def</span> <span class="nf">get_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the gradient at the given iteration</span>
+
+<span class="sd">        This method calculates the gradient value from the input data</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : np.ndarray</span>
+<span class="sd">            Input data array, an array of recovered 2D images</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_grad</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="GradUnknownPSF"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradUnknownPSF">[docs]</a><span class="k">class</span> <span class="nc">GradUnknownPSF</span><span class="p">(</span><span class="n">GradPSF</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gradient class for a unknown PSF</span>
+
+<span class="sd">    This class calculates the gradient when the PSF is not fully known</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : np.ndarray</span>
+<span class="sd">        Input data array, an array of 2D observed images (i.e. with noise)</span>
+<span class="sd">    psf : np.ndarray</span>
+<span class="sd">        PSF, a single 2D PSF or an array of 2D PSFs</span>
+<span class="sd">    psf_type : str {&#39;fixed&#39;, &#39;obj_var&#39;}</span>
+<span class="sd">        PSF type (defualt is &#39;fixed&#39;)</span>
+<span class="sd">    prox : class</span>
+<span class="sd">        Proximity operator for PSF update</span>
+<span class="sd">    beta_reg : float</span>
+<span class="sd">        Gradient step size</span>
+<span class="sd">    lambda_reg : float</span>
+<span class="sd">        Regularisation control parameter</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The properties of `GradPSF` are inherited in this class</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">prox</span><span class="p">,</span> <span class="n">psf_type</span><span class="o">=</span><span class="s1">&#39;fixed&#39;</span><span class="p">,</span> <span class="n">beta_reg</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">lambda_reg</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">prox</span><span class="p">,</span> <span class="s1">&#39;op&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;prox must have &quot;op()&quot; method&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">grad_type</span> <span class="o">=</span> <span class="s1">&#39;psf_unknown&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prox</span> <span class="o">=</span> <span class="n">prox</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_beta_reg</span> <span class="o">=</span> <span class="n">beta_reg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lambda_reg</span> <span class="o">=</span> <span class="n">lambda_reg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_psf0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">psf</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GradUnknownPSF</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">psf_type</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_update_lambda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update the regularisation parameter lambda_reg</span>
+
+<span class="sd">        This method implements the update method for lambda_reg</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lambda_reg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambda_reg</span>
+
+    <span class="k">def</span> <span class="nf">_update_psf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update the current estimate of the PSF</span>
+
+<span class="sd">        This method calculates the gradient of the PSF and updates the current</span>
+<span class="sd">        estimate</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : np.ndarray</span>
+<span class="sd">            Input data array, an array of recovered 2D images</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_lambda</span><span class="p">()</span>
+
+        <span class="n">psf_grad</span> <span class="o">=</span> <span class="p">(</span><span class="n">convolve_stack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H_op</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span>
+                    <span class="n">rot_kernel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambda_reg</span> <span class="o">*</span>
+                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psf</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_psf0</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_psf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prox</span><span class="o">.</span><span class="n">op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psf</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_beta_reg</span> <span class="o">*</span> <span class="n">psf_grad</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GradUnknownPSF.get_grad"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradUnknownPSF.get_grad">[docs]</a>    <span class="k">def</span> <span class="nf">get_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the gradient at the given iteration</span>
+
+<span class="sd">        This method calculates the gradient value from the input data</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : np.ndarray</span>
+<span class="sd">            Input data array, an array of recovered 2D images</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_psf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_grad</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="GradShape"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradShape">[docs]</a><span class="k">class</span> <span class="nc">GradShape</span><span class="p">(</span><span class="n">GradPSF</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gradient class for shape constraint</span>
+
+<span class="sd">    This class calculates the gradient including shape constraint</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : np.ndarray</span>
+<span class="sd">        Input data array, an array of 2D observed images (i.e. with noise)</span>
+<span class="sd">    psf : np.ndarray</span>
+<span class="sd">        PSF, a single 2D PSF or an array of 2D PSFs</span>
+<span class="sd">    psf_type : str {&#39;fixed&#39;, &#39;obj_var&#39;}</span>
+<span class="sd">        PSF type (defualt is &#39;fixed&#39;)</span>
+<span class="sd">    lambda_reg : float</span>
+<span class="sd">        Regularisation control parameter</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The properties of `GradPSF` are inherited in this class</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">psf_type</span><span class="o">=</span><span class="s1">&#39;fixed&#39;</span><span class="p">,</span> <span class="n">lambda_reg</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">grad_type</span> <span class="o">=</span> <span class="s1">&#39;shape&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_psf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">psf</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_psf_type</span> <span class="o">=</span> <span class="n">psf_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda_reg</span> <span class="o">=</span> <span class="n">lambda_reg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_St</span> <span class="o">=</span> <span class="n">cube2matrix</span><span class="p">(</span><span class="n">shape_project</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_S</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_St</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+
+            <span class="n">HX</span> <span class="o">=</span> <span class="n">cube2matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H_op</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+            <span class="n">StSHX</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_St</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_S</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">HX</span><span class="p">))</span>
+
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Ht_op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H_op</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_reg</span> <span class="o">*</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">Ht_op</span><span class="p">(</span><span class="n">matrix2cube</span><span class="p">(</span><span class="n">StSHX</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)))</span>
+
+        <span class="n">PowerMethod</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_calc_shape_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the gradient of the shape constraint component</span>
+
+<span class="sd">        This method calculates the gradient value of the shape constraint</span>
+<span class="sd">        component</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : np.ndarray</span>
+<span class="sd">            Input data array, an array of recovered 2D images</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">HXY</span> <span class="o">=</span> <span class="n">cube2matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H_op</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">)</span>
+
+        <span class="n">StSHXY</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_St</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_S</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">HXY</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ht_op</span><span class="p">(</span><span class="n">matrix2cube</span><span class="p">(</span><span class="n">StSHXY</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+<div class="viewcode-block" id="GradShape.get_grad"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradShape.get_grad">[docs]</a>    <span class="k">def</span> <span class="nf">get_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the gradient at the given iteration</span>
+
+<span class="sd">        This method calculates the gradient value from the input data</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : np.ndarray</span>
+<span class="sd">            Input data array, an array of recovered 2D images</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_calc_grad</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_reg</span> <span class="o">*</span>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">_calc_shape_grad</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="GradNone"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradNone">[docs]</a><span class="k">class</span> <span class="nc">GradNone</span><span class="p">(</span><span class="n">GradPSF</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;No gradient class</span>
+
+<span class="sd">    This is a dummy class that returns an array of zeroes for the gradient</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : np.ndarray</span>
+<span class="sd">        Input data array, an array of 2D observed images (i.e. with noise)</span>
+<span class="sd">    psf : np.ndarray</span>
+<span class="sd">        PSF, a single 2D PSF or an array of 2D PSFs</span>
+<span class="sd">    psf_type : str {&#39;fixed&#39;, &#39;obj_var&#39;}</span>
+<span class="sd">        PSF type (defualt is &#39;fixed&#39;)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="GradNone.get_grad"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradNone.get_grad">[docs]</a>    <span class="k">def</span> <span class="nf">get_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the gradient step</span>
 
 <span class="sd">        This method returns an array of zeroes</span>
@@ -226,86 +489,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="StandardPSF"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.StandardPSF">[docs]</a><span class="k">class</span> <span class="nc">StandardPSF</span><span class="p">(</span><span class="n">GradBasic</span><span class="p">,</span> <span class="n">PowerMethod</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Standard PSF class</span>
-
-<span class="sd">    This class defines the operators for a fixed or object variant PSF</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    data : np.ndarray</span>
-<span class="sd">        Input data array, an array of 2D observed images (i.e. with noise)</span>
-<span class="sd">    psf : np.ndarray</span>
-<span class="sd">        PSF, a single 2D PSF or an array of 2D PSFs</span>
-<span class="sd">    psf_type : str {&#39;fixed&#39;, &#39;obj_var&#39;}</span>
-<span class="sd">        PSF type (defualt is &#39;fixed&#39;)</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    The properties of `GradBasic` and `PowerMethod` are inherited in this class</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">psf_type</span><span class="o">=</span><span class="s1">&#39;fixed&#39;</span><span class="p">):</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">psf</span> <span class="o">=</span> <span class="n">psf</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">psf_type</span> <span class="o">=</span> <span class="n">psf_type</span>
-
-        <span class="n">PowerMethod</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">MtMX</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-
-<div class="viewcode-block" id="StandardPSF.MX"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.StandardPSF.MX">[docs]</a>    <span class="k">def</span> <span class="nf">MX</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;MX</span>
-
-<span class="sd">        This method calculates the action of the matrix M on the data X, in</span>
-<span class="sd">        this case the convolution of the the input data with the PSF</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        x : np.ndarray</span>
-<span class="sd">            Input data array, an array of recovered 2D images</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        np.ndarray result</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="n">psf_convolve</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">psf</span><span class="p">,</span> <span class="n">psf_rot</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">psf_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">psf_type</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="StandardPSF.MtX"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.StandardPSF.MtX">[docs]</a>    <span class="k">def</span> <span class="nf">MtX</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;MX</span>
-
-<span class="sd">        This method calculates the action of the transpose of the matrix M on</span>
-<span class="sd">        the data X, in this case the convolution of the the input data with the</span>
-<span class="sd">        rotated PSF</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        x : np.ndarray</span>
-<span class="sd">            Input data array, an array of recovered 2D images</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        np.ndarray result</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="n">psf_convolve</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">psf</span><span class="p">,</span> <span class="n">psf_rot</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">psf_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">psf_type</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="StandardPSFnoGrad"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.StandardPSFnoGrad">[docs]</a><span class="k">class</span> <span class="nc">StandardPSFnoGrad</span><span class="p">(</span><span class="n">GradZero</span><span class="p">,</span> <span class="n">StandardPSF</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;No gradient class</span>
-
-<span class="sd">    This is a dummy class that inherits `GradZero` and `StandardPSF`</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">pass</span></div>
 </pre></div>
 
+           </div>
+           <div class="articleComments">
+            
            </div>
           </div>
           <footer>
@@ -340,7 +528,8 @@
             VERSION:'3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../../_static/jquery.js"></script>

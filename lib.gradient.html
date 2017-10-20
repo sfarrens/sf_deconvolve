@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,9 +32,12 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="index.html"/>
         <link rel="up" title="lib package" href="lib.html"/>
-        <link rel="next" title="lib.linear module" href="lib.linear.html"/>
+        <link rel="next" title="lib.tests module" href="lib.tests.html"/>
         <link rel="prev" title="lib.file_io module" href="lib.file_io.html"/> 
 
   
@@ -42,6 +47,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -82,35 +88,23 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">sf_deconvolve</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="functions.html">functions package</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="lib.html">lib package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="lib.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="lib.algorithms.html">lib.algorithms module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.convolve.html">lib.convolve module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="lib.args.html">lib.args module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.cost.html">lib.cost module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.deconvolve.html">lib.deconvolve module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.directional.html">lib.directional module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.file_io.html">lib.file_io module</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="">lib.gradient module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.linear.html">lib.linear module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.noise.html">lib.noise module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.optimisation.html">lib.optimisation module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.other_methods.html">lib.other_methods module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.plotting.html">lib.plotting module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.proximity.html">lib.proximity module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.quality.html">lib.quality module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.reweight.html">lib.reweight module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.sf_deconvolve_args.html">lib.sf_deconvolve_args module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.shape.html">lib.shape module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.svd.html">lib.svd module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">lib.gradient module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.tests.html">lib.tests module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.transform.html">lib.transform module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.wavelet.html">lib.wavelet module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="lib.html#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.html#module-lib">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sf_deconvolve.html">sf_deconvolve module</a></li>
@@ -128,8 +122,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">sf_deconvolve</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">sf_deconvolve</a>
+        
       </nav>
 
 
@@ -142,23 +138,40 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
           <li><a href="modules.html">sf_deconvolve</a> &raquo;</li>
-      
+        
           <li><a href="lib.html">lib package</a> &raquo;</li>
-      
-    <li>lib.gradient module</li>
+        
+      <li>lib.gradient module</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/lib.gradient.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/lib.gradient.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -167,101 +180,91 @@
   <div class="section" id="module-lib.gradient">
 <span id="lib-gradient-module"></span><h1>lib.gradient module<a class="headerlink" href="#module-lib.gradient" title="Permalink to this headline">¶</a></h1>
 <p>GRADIENT CLASSES</p>
-<p>This module contains classses for defining algorithm gradients.
-Based on work by Yinghao Ge and Fred Ngole.</p>
+<p>This module contains classses for defining PSF deconvolution specific
+gradients.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Samuel Farrens &lt;<a class="reference external" href="mailto:samuel&#46;farrens&#37;&#52;&#48;gmail&#46;com">samuel<span>&#46;</span>farrens<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Version:</th><td class="field-body">1.2</td>
+<tr class="field-even field"><th class="field-name">Version:</th><td class="field-body">1.0</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">04/01/2017</td>
+<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">19/07/2017</td>
 </tr>
 </tbody>
 </table>
 <dl class="class">
-<dt id="lib.gradient.GradBasic">
-<em class="property">class </em><code class="descclassname">lib.gradient.</code><code class="descname">GradBasic</code><a class="reference internal" href="_modules/lib/gradient.html#GradBasic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.GradBasic" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>Basic gradient class</p>
-<p>This class defines the basic methods that will be inherited by specific
-gradient classes</p>
-<dl class="method">
-<dt id="lib.gradient.GradBasic.MtMX">
-<code class="descname">MtMX</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#GradBasic.MtMX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.GradBasic.MtMX" title="Permalink to this definition">¶</a></dt>
-<dd><p>M^T M X</p>
-<p>This method calculates the action of the transpose of the matrix M on
-the action of the matrix M on the data X</p>
+<dt id="lib.gradient.GradKnownPSF">
+<em class="property">class </em><code class="descclassname">lib.gradient.</code><code class="descname">GradKnownPSF</code><span class="sig-paren">(</span><em>data</em>, <em>psf</em>, <em>psf_type='fixed'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#GradKnownPSF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.GradKnownPSF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#lib.gradient.GradPSF" title="lib.gradient.GradPSF"><code class="xref py py-class docutils literal"><span class="pre">lib.gradient.GradPSF</span></code></a></p>
+<p>Gradient class for a known PSF</p>
+<p>This class calculates the gradient when the PSF is known</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data array</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray result</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> (<em>np.ndarray</em>) &#8211; Input data array, an array of 2D observed images (i.e. with noise)</li>
+<li><strong>psf</strong> (<em>np.ndarray</em>) &#8211; PSF, a single 2D PSF or an array of 2D PSFs</li>
+<li><strong>psf_type</strong> (<em>str {'fixed'</em><em>, </em><em>'obj_var'}</em>) &#8211; PSF type (defualt is &#8216;fixed&#8217;)</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p>Calculates  M^T (MX)</p>
-</dd></dl>
-
+<p>The properties of <cite>GradPSF</cite> are inherited in this class</p>
 <dl class="method">
-<dt id="lib.gradient.GradBasic.get_grad">
-<code class="descname">get_grad</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#GradBasic.get_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.GradBasic.get_grad" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the gradient step</p>
-<p>This method calculates the gradient step from the input data</p>
+<dt id="lib.gradient.GradKnownPSF.get_grad">
+<code class="descname">get_grad</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#GradKnownPSF.get_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.GradKnownPSF.get_grad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the gradient at the given iteration</p>
+<p>This method calculates the gradient value from the input data</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data array</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray gradient value</p>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>np.ndarray</em>) &#8211; Input data array, an array of recovered 2D images</td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Notes</p>
-<p>Calculates M^T (MX - Y)</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt id="lib.gradient.GradZero">
-<em class="property">class </em><code class="descclassname">lib.gradient.</code><code class="descname">GradZero</code><a class="reference internal" href="_modules/lib/gradient.html#GradZero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.GradZero" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#lib.gradient.GradBasic" title="lib.gradient.GradBasic"><code class="xref py py-class docutils literal"><span class="pre">lib.gradient.GradBasic</span></code></a></p>
-<p>Zero gradient class</p>
+<dt id="lib.gradient.GradNone">
+<em class="property">class </em><code class="descclassname">lib.gradient.</code><code class="descname">GradNone</code><span class="sig-paren">(</span><em>data</em>, <em>psf</em>, <em>psf_type='fixed'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#GradNone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.GradNone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#lib.gradient.GradPSF" title="lib.gradient.GradPSF"><code class="xref py py-class docutils literal"><span class="pre">lib.gradient.GradPSF</span></code></a></p>
+<p>No gradient class</p>
 <p>This is a dummy class that returns an array of zeroes for the gradient</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> (<em>np.ndarray</em>) &#8211; Input data array, an array of 2D observed images (i.e. with noise)</li>
+<li><strong>psf</strong> (<em>np.ndarray</em>) &#8211; PSF, a single 2D PSF or an array of 2D PSFs</li>
+<li><strong>psf_type</strong> (<em>str {'fixed'</em><em>, </em><em>'obj_var'}</em>) &#8211; PSF type (defualt is &#8216;fixed&#8217;)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
-<dt id="lib.gradient.GradZero.get_grad">
-<code class="descname">get_grad</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#GradZero.get_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.GradZero.get_grad" title="Permalink to this definition">¶</a></dt>
+<dt id="lib.gradient.GradNone.get_grad">
+<code class="descname">get_grad</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#GradNone.get_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.GradNone.get_grad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the gradient step</p>
 <p>This method returns an array of zeroes</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data array</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>np.ndarray</em>) &#8211; Input data array</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.zeros array size</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.zeros array size</td>
 </tr>
 </tbody>
 </table>
@@ -270,74 +273,62 @@ the action of the matrix M on the data X</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="lib.gradient.StandardPSF">
-<em class="property">class </em><code class="descclassname">lib.gradient.</code><code class="descname">StandardPSF</code><span class="sig-paren">(</span><em>data</em>, <em>psf</em>, <em>psf_type='fixed'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#StandardPSF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.StandardPSF" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#lib.gradient.GradBasic" title="lib.gradient.GradBasic"><code class="xref py py-class docutils literal"><span class="pre">lib.gradient.GradBasic</span></code></a>, <a class="reference internal" href="lib.algorithms.html#lib.algorithms.PowerMethod" title="lib.algorithms.PowerMethod"><code class="xref py py-class docutils literal"><span class="pre">lib.algorithms.PowerMethod</span></code></a></p>
-<p>Standard PSF class</p>
+<dt id="lib.gradient.GradPSF">
+<em class="property">class </em><code class="descclassname">lib.gradient.</code><code class="descname">GradPSF</code><span class="sig-paren">(</span><em>data</em>, <em>psf</em>, <em>psf_type='fixed'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#GradPSF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.GradPSF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sf_tools.math.matrix.PowerMethod</span></code></p>
+<p>Gradient class for PSF convolution</p>
 <p>This class defines the operators for a fixed or object variant PSF</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data array, an array of 2D observed images (i.e. with noise)</p>
-</div></blockquote>
-<p><strong>psf</strong> : np.ndarray</p>
-<blockquote>
-<div><p>PSF, a single 2D PSF or an array of 2D PSFs</p>
-</div></blockquote>
-<p><strong>psf_type</strong> : str {&#8216;fixed&#8217;, &#8216;obj_var&#8217;}</p>
-<blockquote class="last">
-<div><p>PSF type (defualt is &#8216;fixed&#8217;)</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> (<em>np.ndarray</em>) &#8211; Input data array, an array of 2D observed images (i.e. with noise)</li>
+<li><strong>psf</strong> (<em>np.ndarray</em>) &#8211; PSF, a single 2D PSF or an array of 2D PSFs</li>
+<li><strong>psf_type</strong> (<em>str {'fixed'</em><em>, </em><em>'obj_var'}</em>) &#8211; PSF type (defualt is &#8216;fixed&#8217;)</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p>The properties of <cite>GradBasic</cite> and <cite>PowerMethod</cite> are inherited in this class</p>
+<p>The properties of <cite>PowerMethod</cite> are inherited in this class</p>
 <dl class="method">
-<dt id="lib.gradient.StandardPSF.MX">
-<code class="descname">MX</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#StandardPSF.MX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.StandardPSF.MX" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method calculates the action of the matrix M on the data X, in
+<dt id="lib.gradient.GradPSF.H_op">
+<code class="descname">H_op</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#GradPSF.H_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.GradPSF.H_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>H matrix operation</p>
+<p>This method calculates the action of the matrix H on the input data, in
 this case the convolution of the the input data with the PSF</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data array, an array of recovered 2D images</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>np.ndarray</em>) &#8211; Input data array, an array of recovered 2D images</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray result</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray result</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="lib.gradient.StandardPSF.MtX">
-<code class="descname">MtX</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#StandardPSF.MtX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.StandardPSF.MtX" title="Permalink to this definition">¶</a></dt>
-<dd><p>MX</p>
-<p>This method calculates the action of the transpose of the matrix M on
-the data X, in this case the convolution of the the input data with the
-rotated PSF</p>
+<dt id="lib.gradient.GradPSF.Ht_op">
+<code class="descname">Ht_op</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#GradPSF.Ht_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.GradPSF.Ht_op" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ht matrix operation</p>
+<p>This method calculates the action of the transpose of the matrix H on
+the input data, in this case the convolution of the the input data with
+the rotated PSF</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data array, an array of recovered 2D images</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>np.ndarray</em>) &#8211; Input data array, an array of recovered 2D images</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray result</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray result</td>
 </tr>
 </tbody>
 </table>
@@ -346,26 +337,101 @@ rotated PSF</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="lib.gradient.StandardPSFnoGrad">
-<em class="property">class </em><code class="descclassname">lib.gradient.</code><code class="descname">StandardPSFnoGrad</code><span class="sig-paren">(</span><em>data</em>, <em>psf</em>, <em>psf_type='fixed'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#StandardPSFnoGrad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.StandardPSFnoGrad" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#lib.gradient.GradZero" title="lib.gradient.GradZero"><code class="xref py py-class docutils literal"><span class="pre">lib.gradient.GradZero</span></code></a>, <a class="reference internal" href="#lib.gradient.StandardPSF" title="lib.gradient.StandardPSF"><code class="xref py py-class docutils literal"><span class="pre">lib.gradient.StandardPSF</span></code></a></p>
-<p>No gradient class</p>
-<p>This is a dummy class that inherits <cite>GradZero</cite> and <cite>StandardPSF</cite></p>
+<dt id="lib.gradient.GradShape">
+<em class="property">class </em><code class="descclassname">lib.gradient.</code><code class="descname">GradShape</code><span class="sig-paren">(</span><em>data</em>, <em>psf</em>, <em>psf_type='fixed'</em>, <em>lambda_reg=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#GradShape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.GradShape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#lib.gradient.GradPSF" title="lib.gradient.GradPSF"><code class="xref py py-class docutils literal"><span class="pre">lib.gradient.GradPSF</span></code></a></p>
+<p>Gradient class for shape constraint</p>
+<p>This class calculates the gradient including shape constraint</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> (<em>np.ndarray</em>) &#8211; Input data array, an array of 2D observed images (i.e. with noise)</li>
+<li><strong>psf</strong> (<em>np.ndarray</em>) &#8211; PSF, a single 2D PSF or an array of 2D PSFs</li>
+<li><strong>psf_type</strong> (<em>str {'fixed'</em><em>, </em><em>'obj_var'}</em>) &#8211; PSF type (defualt is &#8216;fixed&#8217;)</li>
+<li><strong>lambda_reg</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Regularisation control parameter</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The properties of <cite>GradPSF</cite> are inherited in this class</p>
+<dl class="method">
+<dt id="lib.gradient.GradShape.get_grad">
+<code class="descname">get_grad</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#GradShape.get_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.GradShape.get_grad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the gradient at the given iteration</p>
+<p>This method calculates the gradient value from the input data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>np.ndarray</em>) &#8211; Input data array, an array of recovered 2D images</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="lib.gradient.GradUnknownPSF">
+<em class="property">class </em><code class="descclassname">lib.gradient.</code><code class="descname">GradUnknownPSF</code><span class="sig-paren">(</span><em>data</em>, <em>psf</em>, <em>prox</em>, <em>psf_type='fixed'</em>, <em>beta_reg=1</em>, <em>lambda_reg=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#GradUnknownPSF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.GradUnknownPSF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#lib.gradient.GradPSF" title="lib.gradient.GradPSF"><code class="xref py py-class docutils literal"><span class="pre">lib.gradient.GradPSF</span></code></a></p>
+<p>Gradient class for a unknown PSF</p>
+<p>This class calculates the gradient when the PSF is not fully known</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> (<em>np.ndarray</em>) &#8211; Input data array, an array of 2D observed images (i.e. with noise)</li>
+<li><strong>psf</strong> (<em>np.ndarray</em>) &#8211; PSF, a single 2D PSF or an array of 2D PSFs</li>
+<li><strong>psf_type</strong> (<em>str {'fixed'</em><em>, </em><em>'obj_var'}</em>) &#8211; PSF type (defualt is &#8216;fixed&#8217;)</li>
+<li><strong>prox</strong> (<em>class</em>) &#8211; Proximity operator for PSF update</li>
+<li><strong>beta_reg</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Gradient step size</li>
+<li><strong>lambda_reg</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Regularisation control parameter</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The properties of <cite>GradPSF</cite> are inherited in this class</p>
+<dl class="method">
+<dt id="lib.gradient.GradUnknownPSF.get_grad">
+<code class="descname">get_grad</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/gradient.html#GradUnknownPSF.get_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.gradient.GradUnknownPSF.get_grad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the gradient at the given iteration</p>
+<p>This method calculates the gradient value from the input data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>np.ndarray</em>) &#8211; Input data array, an array of recovered 2D images</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="lib.linear.html" class="btn btn-neutral float-right" title="lib.linear module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="lib.tests.html" class="btn btn-neutral float-right" title="lib.tests module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="lib.file_io.html" class="btn btn-neutral" title="lib.file_io module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="lib.file_io.html" class="btn btn-neutral" title="lib.file_io module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -399,7 +465,8 @@ rotated PSF</p>
             VERSION:'3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="index.html"/>
         <link rel="up" title="lib package" href="lib.html"/>
         <link rel="next" title="lib.directional module" href="lib.directional.html"/>
@@ -42,6 +47,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -82,35 +88,23 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">sf_deconvolve</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="functions.html">functions package</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="lib.html">lib package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="lib.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="lib.algorithms.html">lib.algorithms module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.convolve.html">lib.convolve module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="lib.args.html">lib.args module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.cost.html">lib.cost module</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="">lib.deconvolve module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">lib.deconvolve module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.directional.html">lib.directional module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.file_io.html">lib.file_io module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.gradient.html">lib.gradient module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.linear.html">lib.linear module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.noise.html">lib.noise module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.optimisation.html">lib.optimisation module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.other_methods.html">lib.other_methods module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.plotting.html">lib.plotting module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.proximity.html">lib.proximity module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.quality.html">lib.quality module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.reweight.html">lib.reweight module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.sf_deconvolve_args.html">lib.sf_deconvolve_args module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.shape.html">lib.shape module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.svd.html">lib.svd module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.tests.html">lib.tests module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.transform.html">lib.transform module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.wavelet.html">lib.wavelet module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="lib.html#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.html#module-lib">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sf_deconvolve.html">sf_deconvolve module</a></li>
@@ -128,8 +122,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">sf_deconvolve</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">sf_deconvolve</a>
+        
       </nav>
 
 
@@ -142,23 +138,40 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
           <li><a href="modules.html">sf_deconvolve</a> &raquo;</li>
-      
+        
           <li><a href="lib.html">lib package</a> &raquo;</li>
-      
-    <li>lib.deconvolve module</li>
+        
+      <li>lib.deconvolve module</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/lib.deconvolve.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/lib.deconvolve.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -174,9 +187,9 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Samuel Farrens &lt;<a class="reference external" href="mailto:samuel&#46;farrens&#37;&#52;&#48;gmail&#46;com">samuel<span>&#46;</span>farrens<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Version:</th><td class="field-body">6.0</td>
+<tr class="field-even field"><th class="field-name">Version:</th><td class="field-body">6.1</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">10/03/2017</td>
+<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">20/10/2017</td>
 </tr>
 </tbody>
 </table>
@@ -190,25 +203,18 @@ regularisation</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>n_images</strong> : int</p>
-<blockquote>
-<div><p>Total number of images</p>
-</div></blockquote>
-<p><strong>p_pixel</strong> : int</p>
-<blockquote>
-<div><p>Total number of pixels</p>
-</div></blockquote>
-<p><strong>sigma</strong> : float</p>
-<blockquote>
-<div><p>Noise standard deviation</p>
-</div></blockquote>
-<p><strong>spec_rad</strong> : float</p>
-<blockquote>
-<div><p>The spectral radius of the gradient operator</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>n_images</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Total number of images</li>
+<li><strong>p_pixel</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; Total number of pixels</li>
+<li><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; Noise standard deviation</li>
+<li><strong>spec_rad</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; The spectral radius of the gradient operator</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">float Lambda value</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float Lambda value</p>
 </td>
 </tr>
 </tbody>
@@ -224,7 +230,9 @@ regularisation</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dict Updated keyword arguments</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict Updated keyword arguments</td>
 </tr>
 </tbody>
 </table>
@@ -240,17 +248,16 @@ algorithm</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data array, an array of 2D images</p>
-</div></blockquote>
-<p><strong>psf</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input PSF array, a single 2D PSF or an array of 2D PSFs</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>np.ndarray</em>) &#8211; Input data array, an array of 2D images</li>
+<li><strong>psf</strong> (<em>np.ndarray</em>) &#8211; Input PSF array, a single 2D PSF or an array of 2D PSFs</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray decconvolved data</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray decconvolved data</p>
 </td>
 </tr>
 </tbody>
@@ -268,7 +275,9 @@ the combination of values will lead to convergence.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dict Updated keyword arguments</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict Updated keyword arguments</td>
 </tr>
 </tbody>
 </table>
@@ -284,17 +293,16 @@ to the keyword arguments.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input noisy data (3D array)</p>
-</div></blockquote>
-<p><strong>psf</strong> : np.ndarray</p>
-<blockquote>
-<div><p>PSF data (2D or 3D array)</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>np.ndarray</em>) &#8211; Input noisy data (3D array)</li>
+<li><strong>psf</strong> (<em>np.ndarray</em>) &#8211; PSF data (2D or 3D array)</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dict Updated keyword arguments</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict Updated keyword arguments</p>
 </td>
 </tr>
 </tbody>
@@ -312,17 +320,20 @@ operator and the wavelet filters (if used) to the kwagrs.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input noisy data (3D array)</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>np.ndarray</em>) &#8211; Input noisy data (3D array)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dict Updated keyword arguments</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict Updated keyword arguments</td>
 </tr>
 </tbody>
 </table>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<ul class="last simple">
+<li>Clean up wavelet_filters and l1norm</li>
+</ul>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -334,14 +345,11 @@ operator and the wavelet filters (if used) to the kwagrs.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data_shape</strong> : tuple</p>
-<blockquote>
-<div><p>Shape of the input data array</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data_shape</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; Shape of the input data array</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dict Updated keyword arguments</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict Updated keyword arguments</td>
 </tr>
 </tbody>
 </table>
@@ -358,14 +366,11 @@ arguments.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input noisy data (3D array)</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>np.ndarray</em>) &#8211; Input noisy data (3D array)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dict Updated keyword arguments</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict Updated keyword arguments</td>
 </tr>
 </tbody>
 </table>
@@ -380,7 +385,9 @@ arguments.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dict Updated keyword arguments</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict Updated keyword arguments</td>
 </tr>
 </tbody>
 </table>
@@ -395,14 +402,11 @@ arguments.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data_shape</strong> : tuple</p>
-<blockquote>
-<div><p>Shape of the input data array</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data_shape</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; Shape of the input data array</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dict Updated keyword arguments</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict Updated keyword arguments</td>
 </tr>
 </tbody>
 </table>
@@ -417,14 +421,11 @@ arguments.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input noisy data (3D array)</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>np.ndarray</em>) &#8211; Input noisy data (3D array)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dict Updated keyword arguments</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict Updated keyword arguments</td>
 </tr>
 </tbody>
 </table>
@@ -441,17 +442,16 @@ dual variable.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data_shape</strong> : tuple</p>
-<blockquote>
-<div><p>Shape of the input data array</p>
-</div></blockquote>
-<p><strong>psf</strong> : np.ndarray</p>
-<blockquote>
-<div><p>PSF data (2D or 3D array)</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data_shape</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#tuple" title="(in Python v2.7)"><em>tuple</em></a>) &#8211; Shape of the input data array</li>
+<li><strong>psf</strong> (<em>np.ndarray</em>) &#8211; PSF data (2D or 3D array)</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dict Updated keyword arguments</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict Updated keyword arguments</p>
 </td>
 </tr>
 </tbody>
@@ -462,15 +462,18 @@ dual variable.</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="lib.directional.html" class="btn btn-neutral float-right" title="lib.directional module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="lib.directional.html" class="btn btn-neutral float-right" title="lib.directional module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="lib.cost.html" class="btn btn-neutral" title="lib.cost module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="lib.cost.html" class="btn btn-neutral" title="lib.cost module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -504,7 +507,8 @@ dual variable.</p>
             VERSION:'3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>

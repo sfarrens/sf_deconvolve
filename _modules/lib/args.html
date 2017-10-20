@@ -8,9 +8,11 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>lib.sf_deconvolve_args &mdash; sf_deconvolve 3.2 documentation</title>
+  <title>lib.args &mdash; sf_deconvolve 3.2 documentation</title>
   
 
+  
+  
   
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
@@ -40,6 +45,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -80,7 +86,10 @@
           
             
             
-                <ul>
+              
+            
+            
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">sf_deconvolve</a></li>
 </ul>
 
@@ -94,8 +103,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../index.html">sf_deconvolve</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">sf_deconvolve</a>
+        
       </nav>
 
 
@@ -108,44 +119,61 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      
-    <li>lib.sf_deconvolve_args</li>
+        
+      <li>lib.args</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
+            
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for lib.sf_deconvolve_args</h1><div class="highlight"><pre>
+  <h1>Source code for lib.args</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="sd">&quot;&quot;&quot;PSF DECONVOLUTION ARGUMENTS</span>
+<span class="sd">&quot;&quot;&quot;SF DECONVOLVE ARGUMENTS</span>
 
-<span class="sd">This module sets the arguments for deconvolution_script.py.</span>
+<span class="sd">This module sets the arguments for sf_deconvolve.py.</span>
 
 <span class="sd">:Author: Samuel Farrens &lt;samuel.farrens@gmail.com&gt;</span>
 
-<span class="sd">:Version: 2.1</span>
+<span class="sd">:Version: 2.2</span>
 
-<span class="sd">:Date: 14/03/2017</span>
+<span class="sd">:Date: 20/10/2017</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">argparse</span> <span class="kn">as</span> <span class="nn">ap</span>
-<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentDefaultsHelpFormatter</span> <span class="k">as</span> <span class="n">formatter</span>
+<span class="kn">import</span> <span class="nn">argparse</span> <span class="k">as</span> <span class="nn">ap</span>
+<span class="kn">from</span> <span class="nn">argparse</span> <span class="k">import</span> <span class="n">ArgumentDefaultsHelpFormatter</span> <span class="k">as</span> <span class="n">formatter</span>
 
 
-<div class="viewcode-block" id="ArgParser"><a class="viewcode-back" href="../../lib.sf_deconvolve_args.html#lib.sf_deconvolve_args.ArgParser">[docs]</a><span class="k">class</span> <span class="nc">ArgParser</span><span class="p">(</span><span class="n">ap</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
+<div class="viewcode-block" id="ArgParser"><a class="viewcode-back" href="../../lib.args.html#lib.args.ArgParser">[docs]</a><span class="k">class</span> <span class="nc">ArgParser</span><span class="p">(</span><span class="n">ap</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Argument Parser</span>
 
@@ -156,9 +184,9 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-        <span class="nb">super</span><span class="p">(</span><span class="n">ArgParser</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ArgParser</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ArgParser.convert_arg_line_to_args"><a class="viewcode-back" href="../../lib.sf_deconvolve_args.html#lib.sf_deconvolve_args.ArgParser.convert_arg_line_to_args">[docs]</a>    <span class="k">def</span> <span class="nf">convert_arg_line_to_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+<div class="viewcode-block" id="ArgParser.convert_arg_line_to_args"><a class="viewcode-back" href="../../lib.args.html#lib.args.ArgParser.convert_arg_line_to_args">[docs]</a>    <span class="k">def</span> <span class="nf">convert_arg_line_to_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert argument line to arguments</span>
 
 <span class="sd">        This method overrides the default method of argparse. It skips blank</span>
@@ -186,7 +214,7 @@
                 <span class="k">yield</span> <span class="n">arg</span></div></div>
 
 
-<div class="viewcode-block" id="get_opts"><a class="viewcode-back" href="../../lib.sf_deconvolve_args.html#lib.sf_deconvolve_args.get_opts">[docs]</a><span class="k">def</span> <span class="nf">get_opts</span><span class="p">():</span>
+<div class="viewcode-block" id="get_opts"><a class="viewcode-back" href="../../lib.args.html#lib.args.get_opts">[docs]</a><span class="k">def</span> <span class="nf">get_opts</span><span class="p">():</span>
 
     <span class="sd">&quot;&quot;&quot;Get script options</span>
 
@@ -199,7 +227,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Set up argument parser</span>
-    <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgParser</span><span class="p">(</span><span class="n">add_help</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(prog)s</span><span class="s1"> [options]&#39;</span><span class="p">,</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgParser</span><span class="p">(</span><span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(prog)s</span><span class="s1"> [options]&#39;</span><span class="p">,</span>
                        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;PSF Deconvolution Script&#39;</span><span class="p">,</span>
                        <span class="n">formatter_class</span><span class="o">=</span><span class="n">formatter</span><span class="p">,</span>
                        <span class="n">fromfile_prefix_chars</span><span class="o">=</span><span class="s1">&#39;@&#39;</span><span class="p">)</span>
@@ -209,6 +237,8 @@
     <span class="n">optimisation</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39; * Optimisation&#39;</span><span class="p">)</span>
     <span class="n">lowrank</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39; * Low-Rank Aproximation&#39;</span><span class="p">)</span>
     <span class="n">sparsity</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39; * Sparsity&#39;</span><span class="p">)</span>
+    <span class="n">psfest</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39; * PSF Estimation&#39;</span><span class="p">)</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39; * Shape Constraint&#39;</span><span class="p">)</span>
     <span class="n">condat</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39; * Condat Algorithm&#39;</span><span class="p">)</span>
     <span class="n">testing</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39; * Testing&#39;</span><span class="p">)</span>
 
@@ -217,15 +247,15 @@
                           <span class="n">help</span><span class="o">=</span><span class="s1">&#39;show this help message and exit&#39;</span><span class="p">)</span>
 
     <span class="n">optional</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-v&#39;</span><span class="p">,</span> <span class="s1">&#39;--version&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;version&#39;</span><span class="p">,</span>
-                          <span class="n">version</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(prog)s</span><span class="s1"> v3.2&#39;</span><span class="p">)</span>
+                          <span class="n">version</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(prog)s</span><span class="s1"> v4.1&#39;</span><span class="p">)</span>
 
     <span class="n">optional</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-q&#39;</span><span class="p">,</span> <span class="s1">&#39;--quiet&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
                           <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Suppress verbose.&#39;</span><span class="p">)</span>
 
-    <span class="n">required</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--input&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">required</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--input&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                           <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Input noisy data file name.&#39;</span><span class="p">)</span>
 
-    <span class="n">required</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;--psf_file&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">required</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;--psf_file&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                           <span class="n">help</span><span class="o">=</span><span class="s1">&#39;PSF file name.&#39;</span><span class="p">)</span>
 
     <span class="n">optional</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="s1">&#39;--output&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Output file name.&#39;</span><span class="p">)</span>
@@ -256,13 +286,15 @@
                               <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Window to measure cost function.&#39;</span><span class="p">)</span>
 
     <span class="n">optimisation</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--convergence&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
-                              <span class="n">default</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Convergence tolerance.&#39;</span><span class="p">)</span>
+                              <span class="n">default</span><span class="o">=</span><span class="mf">3e-4</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Convergence tolerance.&#39;</span><span class="p">)</span>
 
     <span class="n">optimisation</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--no_pos&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
                               <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Option to turn off postivity constraint.&#39;</span><span class="p">)</span>
 
-    <span class="n">optimisation</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--no_grad&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
-                              <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Option to turn off gradinet calculation.&#39;</span><span class="p">)</span>
+    <span class="n">optimisation</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--grad_type&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;psf_known&#39;</span><span class="p">,</span>
+                              <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;psf_known&#39;</span><span class="p">,</span> <span class="s1">&#39;psf_unknown&#39;</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">,</span>
+                                       <span class="s1">&#39;none&#39;</span><span class="p">),</span>
+                              <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Option to specify the type of gradient.&#39;</span><span class="p">)</span>
 
     <span class="n">lowrank</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--lowr_thresh_factor&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                          <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Low rank threshold factor.&#39;</span><span class="p">)</span>
@@ -283,18 +315,31 @@
     <span class="n">sparsity</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--n_reweights&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                           <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of reweightings.&#39;</span><span class="p">)</span>
 
+    <span class="n">psfest</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--lambda_psf&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Regularisation control parameter for PSF &#39;</span>
+                        <span class="s1">&#39;estimation&#39;</span><span class="p">)</span>
+
+    <span class="n">psfest</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--beta_psf&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Gradient step for PSF estimation&#39;</span><span class="p">)</span>
+
+    <span class="n">shape</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--lambda_shape&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                       <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Regularisation control parameter for shape &#39;</span>
+                       <span class="s1">&#39;constraint&#39;</span><span class="p">)</span>
+
     <span class="n">condat</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--relax&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Relaxation parameter (rho_n).&#39;</span><span class="p">)</span>
 
-    <span class="n">condat</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--condat_sigma&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="n">const</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+    <span class="n">condat</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--condat_sigma&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="n">const</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                         <span class="n">default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Condat proximal dual parameter.&#39;</span><span class="p">)</span>
 
-    <span class="n">condat</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--condat_tau&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="n">const</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+    <span class="n">condat</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--condat_tau&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="n">const</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                         <span class="n">default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Condat proximal primal parameter&#39;</span><span class="p">)</span>
 
     <span class="n">testing</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="s1">&#39;--clean_data&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Clean data file name.&#39;</span><span class="p">)</span>
 
     <span class="n">testing</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="s1">&#39;--random_seed&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Random seed.&#39;</span><span class="p">)</span>
+
+    <span class="n">testing</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--true_psf&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;True PSFs file name.&#39;</span><span class="p">)</span>
 
     <span class="n">testing</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--kernel&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
                          <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Sigma value for Gaussian kernel.&#39;</span><span class="p">)</span>
@@ -306,6 +351,9 @@
     <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span></div>
 </pre></div>
 
+           </div>
+           <div class="articleComments">
+            
            </div>
           </div>
           <footer>
@@ -340,7 +388,8 @@
             VERSION:'3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../../_static/jquery.js"></script>

@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="index.html"/>
         <link rel="up" title="lib package" href="lib.html"/>
         <link rel="next" title="lib.gradient module" href="lib.gradient.html"/>
@@ -42,6 +47,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -82,35 +88,23 @@
           
             
             
-                <ul class="current">
+              
+            
+            
+              <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">sf_deconvolve</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="functions.html">functions package</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="lib.html">lib package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="lib.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="lib.algorithms.html">lib.algorithms module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.convolve.html">lib.convolve module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="lib.args.html">lib.args module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.cost.html">lib.cost module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.deconvolve.html">lib.deconvolve module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.directional.html">lib.directional module</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="">lib.file_io module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">lib.file_io module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.gradient.html">lib.gradient module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.linear.html">lib.linear module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.noise.html">lib.noise module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.optimisation.html">lib.optimisation module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.other_methods.html">lib.other_methods module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.plotting.html">lib.plotting module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.proximity.html">lib.proximity module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.quality.html">lib.quality module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.reweight.html">lib.reweight module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.sf_deconvolve_args.html">lib.sf_deconvolve_args module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.shape.html">lib.shape module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.svd.html">lib.svd module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="lib.tests.html">lib.tests module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.transform.html">lib.transform module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="lib.wavelet.html">lib.wavelet module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="lib.html#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lib.html#module-lib">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="sf_deconvolve.html">sf_deconvolve module</a></li>
@@ -128,8 +122,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">sf_deconvolve</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">sf_deconvolve</a>
+        
       </nav>
 
 
@@ -142,23 +138,40 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
           <li><a href="modules.html">sf_deconvolve</a> &raquo;</li>
-      
+        
           <li><a href="lib.html">lib package</a> &raquo;</li>
-      
-    <li>lib.file_io module</li>
+        
+      <li>lib.file_io module</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/lib.file_io.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/lib.file_io.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -190,20 +203,13 @@ deconvolution_script.py.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Input data array</p>
-</div></blockquote>
-<p><strong>n_dim</strong> : int or list of ints</p>
-<blockquote>
-<div><p>Expected number of dimensions</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>np.ndarray</em>) &#8211; Input data array</li>
+<li><strong>n_dim</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em> or </em><em>list of ints</em>) &#8211; Expected number of dimensions</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError</strong></p>
-<blockquote class="last">
-<div><p>For invalid array dimensions</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; For invalid array dimensions</p>
 </td>
 </tr>
 </tbody>
@@ -219,16 +225,15 @@ deconvolution_script.py.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>file_name</strong> : str</p>
-<blockquote>
-<div><p>Name of file with path</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Name of file with path</li>
+<li><strong>Retunrs</strong> &#8211; </li>
+<li><strong>-------</strong> &#8211; </li>
+<li><strong>array of image data</strong> (<em>np.ndarray</em>) &#8211; </li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError</strong></p>
-<blockquote class="last">
-<div><p>For invalid file extension</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; For invalid file extension</p>
 </td>
 </tr>
 </tbody>
@@ -244,10 +249,12 @@ deconvolution_script.py.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>file_name</strong> : str</p>
-<blockquote class="last">
-<div><p>Name of file with path</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Name of file with path</li>
+<li><strong>Retunrs</strong> &#8211; </li>
+<li><strong>-------</strong> &#8211; </li>
+<li><strong>array of image data</strong> (<em>np.ndarray</em>) &#8211; </li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -263,31 +270,23 @@ deconvolution_script.py.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data_file_name</strong> : str</p>
-<blockquote>
-<div><p>Name of file with path for the noisy image data</p>
-</div></blockquote>
-<p><strong>psf_file_name</strong> : str</p>
-<blockquote>
-<div><p>Name of file with path for the PSF image data</p>
-</div></blockquote>
-<p><strong>current_file_name</strong> : str, optional</p>
-<blockquote>
-<div><p>Name of file with path for the current results</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data_file_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Name of file with path for the noisy image data</li>
+<li><strong>psf_file_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Name of file with path for the PSF image data</li>
+<li><strong>current_file_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Name of file with path for the current results</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">tuple of np.ndarray arrays of image data</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError</strong></p>
-<blockquote>
-<div><p>If number of noisy images less than the number of PSFs</p>
-</div></blockquote>
-<p><strong>ValueError</strong></p>
-<blockquote class="last">
-<div><p>If the shape of the current results does not match the input data</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">tuple of np.ndarray arrays of image data</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If number of noisy images less than the number of PSFs</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the shape of the current results does not match the input data</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -296,29 +295,20 @@ deconvolution_script.py.</p>
 
 <dl class="function">
 <dt id="lib.file_io.write_output_files">
-<code class="descclassname">lib.file_io.</code><code class="descname">write_output_files</code><span class="sig-paren">(</span><em>output_file_name</em>, <em>primal_res</em>, <em>dual_res=None</em>, <em>output_format='npy'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/file_io.html#write_output_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.file_io.write_output_files" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">lib.file_io.</code><code class="descname">write_output_files</code><span class="sig-paren">(</span><em>output_file_name</em>, <em>primal_res</em>, <em>dual_res=None</em>, <em>psf_res=None</em>, <em>output_format='npy'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/file_io.html#write_output_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.file_io.write_output_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write output files</p>
 <p>This method writes the image data results to the specified output file(s)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>output_file_name</strong> : str</p>
-<blockquote>
-<div><p>Name of file with path for the output data</p>
-</div></blockquote>
-<p><strong>primal_res</strong> : np.ndarray</p>
-<blockquote>
-<div><p>Array of primal output results</p>
-</div></blockquote>
-<p><strong>dual_res</strong> : np.ndarray, optional</p>
-<blockquote>
-<div><p>Array of dual output results</p>
-</div></blockquote>
-<p><strong>output_format</strong> : str, optional</p>
-<blockquote class="last">
-<div><p>Output file format (numpy binary or FITS)</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>output_file_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Name of file with path for the output data</li>
+<li><strong>primal_res</strong> (<em>np.ndarray</em>) &#8211; Array of primal output results</li>
+<li><strong>dual_res</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) &#8211; Array of dual output results</li>
+<li><strong>psf_res</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) &#8211; Array of PSF output results</li>
+<li><strong>output_format</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) &#8211; Output file format (numpy binary or FITS)</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -334,14 +324,10 @@ deconvolution_script.py.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>file_name</strong> : str</p>
-<blockquote>
-<div><p>Name of file with path</p>
-</div></blockquote>
-<p><strong>data</strong> : np.ndarray</p>
-<blockquote class="last">
-<div><p>Image data array</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Name of file with path</li>
+<li><strong>data</strong> (<em>np.ndarray</em>) &#8211; Image data array</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -352,15 +338,18 @@ deconvolution_script.py.</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="lib.gradient.html" class="btn btn-neutral float-right" title="lib.gradient module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="lib.gradient.html" class="btn btn-neutral float-right" title="lib.gradient module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="lib.directional.html" class="btn btn-neutral" title="lib.directional module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="lib.directional.html" class="btn btn-neutral" title="lib.directional module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -394,7 +383,8 @@ deconvolution_script.py.</p>
             VERSION:'3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
