@@ -23,6 +23,8 @@ Contents
 <a name="intro_anchor"></a>
 ## Introduction
 
+> Note: This version of the code was used to produce the results in Farrens et al. (2017)
+
 This repository contains a Python code designed for PSF deconvolution and analysis.
 
 The directory ``lib`` contains all of the primary functions and classes used for optimisation and analysis. ``functions`` contains some additional generic functions and tools.
