@@ -50,7 +50,7 @@ class sf_deconvolveCost(object):
                  lambda_psf=1, mode='lowr', positivity=True, verbose=True):
 
         self.y = y
-        self.op = operator
+        self.grad = grad
         self.wavelet = wavelet
         self.weights = weights
         self.lambda_lowr = lambda_lowr
