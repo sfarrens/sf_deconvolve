@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sf_deconvolve module &mdash; sf_deconvolve 3.2 documentation</title>
+  <title>lib.args module &mdash; sf_deconvolve 3.2 documentation</title>
   
 
   
@@ -36,8 +36,9 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="sf_deconvolve 3.2 documentation" href="index.html"/>
-        <link rel="up" title="sf_deconvolve" href="modules.html"/>
-        <link rel="prev" title="lib.tests module" href="lib.tests.html"/> 
+        <link rel="up" title="lib package" href="lib.html"/>
+        <link rel="next" title="lib.cost module" href="lib.cost.html"/>
+        <link rel="prev" title="lib package" href="lib.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -92,8 +93,21 @@
             
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">sf_deconvolve</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="lib.html">lib package</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">sf_deconvolve module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="lib.html">lib package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="lib.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">lib.args module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="lib.cost.html">lib.cost module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="lib.deconvolve.html">lib.deconvolve module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="lib.directional.html">lib.directional module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="lib.file_io.html">lib.file_io module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="lib.gradient.html">lib.gradient module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="lib.tests.html">lib.tests module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="lib.html#module-lib">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="sf_deconvolve.html">sf_deconvolve module</a></li>
 </ul>
 </li>
 </ul>
@@ -142,13 +156,15 @@
         
           <li><a href="modules.html">sf_deconvolve</a> &raquo;</li>
         
-      <li>sf_deconvolve module</li>
+          <li><a href="lib.html">lib package</a> &raquo;</li>
+        
+      <li>lib.args module</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/sf_deconvolve.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/lib.args.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -161,71 +177,64 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-sf_deconvolve">
-<span id="sf-deconvolve-module"></span><h1>sf_deconvolve module<a class="headerlink" href="#module-sf_deconvolve" title="Permalink to this headline">¶</a></h1>
-<p>SF_DECONVOLVE</p>
-<p>This module is executable and contains methods for deconvolving a set of
-observed galaxy images.</p>
+  <div class="section" id="module-lib.args">
+<span id="lib-args-module"></span><h1>lib.args module<a class="headerlink" href="#module-lib.args" title="Permalink to this headline">¶</a></h1>
+<p>SF DECONVOLVE ARGUMENTS</p>
+<p>This module sets the arguments for sf_deconvolve.py.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Samuel Farrens &lt;<a class="reference external" href="mailto:samuel&#46;farrens&#37;&#52;&#48;gmail&#46;com">samuel<span>&#46;</span>farrens<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Version:</th><td class="field-body">4.1</td>
+<tr class="field-even field"><th class="field-name">Version:</th><td class="field-body">2.2</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">20/10/2017</td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Notes</p>
-<p>This code implements equations 8 and 17 from [F2017].</p>
-<dl class="function">
-<dt id="sf_deconvolve.check_psf">
-<code class="descclassname">sf_deconvolve.</code><code class="descname">check_psf</code><span class="sig-paren">(</span><em>data</em>, <em>log</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sf_deconvolve.html#check_psf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sf_deconvolve.check_psf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check PSF</p>
-<p>This method checks that the input PSFs are properly normalised and updates
-the opts namespace with the PSF type</p>
+<dl class="class">
+<dt id="lib.args.ArgParser">
+<em class="property">class </em><code class="descclassname">lib.args.</code><code class="descname">ArgParser</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/args.html#ArgParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.args.ArgParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/argparse.html#argparse.ArgumentParser" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.ArgumentParser</span></code></a></p>
+<p>Argument Parser</p>
+<p>This class defines a custom argument parser to override the
+defult convert_arg_line_to_args method from argparse.</p>
+<dl class="method">
+<dt id="lib.args.ArgParser.convert_arg_line_to_args">
+<code class="descname">convert_arg_line_to_args</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/args.html#ArgParser.convert_arg_line_to_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.args.ArgParser.convert_arg_line_to_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert argument line to arguments</p>
+<p>This method overrides the default method of argparse. It skips blank
+and comment lines, and allows .ini style formatting.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>data</strong> (<em>np.ndarray</em>) &#8211; Input data array</li>
-<li><strong>log</strong> (<a class="reference external" href="https://docs.python.org/2/library/logging.html#logging.Logger" title="(in Python v2.7)"><em>logging.Logger</em></a>) &#8211; Log instance</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Input argument string</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><em>str</em> &#8211; Argument strings</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
-<dl class="function">
-<dt id="sf_deconvolve.main">
-<code class="descclassname">sf_deconvolve.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sf_deconvolve.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sf_deconvolve.main" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+</dd></dl>
 
 <dl class="function">
-<dt id="sf_deconvolve.run_script">
-<code class="descclassname">sf_deconvolve.</code><code class="descname">run_script</code><span class="sig-paren">(</span><em>log</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sf_deconvolve.html#run_script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sf_deconvolve.run_script" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run script</p>
-<p>This method runs the script.</p>
+<dt id="lib.args.get_opts">
+<code class="descclassname">lib.args.</code><code class="descname">get_opts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lib/args.html#get_opts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lib.args.get_opts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get script options</p>
+<p>This method sets the PSF deconvolution script options.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>log</strong> (<a class="reference external" href="https://docs.python.org/2/library/logging.html#logging.Logger" title="(in Python v2.7)"><em>logging.Logger</em></a>) &#8211; Log instance</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">arguments namespace</td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="function">
-<dt id="sf_deconvolve.set_out_string">
-<code class="descclassname">sf_deconvolve.</code><code class="descname">set_out_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sf_deconvolve.html#set_out_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sf_deconvolve.set_out_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set output string</p>
-<p>This method checks if an output string has been specified and if not
-creates and ouput string from the input string and the mode</p>
 </dd></dl>
 
 </div>
@@ -240,8 +249,10 @@ creates and ouput string from the input string and the mode</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="lib.cost.html" class="btn btn-neutral float-right" title="lib.cost module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="lib.tests.html" class="btn btn-neutral" title="lib.tests module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="lib.html" class="btn btn-neutral" title="lib package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

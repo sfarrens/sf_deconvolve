@@ -173,7 +173,9 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">sf_tools.signal.gradient</span> <span class="k">import</span> <span class="n">GradBasic</span>
 <span class="kn">from</span> <span class="nn">sf_tools.math.matrix</span> <span class="k">import</span> <span class="n">PowerMethod</span>
+<span class="kn">from</span> <span class="nn">sf_tools.base.transform</span> <span class="k">import</span> <span class="n">cube2matrix</span><span class="p">,</span> <span class="n">matrix2cube</span>
 <span class="kn">from</span> <span class="nn">sf_tools.image.convolve</span> <span class="k">import</span> <span class="n">psf_convolve</span><span class="p">,</span> <span class="n">convolve_stack</span>
+<span class="kn">from</span> <span class="nn">sf_tools.image.shape</span> <span class="k">import</span> <span class="n">shape_project</span>
 
 
 <div class="viewcode-block" id="GradPSF"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradPSF">[docs]</a><span class="k">class</span> <span class="nc">GradPSF</span><span class="p">(</span><span class="n">PowerMethod</span><span class="p">):</span>
@@ -374,6 +376,84 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_psf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_grad</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="GradShape"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradShape">[docs]</a><span class="k">class</span> <span class="nc">GradShape</span><span class="p">(</span><span class="n">GradPSF</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gradient class for shape constraint</span>
+
+<span class="sd">    This class calculates the gradient including shape constraint</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : np.ndarray</span>
+<span class="sd">        Input data array, an array of 2D observed images (i.e. with noise)</span>
+<span class="sd">    psf : np.ndarray</span>
+<span class="sd">        PSF, a single 2D PSF or an array of 2D PSFs</span>
+<span class="sd">    psf_type : str {&#39;fixed&#39;, &#39;obj_var&#39;}</span>
+<span class="sd">        PSF type (defualt is &#39;fixed&#39;)</span>
+<span class="sd">    lambda_reg : float</span>
+<span class="sd">        Regularisation control parameter</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The properties of `GradPSF` are inherited in this class</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">psf_type</span><span class="o">=</span><span class="s1">&#39;fixed&#39;</span><span class="p">,</span> <span class="n">lambda_reg</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">grad_type</span> <span class="o">=</span> <span class="s1">&#39;shape&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_psf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">psf</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_psf_type</span> <span class="o">=</span> <span class="n">psf_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda_reg</span> <span class="o">=</span> <span class="n">lambda_reg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_St</span> <span class="o">=</span> <span class="n">cube2matrix</span><span class="p">(</span><span class="n">shape_project</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_S</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_St</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+
+            <span class="n">HX</span> <span class="o">=</span> <span class="n">cube2matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H_op</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+            <span class="n">StSHX</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_St</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_S</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">HX</span><span class="p">))</span>
+
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Ht_op</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H_op</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_reg</span> <span class="o">*</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">Ht_op</span><span class="p">(</span><span class="n">matrix2cube</span><span class="p">(</span><span class="n">StSHX</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)))</span>
+
+        <span class="n">PowerMethod</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_calc_shape_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the gradient of the shape constraint component</span>
+
+<span class="sd">        This method calculates the gradient value of the shape constraint</span>
+<span class="sd">        component</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : np.ndarray</span>
+<span class="sd">            Input data array, an array of recovered 2D images</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">HXY</span> <span class="o">=</span> <span class="n">cube2matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H_op</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">)</span>
+
+        <span class="n">StSHXY</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_St</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_S</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">HXY</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Ht_op</span><span class="p">(</span><span class="n">matrix2cube</span><span class="p">(</span><span class="n">StSHXY</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+<div class="viewcode-block" id="GradShape.get_grad"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradShape.get_grad">[docs]</a>    <span class="k">def</span> <span class="nf">get_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the gradient at the given iteration</span>
+
+<span class="sd">        This method calculates the gradient value from the input data</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : np.ndarray</span>
+<span class="sd">            Input data array, an array of recovered 2D images</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_calc_grad</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_reg</span> <span class="o">*</span>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">_calc_shape_grad</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div></div>
 
 
 <div class="viewcode-block" id="GradNone"><a class="viewcode-back" href="../../lib.gradient.html#lib.gradient.GradNone">[docs]</a><span class="k">class</span> <span class="nc">GradNone</span><span class="p">(</span><span class="n">GradPSF</span><span class="p">):</span>

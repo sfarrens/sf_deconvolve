@@ -300,11 +300,11 @@
     <span class="n">input_data</span> <span class="o">=</span> <span class="n">read_file</span><span class="p">(</span><span class="n">data_file_name</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">input_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="n">input_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">input_data</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
     <span class="n">psf_data</span> <span class="o">=</span> <span class="n">read_file</span><span class="p">(</span><span class="n">psf_file_name</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">psf_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">psf_data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">input_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">psf_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number of input images must be greater than or &#39;</span>
                          <span class="s1">&#39;or equal to the number of PSF images.&#39;</span><span class="p">)</span>
 

@@ -163,12 +163,14 @@
 
 <span class="sd">:Author: Samuel Farrens &lt;samuel.farrens@gmail.com&gt;</span>
 
-<span class="sd">:Version: 6.0</span>
+<span class="sd">:Version: 6.1</span>
 
-<span class="sd">:Date: 10/03/2017</span>
+<span class="sd">:Date: 20/10/2017</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="k">import</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">zip</span>
 <span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="k">import</span> <span class="n">norm</span>
 <span class="kn">from</span> <span class="nn">sf_tools.signal.optimisation</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">sf_tools.math.stats</span> <span class="k">import</span> <span class="n">sigma_mad</span>
@@ -203,7 +205,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;noise_est&#39;</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;noise_est&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma_mad</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-    <span class="nb">print</span> <span class="s1">&#39; - Noise Estimate:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;noise_est&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; - Noise Estimate:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;noise_est&#39;</span><span class="p">])</span>
     <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Noise Estimate: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;noise_est&#39;</span><span class="p">]))</span>
 
     <span class="k">return</span> <span class="n">kwargs</span></div>
@@ -239,10 +241,14 @@
                                            <span class="n">beta_reg</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;beta_psf&#39;</span><span class="p">],</span>
                                            <span class="n">lambda_reg</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lambda_psf&#39;</span><span class="p">])</span>
 
+    <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;shape&#39;</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">GradShape</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">psf_type</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;psf_type&#39;</span><span class="p">],</span>
+                                      <span class="n">lambda_reg</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lambda_shape&#39;</span><span class="p">])</span>
+
     <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">GradNone</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">psf_type</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;psf_type&#39;</span><span class="p">])</span>
 
-    <span class="nb">print</span> <span class="s1">&#39; - Spectral Radius:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">spec_rad</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; - Spectral Radius:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">spec_rad</span><span class="p">)</span>
     <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Spectral Radius: &#39;</span> <span class="o">+</span>
                        <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">spec_rad</span><span class="p">))</span>
 
@@ -325,7 +331,7 @@
                                 <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;wave_thresh_factor&#39;</span><span class="p">])])</span>
 
         <span class="n">filter_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">filter_norm</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span>
-                                <span class="n">xrange</span><span class="p">(</span><span class="n">data_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span>
+                                <span class="nb">range</span><span class="p">(</span><span class="n">data_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span>
 
     <span class="k">else</span><span class="p">:</span>
 
@@ -361,35 +367,31 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># Define a metho for calculating sigma and/or tau</span>
+    <span class="c1"># Define a method for calculating sigma and/or tau</span>
     <span class="k">def</span> <span class="nf">get_sig_tau</span><span class="p">():</span>
         <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">spec_rad</span> <span class="o">+</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_l1norm&#39;</span><span class="p">])</span>
 
     <span class="c1"># Calulate tau if not provided</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_tau&#39;</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
-        <span class="n">condat_tau</span> <span class="o">=</span> <span class="n">get_sig_tau</span><span class="p">()</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">condat_tau</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_tau&#39;</span><span class="p">]</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_tau&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_sig_tau</span><span class="p">()</span>
 
     <span class="c1"># Calculate sigma if not provided</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_sigma&#39;</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
-        <span class="n">condat_sigma</span> <span class="o">=</span> <span class="n">get_sig_tau</span><span class="p">()</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">condat_sigma</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_sigma&#39;</span><span class="p">]</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_sigma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_sig_tau</span><span class="p">()</span>
 
-    <span class="nb">print</span> <span class="s1">&#39; - tau:&#39;</span><span class="p">,</span> <span class="n">condat_tau</span>
-    <span class="nb">print</span> <span class="s1">&#39; - sigma:&#39;</span><span class="p">,</span> <span class="n">condat_sigma</span>
-    <span class="nb">print</span> <span class="s1">&#39; - rho:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;relax&#39;</span><span class="p">]</span>
-    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - tau: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">condat_tau</span><span class="p">))</span>
-    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - sigma: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">condat_sigma</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; - tau:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_tau&#39;</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; - sigma:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_sigma&#39;</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; - rho:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;relax&#39;</span><span class="p">])</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - tau: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_tau&#39;</span><span class="p">]))</span>
+    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - sigma: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_sigma&#39;</span><span class="p">]))</span>
     <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - rho: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;relax&#39;</span><span class="p">]))</span>
 
     <span class="c1"># Test combination of sigma and tau</span>
-    <span class="n">sig_tau_test</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">condat_tau</span> <span class="o">-</span> <span class="n">condat_sigma</span> <span class="o">*</span>
+    <span class="n">sig_tau_test</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_tau&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;condat_sigma&#39;</span><span class="p">]</span> <span class="o">*</span>
                     <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_l1norm&#39;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">&gt;=</span>
                     <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;grad_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">spec_rad</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
 
-    <span class="nb">print</span> <span class="s1">&#39; - 1/tau - sigma||L||^2 &gt;= beta/2:&#39;</span><span class="p">,</span> <span class="n">sig_tau_test</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; - 1/tau - sigma||L||^2 &gt;= beta/2:&#39;</span><span class="p">,</span> <span class="n">sig_tau_test</span><span class="p">)</span>
     <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - 1/tau - sigma||L||^2 &gt;= beta/2: &#39;</span> <span class="o">+</span>
                        <span class="nb">str</span><span class="p">(</span><span class="n">sig_tau_test</span><span class="p">))</span>
 
@@ -446,7 +448,7 @@
     <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lowr_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ngole&#39;</span><span class="p">:</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lowr_thresh_factor&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;noise_est&#39;</span><span class="p">])</span>
 
-    <span class="nb">print</span> <span class="s1">&#39; - lambda:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; - lambda:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">])</span>
     <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - lambda: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lambda&#39;</span><span class="p">]))</span>
 
     <span class="k">return</span> <span class="n">kwargs</span></div>
@@ -484,9 +486,9 @@
     <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;sparse&#39;</span><span class="p">:</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dual_shape&#39;</span><span class="p">])</span>
 
-    <span class="nb">print</span> <span class="s1">&#39; - Primal Variable Shape:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
-    <span class="nb">print</span> <span class="s1">&#39; - Dual Variable Shape:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dual&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
-    <span class="nb">print</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">70</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; - Primal Variable Shape:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; - Dual Variable Shape:&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dual&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">70</span><span class="p">)</span>
     <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Primal Variable Shape: &#39;</span> <span class="o">+</span>
                        <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primal&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
     <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Dual Variable Shape: &#39;</span> <span class="o">+</span>
@@ -631,10 +633,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Loop through number of reweightings</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;n_reweights&#39;</span><span class="p">]):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;n_reweights&#39;</span><span class="p">]):</span>
 
-        <span class="nb">print</span> <span class="s1">&#39; - REWEIGHT:&#39;</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="nb">print</span> <span class="s1">&#39;&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; - REWEIGHT:&#39;</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 
         <span class="c1"># Generate the new weights following reweighting persctiption</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;reweight&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reweight</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;linear_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">op</span><span class="p">(</span>
@@ -643,7 +645,7 @@
         <span class="c1"># Perform optimisation with new weights</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;optimisation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;n_iter&#39;</span><span class="p">])</span>
 
-        <span class="nb">print</span> <span class="s1">&#39;&#39;</span></div>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="run"><a class="viewcode-back" href="../../lib.deconvolve.html#lib.deconvolve.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
