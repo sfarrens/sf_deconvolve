@@ -3,7 +3,7 @@ SF_DECONVOLVE
 
 > Author: **Samuel Farrens**  
 > Year: **2017**  
-> Version: **4.1**  
+> Version: **4.2**  
 > Email: [samuel.farrens@gmail.com](mailto:samuel.farrens@gmail.com)  
 > Website: [sfarrens.github.io](https://sfarrens.github.io/)  
 > Reference Paper: [arXiv:1703.02305](https://arxiv.org/abs/1703.02305)
@@ -91,23 +91,33 @@ An example configuration file is provided in the `examples` directory.
 <a name="py_sesh"></a>
 ### Running the code in a Python session
 
-To run the code in an active Python session you should include the following imports:
+The code can be run in an active Python session in two ways. For either approach first import `sf_deconvolve`:
 
 ```Python
->>> from lib.deconvolve import run
->>> from functions.log import set_up_log
+>>> import sf_deconvolve
 ```
 
-*Note:* At present it is necessary to create a logging session but this may be relaxed in a future update.
-
-The code can then be run as follows:
+The first approach simply runs the full script where the command line arguments can be passed as a list of strings:
 
 ```Python
->>> log = set_up_log('LOG_FILE_NAME')
->>> primal_res, dual_res = run(INPUT_IMAGES, INPUT_PSFS, log=log, **KEYWORDS)
+>>> sf_deconvolve.main(['-i', 'INPUT_IMAGES.npy', '-p', 'PSF.npy', '-o', 'OUTPUT_NAME'])
 ```
 
-Where `INPUT_IMAGES` and `INPUT_PSFS` are both Numpy arrays and `KEYWORDS` is a dictionary that contains all of the parameter settings (this requires defining values for virtually all of the arguments listed [below](#opt_anchor)). The resulting deconvolved images will be saved to the variable `primal_res`.
+The second approach assumes the user has already has read  the images and PSF(s) into memory and wishes to return the results to memory:
+
+```Python
+>>> opts = vars(sf_deconvolve.get_opts(['-i', 'INPUT_IMAGES.npy', '-p', 'PSF.npy', '-o', 'OUTPUT_NAME']))
+>>> primal_res, dual_res, psf_res = sf_deconvolve.run(INPUT_IMAGES, INPUT_PSFS, **opts)
+```
+
+Where `INPUT_IMAGES` and `INPUT_PSFS` are both Numpy arrays. The resulting deconvolved images will be saved to the variable `primal_res`.
+
+In both cases it is possible to read a predefined configuration file.
+
+```Python
+>>> opts = vars(sf_deconvolve.get_opts(['@config.ini']))
+>>> primal_res, dual_res, psf_res = sf_deconvolve.run(INPUT_IMAGES, INPUT_PSFS, **opts)
+```
 
 <a name="eg_anchor"></a>
 ### Example

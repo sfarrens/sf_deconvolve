@@ -6,9 +6,9 @@ This module deconvolves a set of galaxy images with a known object-variant PSF.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 6.1
+:Version: 6.2
 
-:Date: 20/10/2017
+:Date: 22/10/2017
 
 """
 
@@ -49,7 +49,8 @@ def set_noise(data, **kwargs):
         kwargs['noise_est'] = sigma_mad(data)
 
     print(' - Noise Estimate:', kwargs['noise_est'])
-    kwargs['log'].info(' - Noise Estimate: ' + str(kwargs['noise_est']))
+    if 'log' in kwargs:
+        kwargs['log'].info(' - Noise Estimate: ' + str(kwargs['noise_est']))
 
     return kwargs
 
@@ -92,8 +93,9 @@ def set_grad_op(data, psf, **kwargs):
         kwargs['grad_op'] = GradNone(data, psf, psf_type=kwargs['psf_type'])
 
     print(' - Spectral Radius:', kwargs['grad_op'].spec_rad)
-    kwargs['log'].info(' - Spectral Radius: ' +
-                       str(kwargs['grad_op'].spec_rad))
+    if 'log' in kwargs:
+        kwargs['log'].info(' - Spectral Radius: ' +
+                           str(kwargs['grad_op'].spec_rad))
 
     return kwargs
 
@@ -225,9 +227,10 @@ def set_condat_param(**kwargs):
     print(' - tau:', kwargs['condat_tau'])
     print(' - sigma:', kwargs['condat_sigma'])
     print(' - rho:', kwargs['relax'])
-    kwargs['log'].info(' - tau: ' + str(kwargs['condat_tau']))
-    kwargs['log'].info(' - sigma: ' + str(kwargs['condat_sigma']))
-    kwargs['log'].info(' - rho: ' + str(kwargs['relax']))
+    if 'log' in kwargs:
+        kwargs['log'].info(' - tau: ' + str(kwargs['condat_tau']))
+        kwargs['log'].info(' - sigma: ' + str(kwargs['condat_sigma']))
+        kwargs['log'].info(' - rho: ' + str(kwargs['relax']))
 
     # Test combination of sigma and tau
     sig_tau_test = (1.0 / kwargs['condat_tau'] - kwargs['condat_sigma'] *
@@ -235,8 +238,9 @@ def set_condat_param(**kwargs):
                     kwargs['grad_op'].spec_rad / 2.0)
 
     print(' - 1/tau - sigma||L||^2 >= beta/2:', sig_tau_test)
-    kwargs['log'].info(' - 1/tau - sigma||L||^2 >= beta/2: ' +
-                       str(sig_tau_test))
+    if 'log' in kwargs:
+        kwargs['log'].info(' - 1/tau - sigma||L||^2 >= beta/2: ' +
+                           str(sig_tau_test))
 
     return kwargs
 
@@ -292,7 +296,8 @@ def set_lowr_thresh(data_shape, **kwargs):
         kwargs['lambda'] = (kwargs['lowr_thresh_factor'] * kwargs['noise_est'])
 
     print(' - lambda:', kwargs['lambda'])
-    kwargs['log'].info(' - lambda: ' + str(kwargs['lambda']))
+    if 'log' in kwargs:
+        kwargs['log'].info(' - lambda: ' + str(kwargs['lambda']))
 
     return kwargs
 
@@ -332,10 +337,11 @@ def set_primal_dual(data_shape, **kwargs):
     print(' - Primal Variable Shape:', kwargs['primal'].shape)
     print(' - Dual Variable Shape:', kwargs['dual'].shape)
     print(' ' + '-' * 70)
-    kwargs['log'].info(' - Primal Variable Shape: ' +
-                       str(kwargs['primal'].shape))
-    kwargs['log'].info(' - Dual Variable Shape: ' +
-                       str(kwargs['dual'].shape))
+    if 'log' in kwargs:
+        kwargs['log'].info(' - Primal Variable Shape: ' +
+                           str(kwargs['primal'].shape))
+        kwargs['log'].info(' - Dual Variable Shape: ' +
+                           str(kwargs['dual'].shape))
 
     return kwargs
 
@@ -551,11 +557,13 @@ def run(data, psf, **kwargs):
     kwargs['cost_op'].plot_cost()
 
     # FINISH AND RETURN RESULTS
-    kwargs['log'].info(' - Final iteration number: ' +
-                       str(kwargs['cost_op']._iteration))
-    kwargs['log'].info(' - Final log10 cost value: ' +
-                       str(np.log10(kwargs['cost_op'].cost)))
-    kwargs['log'].info(' - Converged: ' + str(kwargs['optimisation'].converge))
+    if 'log' in kwargs:
+        kwargs['log'].info(' - Final iteration number: ' +
+                           str(kwargs['cost_op']._iteration))
+        kwargs['log'].info(' - Final log10 cost value: ' +
+                           str(np.log10(kwargs['cost_op'].cost)))
+        kwargs['log'].info(' - Converged: ' +
+                           str(kwargs['optimisation'].converge))
 
     primal_res = kwargs['optimisation'].x_final
 

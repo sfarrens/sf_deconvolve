@@ -6,9 +6,9 @@ This module sets the arguments for sf_deconvolve.py.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 2.2
+:Version: 2.3
 
-:Date: 20/10/2017
+:Date: 22/10/2017
 
 """
 
@@ -57,7 +57,7 @@ class ArgParser(ap.ArgumentParser):
                 yield arg
 
 
-def get_opts():
+def get_opts(args=None):
 
     """Get script options
 
@@ -84,13 +84,14 @@ def get_opts():
     shape = parser.add_argument_group(' * Shape Constraint')
     condat = parser.add_argument_group(' * Condat Algorithm')
     testing = parser.add_argument_group(' * Testing')
+    hidden = parser.add_argument_group(' * Hidden Options')
 
     # Add arguments
     optional.add_argument('-h', '--help', action='help',
                           help='show this help message and exit')
 
     optional.add_argument('-v', '--version', action='version',
-                          version='%(prog)s v4.1')
+                          version='%(prog)s v4.2')
 
     optional.add_argument('-q', '--quiet', action='store_true',
                           help='Suppress verbose.')
@@ -101,6 +102,9 @@ def get_opts():
     required.add_argument('-p', '--psf_file', required=True,
                           help='PSF file name.')
 
+    hidden.add_argument('--psf_type', choices=('fixed', 'obj_var'),
+                        default='obj_var', help=ap.SUPPRESS)
+
     optional.add_argument('-o', '--output', help='Output file name.')
 
     optional.add_argument('--output_format', choices={'npy', 'fits'},
@@ -108,6 +112,8 @@ def get_opts():
 
     init.add_argument('-k', '--current_res',
                       help='Current deconvolution results file name.')
+
+    hidden.add_argument('--primal', help=ap.SUPPRESS)
 
     init.add_argument('--noise_est', type=float,
                       help='Initial noise estimate.')
@@ -191,4 +197,4 @@ def get_opts():
                          default='median', help='Metric to average errors.')
 
     # Return the argument namespace
-    return parser.parse_args()
+    return parser.parse_args(args)

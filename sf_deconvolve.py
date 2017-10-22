@@ -8,9 +8,9 @@ observed galaxy images.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 4.1
+:Version: 4.2
 
-:Date: 20/10/2017
+:Date: 22/10/2017
 
 Notes
 -----
@@ -62,11 +62,8 @@ def check_psf(data, log):
         warn('Not all PSFs integrate to 1.0.')
         log.info(' - Not all PSFs integrate to 1.0.')
 
-    opts_dict = vars(opts)
-    opts_dict['psf_type'] = 'obj_var'
-
     if data.ndim == 2:
-        opts_dict['psf_type'] = 'fixed'
+        opts.psf_type = 'fixed'
 
 
 def run_script(log):
@@ -88,6 +85,7 @@ def run_script(log):
     output_text = ' Running SF_DECONVOLVE'
     print(output_text)
     log.info(output_text)
+    opts.log = log
 
     print(h_line)
 
@@ -96,6 +94,7 @@ def run_script(log):
     data_noisy, psf_data, primal = read_input_files(opts.input, opts.psf_file,
                                                     opts.current_res)
     check_psf(psf_data, log)
+    opts.primal = primal
     ###########################################################################
 
     # Log input options
@@ -162,7 +161,7 @@ def run_script(log):
 
     ###########################################################################
     # Perform deconvolution.
-    results = run(data_noisy, psf_data, primal=primal, log=log, **vars(opts))
+    results = run(data_noisy, psf_data, **vars(opts))
     ###########################################################################
 
     if not isinstance(opts.clean_data, type(None)):
@@ -250,11 +249,11 @@ def run_script(log):
     print(h_line)
 
 
-def main():
+def main(args=None):
 
     try:
         global opts
-        opts = get_opts()
+        opts = get_opts(args)
         set_out_string()
         log = set_up_log(opts.output)
         run_script(log)
