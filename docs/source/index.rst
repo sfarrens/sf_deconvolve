@@ -23,14 +23,10 @@ summary of this paper is available |link-to-post|.
 Contents
 ========
 
-.. toctree::
-   :maxdepth: 2
-
-   modules
-
 1. `Introduction`_
-2. `Dependencies`_
-3. `Execution`_
+2. `Package Contents`_
+3. `Dependencies`_
+4. `Execution`_
 
    1. `Input Format`_
    2. `Running the executable script`_
@@ -38,7 +34,7 @@ Contents
    4. `Example`_
    5. `Code Options`_
 
-4. `Troubleshooting`_
+5. `Troubleshooting`_
 
 Introduction
 ============
@@ -53,6 +49,14 @@ The directory ``lib`` contains several primary functions and classes, but the ma
    :scale: 100 %
    :alt: example
    :align: center
+
+Package Contents
+================
+
+.. toctree::
+   :maxdepth: 2
+
+   modules
 
 Dependencies
 ============
