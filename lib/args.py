@@ -6,9 +6,9 @@ This module sets the arguments for sf_deconvolve.py.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 2.3
+:Version: 2.4
 
-:Date: 22/10/2017
+:Date: 23/10/2017
 
 """
 
@@ -91,7 +91,7 @@ def get_opts(args=None):
                           help='show this help message and exit')
 
     optional.add_argument('-v', '--version', action='version',
-                          version='%(prog)s v4.2')
+                          version='%(prog)s v4.3')
 
     optional.add_argument('-q', '--quiet', action='store_true',
                           help='Suppress verbose.')
@@ -139,6 +139,9 @@ def get_opts(args=None):
 
     optimisation.add_argument('--no_pos', action='store_true',
                               help='Option to turn off postivity constraint.')
+
+    optimisation.add_argument('--no_plots', action='store_true',
+                              help='Suppress plots.')
 
     optimisation.add_argument('--grad_type', default='psf_known',
                               choices=('psf_known', 'psf_unknown', 'shape',

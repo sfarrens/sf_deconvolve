@@ -8,9 +8,9 @@ observed galaxy images.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 4.2
+:Version: 4.3
 
-:Date: 22/10/2017
+:Date: 23/10/2017
 
 Notes
 -----
@@ -116,6 +116,7 @@ def run_script(log):
     print(' - Number of Iterations:', opts.n_iter)
     print(' - Cost Function Window:', opts.cost_window)
     print(' - Convergence Tolerance:', opts.convergence)
+    print(' - Suppress Plots:', opts.no_plots)
     log.info(' - Mode: ' + opts.mode)
     log.info(' - PSF Type: ' + opts.psf_type)
     log.info(' - Gradient Type: ' + opts.grad_type)
@@ -125,6 +126,7 @@ def run_script(log):
     log.info(' - Number of Iterations: ' + str(opts.n_iter))
     log.info(' - Cost Function Window: ' + str(opts.cost_window))
     log.info(' - Convergence Tolerance: ' + str(opts.convergence))
+    log.info(' - Suppress Plots:' + str(opts.no_plots))
 
     # Log sparsity options
     if opts.mode in ('all', 'sparse'):

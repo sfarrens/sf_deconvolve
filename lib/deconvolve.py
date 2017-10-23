@@ -6,9 +6,9 @@ This module deconvolves a set of galaxy images with a known object-variant PSF.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 6.2
+:Version: 6.3
 
-:Date: 22/10/2017
+:Date: 23/10/2017
 
 """
 
@@ -554,7 +554,8 @@ def run(data, psf, **kwargs):
         perform_reweighting(**kwargs)
 
     # PLOT THE COST FUNCTION
-    kwargs['cost_op'].plot_cost()
+    if not kwargs['no_plots']:
+        kwargs['cost_op'].plot_cost()
 
     # FINISH AND RETURN RESULTS
     if 'log' in kwargs:
