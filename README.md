@@ -12,6 +12,8 @@ Contents
 ------------
 1. [Introduction](#intro_anchor)
 1. [Dependencies](#depend_anchor)
+    1. [Required Packages](#required_package)
+    1. [Optional Packages](#optional_package)
 1. [Execution](#exe_anchor)
     1. [Input Format](#in_format)
     1. [Running the executable script](#py_ex)
@@ -31,6 +33,9 @@ The directory `lib` contains several primary functions and classes, but the majo
 <a name="depend_anchor"></a>
 ## Dependencies
 
+<a name="required_package"></a>
+### Required Packages
+
 In order to run the code in this repository the following packages must be installed:
 
 * **[Python](https://www.python.org/)</a>**
@@ -40,17 +45,22 @@ In order to run the code in this repository the following packages must be insta
 
 * **[Scipy](http://www.scipy.org/)** [Tested with v 0.18.1]
 
+* **[Future](http://python-future.org/quickstart.html)** [Tested with v 0.16.0]
+
 * **[Astropy](http://www.astropy.org/)** [Tested with v 1.3]
+
+* **[sf_tools](https://sfarrens.github.io/sf_tools/)** [Tested with v 1.0]
+
+* The current implementation of wavelet transformations additionally requires the `mr_transform.cc` C++ script from the Sparse2D library in the **[iSap](http://www.cosmostat.org/software/isap/)** package [Tested with v 3.1]. These C++ scripts will be need to be compiled in order to run (see [iSap Documentation](http://www.cosmostat.org/wp-content/uploads/2014/12/doc_iSAP.pdf) for details). *Note:* The low-rank approximation method can be run purely in Python without the Sparse2D binaries.
+
+<a name="optional_package"></a>
+### Optional Packages
+
+The following packages can optionally be installed to add extra functionality:
 
 * **[Matplotlib](http://matplotlib.org/)** [Tested with v 2.0.2]
 
 * **[Termcolor](https://pypi.python.org/pypi/termcolor)** [Tested with v 1.1.0]
-
-* **[sf_tools](https://sfarrens.github.io/sf_tools/)** [Tested with v 1.0]
-
-* The current implementation of wavelet transformations additionally requires the `mr_transform.cc` C++ script from the Sparse2D library in the **[iSap](http://www.cosmostat.org/software/isap/)** package [Tested with v 3.1]. These C++ scripts will be need to be compiled in order to run (see [iSap Documentation](http://www.cosmostat.org/wp-content/uploads/2014/12/doc_iSAP.pdf) for details).
-
-The low-rank approximation method can be run purely in Python.
 
 <a name="exe_anchor"></a>
 ## Execution
