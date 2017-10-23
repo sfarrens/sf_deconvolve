@@ -51,7 +51,7 @@ def read_from_fits(file_name):
     file_name : str
         Name of file with path
 
-    Retunrs
+    Returns
     -------
     np.ndarray array of image data
 
@@ -87,7 +87,7 @@ def read_file(file_name):
     file_name : str
         Name of file with path
 
-    Retunrs
+    Returns
     -------
     np.ndarray array of image data
 
