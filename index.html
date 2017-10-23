@@ -173,44 +173,53 @@ target="_blank">here</a>.</p>
 </li>
 </ul>
 </div>
-<p>1. <a class="reference internal" href="#introduction">Introduction</a>
-1. <a class="reference internal" href="#dependencies">Dependencies</a>
-1. <a class="reference internal" href="#execution">Execution</a></p>
-<blockquote>
-<div>1. <a class="reference internal" href="#input-format">Input Format</a>
-1. <a class="reference internal" href="#running-the-executable-script">Running the executable script</a>
-1. <a class="reference internal" href="#running-the-code-in-a-python-session">Running the code in a Python session</a>
-1. <a class="reference internal" href="#example">Example</a>
-1. <a class="reference internal" href="#code-options">Code Options</a></div></blockquote>
 <ol class="arabic simple">
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li><a class="reference internal" href="#execution">Execution</a><ol class="arabic">
+<li><a class="reference internal" href="#input-format">Input Format</a></li>
+<li><a class="reference internal" href="#running-the-executable-script">Running the executable script</a></li>
+<li><a class="reference internal" href="#running-the-code-in-a-python-session">Running the code in a Python session</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+<li><a class="reference internal" href="#code-options">Code Options</a></li>
+</ol>
+</li>
 <li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
 </ol>
 </div>
 <div class="section" id="introduction">
 <h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
 <p>This repository contains a Python code designed for PSF deconvolution and analysis.</p>
-<p>The directory <cite>lib</cite> contains several primary functions and classes, but the majority of the optimisation and analysis tools are provided in <strong>|link-to-sf-tools|</strong>.</p>
+<p>The directory <code class="docutils literal"><span class="pre">lib</span></code> contains several primary functions and classes, but the majority of the optimisation and analysis tools are provided in <strong>|link-to-sf-tools|</strong>.</p>
 <a class="reference internal image-reference" href="_images/example_image.png"><img alt="example" class="align-center" src="_images/example_image.png" style="width: 704.0px; height: 358.0px;" /></a>
 </div>
 <div class="section" id="dependencies">
 <h1>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h1>
 <p>In order to run the code in this repository the following packages must be installed:</p>
 <ul class="simple">
-<li><strong>|link-to-python|</strong> [Tested with v 2.7.11 and 3.6.3]</li>
-<li><strong>|link-to-numpy|</strong> [Tested with v 1.13.3]</li>
-<li><strong>|link-to-scipy|</strong> [Tested with v 0.18.1]</li>
-<li><strong>|link-to-astropy|</strong> [Tested with v 1.3]</li>
-<li><strong>|link-to-matplotlib|</strong> [Tested with v 2.0.2]</li>
-<li><strong>|link-to-termcolor|</strong> [Tested with v 1.1.0]</li>
-<li><strong>|link-to-sf-tools|</strong> [Tested with v 1.0]</li>
-<li>The current implementation of wavelet transformations additionally requires the <cite>mr_transform.cc</cite> C++ script from the Sparse2D library in the <strong>|link-to-isap|</strong> package [Tested with v 3.1]. These C++ scripts will be need to be compiled in order to run (see <a href="http://www.cosmostat.org/wp-content/uploads/2014/12/doc_iSAP.pdf"
+<li><a href="https://www.python.org/"
+target="_blank">Python</a> [Tested with v 2.7.11 and 3.6.3]</li>
+<li><a href="http://www.numpy.org/"
+target="_blank">Numpy</a> [Tested with v 1.13.3]</li>
+<li><a href="http://www.scipy.org/"
+target="_blank">Scipy</a> [Tested with v 0.18.1]</li>
+<li><a href="http://www.astropy.org/"
+target="_blank">Astropy</a> [Tested with v 1.3]</li>
+<li><a href="http://matplotlib.org/"
+target="_blank">Matplotlib</a> [Tested with v 2.0.2]</li>
+<li><a href="https://pypi.python.org/pypi/termcolor"
+target="_blank">Termcolor</a> [Tested with v 1.1.0]</li>
+<li><a href="https://sfarrens.github.io/sf_tools/"
+target="_blank">sf-tools</a> [Tested with v 1.0]</li>
+<li>The current implementation of wavelet transformations additionally requires the <code class="docutils literal"><span class="pre">mr_transform.cc</span></code> C++ script from the Sparse2D library in the <a href="http://www.cosmostat.org/software/isap/"
+target="_blank">iSAP</a> package [Tested with v 3.1]. These C++ scripts will be need to be compiled in order to run (see <a href="http://www.cosmostat.org/wp-content/uploads/2014/12/doc_iSAP.pdf"
 target="_blank">iSAP Documentation</a> for details).</li>
 </ul>
 <p>The low-rank approximation method can be run purely in Python.</p>
 </div>
 <div class="section" id="execution">
 <h1>Execution<a class="headerlink" href="#execution" title="Permalink to this headline">¶</a></h1>
-<p>The primary code is an executable script called <code class="docutils literal"><span class="pre">sf_deconvolve.py</span></code> which is designed to take an observed (<em>i.e.</em> with PSF effects and noise) stack of galaxy images and a known PSF, and attempt to reconstruct the original images. The input format are Numpy binary files (.npy) or FITS image files (.fits).</p>
+<p>The primary code is an executable script called <code class="docutils literal"><span class="pre">sf_deconvolve.py</span></code> which is designed to take an observed (<em>i.e.</em> with PSF effects and noise) stack of galaxy images and a known PSF, and attempt to reconstruct the original images. The input format are Numpy binary files (<code class="docutils literal"><span class="pre">.npy</span></code>) or FITS image files (<code class="docutils literal"><span class="pre">.fits</span></code>).</p>
 <div class="section" id="input-format">
 <h2>Input Format<a class="headerlink" href="#input-format" title="Permalink to this headline">¶</a></h2>
 <p>The input files should have the following format:</p>
@@ -218,7 +227,7 @@ target="_blank">iSAP Documentation</a> for details).</li>
 <li>Input Images: This should be either a Numpy binary or a FITS file containing a 3D array of galaxy images. <em>e.g.</em> for a sample of 10 images, each with size 41x41, the shape of the array should be [10, 41, 41].</li>
 <li>Input PSF(s): This should be either a Numpy binary or a FITS file containing a 2D array (for a fixed PSF) or a 3D array (for a spatially varying PSF) of PSF images. For the spatially varying case the number of PSF images must match the number of corresponding galaxy images. <em>e.g.</em> For a sample of 10 images the codes expects 10 PSFs.</li>
 </ul>
-<p>See the files provided in the <cite>examples</cite> directory for reference.</p>
+<p>See the files provided in the <code class="docutils literal"><span class="pre">examples</span></code> directory for reference.</p>
 </div>
 <div class="section" id="running-the-executable-script">
 <h2>Running the executable script<a class="headerlink" href="#running-the-executable-script" title="Permalink to this headline">¶</a></h2>
@@ -226,17 +235,17 @@ target="_blank">iSAP Documentation</a> for details).</li>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ sf_deconvolve.py -i INPUT_IMAGES.npy -p PSF.npy -o OUTPUT_NAME
 </pre></div>
 </div>
-<p>Where <cite>INPUT_IMAGES.npy</cite> denotes the Numpy binary file containing the stack of observed galaxy images, <cite>PSF.npy</cite> denotes the PSF corresponding to each galaxy image and <cite>OUTPUT_NAME</cite> specifies the output path and file name.</p>
+<p>Where <code class="docutils literal"><span class="pre">INPUT_IMAGES.npy</span></code> denotes the Numpy binary file containing the stack of observed galaxy images, <cite>PSF.npy</cite> denotes the PSF corresponding to each galaxy image and <code class="docutils literal"><span class="pre">OUTPUT_NAME</span></code> specifies the output path and file name.</p>
 <p>Alternatively the code arguments can be stored in a configuration file (with any name) and the code can be run by providing
-the file name preceded by a <cite>&#64;</cite>.</p>
+the file name preceded by a <code class="docutils literal"><span class="pre">&#64;</span></code>.</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ sf_deconvolve.py @config.ini
 </pre></div>
 </div>
-<p>An example configuration file is provided in the <cite>examples</cite> directory.</p>
+<p>An example configuration file is provided in the <code class="docutils literal"><span class="pre">examples</span></code> directory.</p>
 </div>
 <div class="section" id="running-the-code-in-a-python-session">
 <h2>Running the code in a Python session<a class="headerlink" href="#running-the-code-in-a-python-session" title="Permalink to this headline">¶</a></h2>
-<p>The code can be run in an active Python session in two ways. For either approach first import <cite>sf_deconvolve</cite>:</p>
+<p>The code can be run in an active Python session in two ways. For either approach first import <code class="docutils literal"><span class="pre">sf_deconvolve</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">sf_deconvolve</span>
 </pre></div>
 </div>
@@ -249,7 +258,7 @@ the file name preceded by a <cite>&#64;</cite>.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">primal_res</span><span class="p">,</span> <span class="n">dual_res</span><span class="p">,</span> <span class="n">psf_res</span> <span class="o">=</span> <span class="n">sf_deconvolve</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">INPUT_IMAGES</span><span class="p">,</span> <span class="n">INPUT_PSFS</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Where <cite>INPUT_IMAGES</cite> and <cite>INPUT_PSFS</cite> are both Numpy arrays. The resulting deconvolved images will be saved to the variable <cite>primal_res</cite>.</p>
+<p>Where <code class="docutils literal"><span class="pre">INPUT_IMAGES</span></code> and <code class="docutils literal"><span class="pre">INPUT_PSFS</span></code> are both Numpy arrays. The resulting deconvolved images will be saved to the variable <code class="docutils literal"><span class="pre">primal_res</span></code>.</p>
 <p>In both cases it is possible to read a predefined configuration file.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">sf_deconvolve</span><span class="o">.</span><span class="n">get_opts</span><span class="p">([</span><span class="s1">&#39;@config.ini&#39;</span><span class="p">]))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">primal_res</span><span class="p">,</span> <span class="n">dual_res</span><span class="p">,</span> <span class="n">psf_res</span> <span class="o">=</span> <span class="n">sf_deconvolve</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">INPUT_IMAGES</span><span class="p">,</span> <span class="n">INPUT_PSFS</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
@@ -264,7 +273,7 @@ the file name preceded by a <cite>&#64;</cite>.</p>
 </pre></div>
 </div>
 <p>The example can also be run using the configuration file provided.</p>
-<p>The result will be two Numpy binary files called <cite>example_output_primal.npy</cite> and <cite>example_output_dual.npy</cite> corresponding to the primal and dual variables in the splitting algorithm. The reconstructed images will be in the <cite>example_output_primal.npy</cite> file.</p>
+<p>The result will be two Numpy binary files called <code class="docutils literal"><span class="pre">example_output_primal.npy</span></code> and <code class="docutils literal"><span class="pre">example_output_dual.npy</span></code> corresponding to the primal and dual variables in the splitting algorithm. The reconstructed images will be in the <code class="docutils literal"><span class="pre">example_output_primal.npy</span></code> file.</p>
 <p>The example can also be run with the FITS files provided.</p>
 </div>
 <div class="section" id="code-options">
@@ -340,7 +349,7 @@ target="_blank">iSAP Documentation</a>). (default: 1)</li>
 <ul class="simple">
 <li>If you get the following error:</li>
 </ul>
-<p><cite>ERROR: svd() got an unexpected keyword argument &#8216;lapack_driver&#8217;</cite></p>
+<p><code class="docutils literal"><span class="pre">ERROR:</span> <span class="pre">svd()</span> <span class="pre">got</span> <span class="pre">an</span> <span class="pre">unexpected</span> <span class="pre">keyword</span> <span class="pre">argument</span> <span class="pre">'lapack_driver'</span></code></p>
 <p>Update your Numpy and Scipy installations</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ pip install --upgrade numpy
 $ pip install --upgrade scipy
