@@ -163,9 +163,9 @@
 
 <span class="sd">:Author: Samuel Farrens &lt;samuel.farrens@gmail.com&gt;</span>
 
-<span class="sd">:Version: 2.2</span>
+<span class="sd">:Version: 2.3</span>
 
-<span class="sd">:Date: 20/10/2017</span>
+<span class="sd">:Date: 22/10/2017</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -214,7 +214,7 @@
                 <span class="k">yield</span> <span class="n">arg</span></div></div>
 
 
-<div class="viewcode-block" id="get_opts"><a class="viewcode-back" href="../../lib.args.html#lib.args.get_opts">[docs]</a><span class="k">def</span> <span class="nf">get_opts</span><span class="p">():</span>
+<div class="viewcode-block" id="get_opts"><a class="viewcode-back" href="../../lib.args.html#lib.args.get_opts">[docs]</a><span class="k">def</span> <span class="nf">get_opts</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Get script options</span>
 
@@ -241,13 +241,14 @@
     <span class="n">shape</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39; * Shape Constraint&#39;</span><span class="p">)</span>
     <span class="n">condat</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39; * Condat Algorithm&#39;</span><span class="p">)</span>
     <span class="n">testing</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39; * Testing&#39;</span><span class="p">)</span>
+    <span class="n">hidden</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39; * Hidden Options&#39;</span><span class="p">)</span>
 
     <span class="c1"># Add arguments</span>
     <span class="n">optional</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-h&#39;</span><span class="p">,</span> <span class="s1">&#39;--help&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;help&#39;</span><span class="p">,</span>
                           <span class="n">help</span><span class="o">=</span><span class="s1">&#39;show this help message and exit&#39;</span><span class="p">)</span>
 
     <span class="n">optional</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-v&#39;</span><span class="p">,</span> <span class="s1">&#39;--version&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;version&#39;</span><span class="p">,</span>
-                          <span class="n">version</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(prog)s</span><span class="s1"> v4.1&#39;</span><span class="p">)</span>
+                          <span class="n">version</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(prog)s</span><span class="s1"> v4.2&#39;</span><span class="p">)</span>
 
     <span class="n">optional</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-q&#39;</span><span class="p">,</span> <span class="s1">&#39;--quiet&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
                           <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Suppress verbose.&#39;</span><span class="p">)</span>
@@ -258,6 +259,9 @@
     <span class="n">required</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;--psf_file&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                           <span class="n">help</span><span class="o">=</span><span class="s1">&#39;PSF file name.&#39;</span><span class="p">)</span>
 
+    <span class="n">hidden</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--psf_type&#39;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;fixed&#39;</span><span class="p">,</span> <span class="s1">&#39;obj_var&#39;</span><span class="p">),</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;obj_var&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="n">ap</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span>
+
     <span class="n">optional</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="s1">&#39;--output&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Output file name.&#39;</span><span class="p">)</span>
 
     <span class="n">optional</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--output_format&#39;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;npy&#39;</span><span class="p">,</span> <span class="s1">&#39;fits&#39;</span><span class="p">},</span>
@@ -265,6 +269,8 @@
 
     <span class="n">init</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-k&#39;</span><span class="p">,</span> <span class="s1">&#39;--current_res&#39;</span><span class="p">,</span>
                       <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Current deconvolution results file name.&#39;</span><span class="p">)</span>
+
+    <span class="n">hidden</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--primal&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="n">ap</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span>
 
     <span class="n">init</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--noise_est&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
                       <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Initial noise estimate.&#39;</span><span class="p">)</span>
@@ -348,7 +354,7 @@
                          <span class="n">default</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Metric to average errors.&#39;</span><span class="p">)</span>
 
     <span class="c1"># Return the argument namespace</span>
-    <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span></div>
+    <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
