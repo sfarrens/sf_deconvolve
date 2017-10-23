@@ -25,7 +25,7 @@ Contents
 
 This repository contains a Python code designed for PSF deconvolution and analysis.
 
-The directory ``lib`` contains all of the primary functions and classes used for optimisation and analysis.
+The directory `lib` contains several primary functions and classes, but the majority of the optimisation and analysis tools are provided in **[sf_tools](https://sfarrens.github.io/sf_tools/)**.
 ![](docs/images/example_image.png)
 
 <a name="depend_anchor"></a>
@@ -66,7 +66,7 @@ The input files should have the following format:
 
 - Input PSF(s): This should be either a Numpy binary or a FITS file containing a 2D array (for a fixed PSF) or a 3D array (for a spatially varying PSF) of PSF images. For the spatially varying case the number of PSF images must match the number of corresponding galaxy images. *e.g.* For a sample of 10 images the codes expects 10 PSFs.
 
-See the files provides in the `examples` directory for reference.
+See the files provided in the `examples` directory for reference.
 
 <a name="py_ex"></a>
 ### Running the executable script
@@ -103,7 +103,7 @@ The first approach simply runs the full script where the command line arguments 
 >>> sf_deconvolve.main(['-i', 'INPUT_IMAGES.npy', '-p', 'PSF.npy', '-o', 'OUTPUT_NAME'])
 ```
 
-The second approach assumes the user has already has read  the images and PSF(s) into memory and wishes to return the results to memory:
+The second approach assumes that the user has already has read  the images and PSF(s) into memory and wishes to return the deconvolution results to memory:
 
 ```Python
 >>> opts = vars(sf_deconvolve.get_opts(['-i', 'INPUT_IMAGES.npy', '-p', 'PSF.npy', '-o', 'OUTPUT_NAME']))
