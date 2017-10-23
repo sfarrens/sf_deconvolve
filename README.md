@@ -3,7 +3,7 @@ SF_DECONVOLVE
 
 > Author: **Samuel Farrens**  
 > Year: **2017**  
-> Version: **4.2**  
+> Version: **4.3**  
 > Email: [samuel.farrens@gmail.com](mailto:samuel.farrens@gmail.com)  
 > Website: [sfarrens.github.io](https://sfarrens.github.io/)  
 > Reference Paper: [arXiv:1703.02305](https://arxiv.org/abs/1703.02305)
