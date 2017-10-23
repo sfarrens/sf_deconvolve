@@ -163,9 +163,9 @@
 
 <span class="sd">:Author: Samuel Farrens &lt;samuel.farrens@gmail.com&gt;</span>
 
-<span class="sd">:Version: 6.2</span>
+<span class="sd">:Version: 6.3</span>
 
-<span class="sd">:Date: 22/10/2017</span>
+<span class="sd">:Date: 23/10/2017</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -711,7 +711,8 @@
         <span class="n">perform_reweighting</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="c1"># PLOT THE COST FUNCTION</span>
-    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;cost_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot_cost</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;no_plots&#39;</span><span class="p">]:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;cost_op&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot_cost</span><span class="p">()</span>
 
     <span class="c1"># FINISH AND RETURN RESULTS</span>
     <span class="k">if</span> <span class="s1">&#39;log&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>

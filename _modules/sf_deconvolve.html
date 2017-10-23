@@ -165,9 +165,9 @@
 
 <span class="sd">:Author: Samuel Farrens &lt;samuel.farrens@gmail.com&gt;</span>
 
-<span class="sd">:Version: 4.2</span>
+<span class="sd">:Version: 4.3</span>
 
-<span class="sd">:Date: 22/10/2017</span>
+<span class="sd">:Date: 23/10/2017</span>
 
 <span class="sd">Notes</span>
 <span class="sd">-----</span>
@@ -273,6 +273,7 @@
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; - Number of Iterations:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">n_iter</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; - Cost Function Window:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">cost_window</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; - Convergence Tolerance:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">convergence</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; - Suppress Plots:&#39;</span><span class="p">,</span> <span class="n">opts</span><span class="o">.</span><span class="n">no_plots</span><span class="p">)</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Mode: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - PSF Type: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">psf_type</span><span class="p">)</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Gradient Type: &#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="o">.</span><span class="n">grad_type</span><span class="p">)</span>
@@ -282,6 +283,7 @@
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Number of Iterations: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">n_iter</span><span class="p">))</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Cost Function Window: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">cost_window</span><span class="p">))</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Convergence Tolerance: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">convergence</span><span class="p">))</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39; - Suppress Plots:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">no_plots</span><span class="p">))</span>
 
     <span class="c1"># Log sparsity options</span>
     <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;sparse&#39;</span><span class="p">):</span>
