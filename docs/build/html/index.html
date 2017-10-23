@@ -167,7 +167,11 @@ target="_blank">here</a>.</p>
 <ol class="arabic simple">
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#package-contents">Package Contents</a></li>
-<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li><a class="reference internal" href="#dependencies">Dependencies</a><ol class="arabic">
+<li><a class="reference internal" href="#required-packages">Required Packages</a></li>
+<li><a class="reference internal" href="#optional-packages">Optional Packages</a></li>
+</ol>
+</li>
 <li><a class="reference internal" href="#execution">Execution</a><ol class="arabic">
 <li><a class="reference internal" href="#input-format">Input Format</a></li>
 <li><a class="reference internal" href="#running-the-executable-script">Running the executable script</a></li>
@@ -181,8 +185,11 @@ target="_blank">here</a>.</p>
 </div>
 <div class="section" id="introduction">
 <h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
-<p>This repository contains a Python code designed for PSF deconvolution and analysis.</p>
-<p>The directory <code class="docutils literal"><span class="pre">lib</span></code> contains several primary functions and classes, but the majority of the optimisation and analysis tools are provided in <a href="https://sfarrens.github.io/sf_tools/"
+<p>This repository contains a Python code designed for PSF deconvolution and
+analysis.</p>
+<p>The directory <code class="docutils literal"><span class="pre">lib</span></code> contains several primary functions and classes, but the
+majority of the optimisation and analysis tools are provided in
+<a href="https://sfarrens.github.io/sf_tools/"
 target="_blank">sf-tools</a>.</p>
 <a class="reference internal image-reference" href="_images/example_image.png"><img alt="example" class="align-center" src="_images/example_image.png" style="width: 704.0px; height: 358.0px;" /></a>
 </div>
@@ -200,7 +207,10 @@ target="_blank">sf-tools</a>.</p>
 </div>
 <div class="section" id="dependencies">
 <h1>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h1>
-<p>In order to run the code in this repository the following packages must be installed:</p>
+<div class="section" id="required-packages">
+<h2>Required Packages<a class="headerlink" href="#required-packages" title="Permalink to this headline">¶</a></h2>
+<p>In order to run the code in this repository the following packages must be
+installed:</p>
 <ul class="simple">
 <li><a href="https://www.python.org/"
 target="_blank">Python</a> [Tested with v 2.7.11 and 3.6.3]</li>
@@ -208,29 +218,51 @@ target="_blank">Python</a> [Tested with v 2.7.11 and 3.6.3]</li>
 target="_blank">Numpy</a> [Tested with v 1.13.3]</li>
 <li><a href="http://www.scipy.org/"
 target="_blank">Scipy</a> [Tested with v 0.18.1]</li>
+<li><a href="http://python-future.org/quickstart.html"
+target="_blank">Future</a> [Tested with v 0.16.0]</li>
 <li><a href="http://www.astropy.org/"
 target="_blank">Astropy</a> [Tested with v 1.3]</li>
+<li><a href="https://sfarrens.github.io/sf_tools/"
+target="_blank">sf-tools</a> [Tested with v 1.0]</li>
+<li>The current implementation of wavelet transformations additionally requires
+the <code class="docutils literal"><span class="pre">mr_transform.cc</span></code> C++ script from the Sparse2D library in the
+<a href="http://www.cosmostat.org/software/isap/"
+target="_blank">iSAP</a> package [Tested with v 3.1]. These C++ scripts will be need to
+be compiled in order to run (see <a href="http://www.cosmostat.org/wp-content/uploads/2014/12/doc_iSAP.pdf"
+target="_blank">iSAP Documentation</a> for details). <em>Note:</em> The
+low-rank approximation method can be run purely in Python without the Sparse2D
+binaries.</li>
+</ul>
+</div>
+<div class="section" id="optional-packages">
+<h2>Optional Packages<a class="headerlink" href="#optional-packages" title="Permalink to this headline">¶</a></h2>
+<p>The following packages can optionally be installed to add extra functionality:</p>
+<ul class="simple">
 <li><a href="http://matplotlib.org/"
 target="_blank">Matplotlib</a> [Tested with v 2.0.2]</li>
 <li><a href="https://pypi.python.org/pypi/termcolor"
 target="_blank">Termcolor</a> [Tested with v 1.1.0]</li>
-<li><a href="https://sfarrens.github.io/sf_tools/"
-target="_blank">sf-tools</a> [Tested with v 1.0]</li>
-<li>The current implementation of wavelet transformations additionally requires the <code class="docutils literal"><span class="pre">mr_transform.cc</span></code> C++ script from the Sparse2D library in the <a href="http://www.cosmostat.org/software/isap/"
-target="_blank">iSAP</a> package [Tested with v 3.1]. These C++ scripts will be need to be compiled in order to run (see <a href="http://www.cosmostat.org/wp-content/uploads/2014/12/doc_iSAP.pdf"
-target="_blank">iSAP Documentation</a> for details).</li>
 </ul>
-<p>The low-rank approximation method can be run purely in Python.</p>
+</div>
 </div>
 <div class="section" id="execution">
 <h1>Execution<a class="headerlink" href="#execution" title="Permalink to this headline">¶</a></h1>
-<p>The primary code is an executable script called <code class="docutils literal"><span class="pre">sf_deconvolve.py</span></code> which is designed to take an observed (<em>i.e.</em> with PSF effects and noise) stack of galaxy images and a known PSF, and attempt to reconstruct the original images. The input format are Numpy binary files (<code class="docutils literal"><span class="pre">.npy</span></code>) or FITS image files (<code class="docutils literal"><span class="pre">.fits</span></code>).</p>
+<p>The primary code is an executable script called <code class="docutils literal"><span class="pre">sf_deconvolve.py</span></code> which is
+designed to take an observed (<em>i.e.</em> with PSF effects and noise) stack of
+galaxy images and a known PSF, and attempt to reconstruct the original images.
+The input format are Numpy binary files (<code class="docutils literal"><span class="pre">.npy</span></code>) or FITS image files (<code class="docutils literal"><span class="pre">.fits</span></code>).</p>
 <div class="section" id="input-format">
 <h2>Input Format<a class="headerlink" href="#input-format" title="Permalink to this headline">¶</a></h2>
 <p>The input files should have the following format:</p>
 <ul class="simple">
-<li>Input Images: This should be either a Numpy binary or a FITS file containing a 3D array of galaxy images. <em>e.g.</em> for a sample of 10 images, each with size 41x41, the shape of the array should be [10, 41, 41].</li>
-<li>Input PSF(s): This should be either a Numpy binary or a FITS file containing a 2D array (for a fixed PSF) or a 3D array (for a spatially varying PSF) of PSF images. For the spatially varying case the number of PSF images must match the number of corresponding galaxy images. <em>e.g.</em> For a sample of 10 images the codes expects 10 PSFs.</li>
+<li>Input Images: This should be either a Numpy binary or a FITS file containing
+a 3D array of galaxy images. <em>e.g.</em> for a sample of 10 images, each with size
+41x41, the shape of the array should be [10, 41, 41].</li>
+<li>Input PSF(s): This should be either a Numpy binary or a FITS file containing
+a 2D array (for a fixed PSF) or a 3D array (for a spatially varying PSF) of
+PSF images. For the spatially varying case the number of PSF images must
+match the number of corresponding galaxy images. <em>e.g.</em> For a sample of 10
+images the codes expects 10 PSFs.</li>
 </ul>
 <p>See the files provided in the <code class="docutils literal"><span class="pre">examples</span></code> directory for reference.</p>
 </div>
@@ -240,8 +272,11 @@ target="_blank">iSAP Documentation</a> for details).</li>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ sf_deconvolve.py -i INPUT_IMAGES.npy -p PSF.npy -o OUTPUT_NAME
 </pre></div>
 </div>
-<p>Where <code class="docutils literal"><span class="pre">INPUT_IMAGES.npy</span></code> denotes the Numpy binary file containing the stack of observed galaxy images, <cite>PSF.npy</cite> denotes the PSF corresponding to each galaxy image and <code class="docutils literal"><span class="pre">OUTPUT_NAME</span></code> specifies the output path and file name.</p>
-<p>Alternatively the code arguments can be stored in a configuration file (with any name) and the code can be run by providing
+<p>Where <code class="docutils literal"><span class="pre">INPUT_IMAGES.npy</span></code> denotes the Numpy binary file containing the stack
+of observed galaxy images, <cite>PSF.npy</cite> denotes the PSF corresponding to each
+galaxy image and <code class="docutils literal"><span class="pre">OUTPUT_NAME</span></code> specifies the output path and file name.</p>
+<p>Alternatively the code arguments can be stored in a configuration file (with
+any name) and the code can be run by providing
 the file name preceded by a <code class="docutils literal"><span class="pre">&#64;</span></code>.</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ sf_deconvolve.py @config.ini
 </pre></div>
@@ -250,20 +285,24 @@ the file name preceded by a <code class="docutils literal"><span class="pre">&#6
 </div>
 <div class="section" id="running-the-code-in-a-python-session">
 <h2>Running the code in a Python session<a class="headerlink" href="#running-the-code-in-a-python-session" title="Permalink to this headline">¶</a></h2>
-<p>The code can be run in an active Python session in two ways. For either approach first import <code class="docutils literal"><span class="pre">sf_deconvolve</span></code>:</p>
+<p>The code can be run in an active Python session in two ways. For either
+approach first import <code class="docutils literal"><span class="pre">sf_deconvolve</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">sf_deconvolve</span>
 </pre></div>
 </div>
-<p>The first approach simply runs the full script where the command line arguments can be passed as a list of strings:</p>
+<p>The first approach simply runs the full script where the command line arguments
+can be passed as a list of strings:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sf_deconvolve</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;INPUT_IMAGES.npy&#39;</span><span class="p">,</span> <span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;PSF.npy&#39;</span><span class="p">,</span> <span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="s1">&#39;OUTPUT_NAME&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>The second approach assumes that the user has already has read  the images and PSF(s) into memory and wishes to return the deconvolution results to memory:</p>
+<p>The second approach assumes that the user has already has read  the images and
+PSF(s) into memory and wishes to return the deconvolution results to memory:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">sf_deconvolve</span><span class="o">.</span><span class="n">get_opts</span><span class="p">([</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;INPUT_IMAGES.npy&#39;</span><span class="p">,</span> <span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;PSF.npy&#39;</span><span class="p">,</span> <span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="s1">&#39;OUTPUT_NAME&#39;</span><span class="p">]))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">primal_res</span><span class="p">,</span> <span class="n">dual_res</span><span class="p">,</span> <span class="n">psf_res</span> <span class="o">=</span> <span class="n">sf_deconvolve</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">INPUT_IMAGES</span><span class="p">,</span> <span class="n">INPUT_PSFS</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Where <code class="docutils literal"><span class="pre">INPUT_IMAGES</span></code> and <code class="docutils literal"><span class="pre">INPUT_PSFS</span></code> are both Numpy arrays. The resulting deconvolved images will be saved to the variable <code class="docutils literal"><span class="pre">primal_res</span></code>.</p>
+<p>Where <code class="docutils literal"><span class="pre">INPUT_IMAGES</span></code> and <code class="docutils literal"><span class="pre">INPUT_PSFS</span></code> are both Numpy arrays. The resulting
+deconvolved images will be saved to the variable <code class="docutils literal"><span class="pre">primal_res</span></code>.</p>
 <p>In both cases it is possible to read a predefined configuration file.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">sf_deconvolve</span><span class="o">.</span><span class="n">get_opts</span><span class="p">([</span><span class="s1">&#39;@config.ini&#39;</span><span class="p">]))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">primal_res</span><span class="p">,</span> <span class="n">dual_res</span><span class="p">,</span> <span class="n">psf_res</span> <span class="o">=</span> <span class="n">sf_deconvolve</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">INPUT_IMAGES</span><span class="p">,</span> <span class="n">INPUT_PSFS</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
@@ -272,13 +311,19 @@ the file name preceded by a <code class="docutils literal"><span class="pre">&#6
 </div>
 <div class="section" id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
-<p>The following example can be run on the sample data provided in the <code class="docutils literal"><span class="pre">example</span></code> directory.</p>
-<p>This example takes a sample of 100 galaxy images (with PSF effects and added noise) and the corresponding PSFs, and recovers the original images using low-rank approximation via Condat-Vu optimisation.</p>
+<p>The following example can be run on the sample data provided in the <code class="docutils literal"><span class="pre">example</span></code>
+directory.</p>
+<p>This example takes a sample of 100 galaxy images (with PSF effects and added
+noise) and the corresponding PSFs, and recovers the original images using
+low-rank approximation via Condat-Vu optimisation.</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ sf_deconvolve.py -i example_image_stack.npy -p example_psfs.npy -o example_output --mode lowr
 </pre></div>
 </div>
 <p>The example can also be run using the configuration file provided.</p>
-<p>The result will be two Numpy binary files called <code class="docutils literal"><span class="pre">example_output_primal.npy</span></code> and <code class="docutils literal"><span class="pre">example_output_dual.npy</span></code> corresponding to the primal and dual variables in the splitting algorithm. The reconstructed images will be in the <code class="docutils literal"><span class="pre">example_output_primal.npy</span></code> file.</p>
+<p>The result will be two Numpy binary files called <code class="docutils literal"><span class="pre">example_output_primal.npy</span></code>
+and <code class="docutils literal"><span class="pre">example_output_dual.npy</span></code> corresponding to the primal and dual variables
+in the splitting algorithm. The reconstructed images will be in the
+<code class="docutils literal"><span class="pre">example_output_primal.npy</span></code> file.</p>
 <p>The example can also be run with the FITS files provided.</p>
 </div>
 <div class="section" id="code-options">
@@ -286,8 +331,13 @@ the file name preceded by a <code class="docutils literal"><span class="pre">&#6
 <div class="section" id="required-arguments">
 <h3>Required Arguments<a class="headerlink" href="#required-arguments" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><strong>-i INPUT, &#8211;input INPUT:</strong> Input data file name. File should be a Numpy binary containing a stack of noisy galaxy images with PSF effects (<em>i.e.</em> a 3D array).</li>
-<li><strong>-p PSF, &#8211;psf PSF:</strong> PSF file name. File should be a Numpy binary containing either: (a) a single PSF (<em>i.e.</em> a 2D array for <em>fixed</em> format) or (b) a stack of PSFs corresponding to each of the galaxy images (<em>i.e.</em> a 3D array for <em>obj_var</em> format).</li>
+<li><strong>-i INPUT, &#8211;input INPUT:</strong> Input data file name. File should be a Numpy
+binary containing a stack of noisy galaxy images with PSF effects (<em>i.e.</em> a
+3D array).</li>
+<li><strong>-p PSF, &#8211;psf PSF:</strong> PSF file name. File should be a Numpy binary
+containing either: (a) a single PSF (<em>i.e.</em> a 2D array for <em>fixed</em> format) or
+(b) a stack of PSFs corresponding to each of the galaxy images (<em>i.e.</em> a 3D
+array for <em>obj_var</em> format).</li>
 </ul>
 </div>
 <div class="section" id="optional-arguments">
@@ -296,54 +346,81 @@ the file name preceded by a <code class="docutils literal"><span class="pre">&#6
 <li><strong>-h, &#8211;help:</strong> Show the help message and exit.</li>
 <li><strong>-v, &#8211;version:</strong> Show the program&#8217;s version number and exit.</li>
 <li><strong>-q, &#8211;quiet:</strong> Suppress verbose for each iteration.</li>
-<li><strong>-o, &#8211;output:</strong> Output file name. If not specified output files will placed in input file path.</li>
+<li><strong>-o, &#8211;output:</strong> Output file name. If not specified output files will placed
+in input file path.</li>
 <li><strong>&#8211;output_format</strong> Output file format [npy or fits].</li>
 </ul>
 <p><em>Initialisation:</em></p>
 <ul class="simple">
-<li><strong>-k, &#8211;current_res</strong>: Current deconvolution results file name (<em>i.e.</em> the file containing the primal results from a previous run).</li>
-<li><strong>&#8211;noise_est:</strong> Initial estimate of the noise standard deviation in the observed galaxy images. If not specified this quantity is automatically calculated using the median absolute deviation of the input image(s).</li>
+<li><strong>-k, &#8211;current_res</strong>: Current deconvolution results file name (<em>i.e.</em> the
+file containing the primal results from a previous run).</li>
+<li><strong>&#8211;noise_est:</strong> Initial estimate of the noise standard deviation in the
+observed galaxy images. If not specified this quantity is automatically
+calculated using the median absolute deviation of the input image(s).</li>
 </ul>
 <p><em>Optimisation:</em></p>
 <ul class="simple">
-<li><strong>-m, &#8211;mode {all,sparse,lowr,grad}:</strong> Option to specify the optimisation mode [all, sparse, lowr or grad]. <em>all</em> performs optimisation using both low-rank approximation and sparsity, <em>sparse</em> using only sparsity, <em>lowr</em> uses only low-rank and <em>grad</em> uses only gradient descent. (default: lowr)</li>
-<li><strong>&#8211;opt_type {condat,fwbw,gfwbw}:</strong> Option to specify the optimisation method to be implemented [condat, fwbw or gfwbw]. <em>condat</em> implements the Condat-Vu proximal splitting method, <em>fwbw</em> implements Forward-Backward splitting with FISTA speed-up and <em>gfwbw</em> implements the generalised Forward-Backward splitting method. (default: condat)</li>
+<li><strong>-m, &#8211;mode {all,sparse,lowr,grad}:</strong> Option to specify the optimisation
+mode [all, sparse, lowr or grad]. <em>all</em> performs optimisation using both
+low-rank approximation and sparsity, <em>sparse</em> using only sparsity, <em>lowr</em>
+uses only low-rank and <em>grad</em> uses only gradient descent. (default: lowr)</li>
+<li><strong>&#8211;opt_type {condat,fwbw,gfwbw}:</strong> Option to specify the optimisation method
+to be implemented [condat, fwbw or gfwbw]. <em>condat</em> implements the Condat-Vu
+proximal splitting method, <em>fwbw</em> implements Forward-Backward splitting with
+FISTA speed-up and <em>gfwbw</em> implements the generalised Forward-Backward
+splitting method. (default: condat)</li>
 <li><strong>&#8211;n_iter:</strong> Number of iterations. (default: 150)</li>
-<li><strong>&#8211;cost_window:</strong> Window to measure cost function (<em>i.e.</em> interval of iterations for which cost should be calculated). (default: 1)</li>
+<li><strong>&#8211;cost_window:</strong> Window to measure cost function (<em>i.e.</em> interval of
+iterations for which cost should be calculated). (default: 1)</li>
 <li><strong>&#8211;convergence:</strong> Convergence tolerance. (default: 0.0001)</li>
 <li><strong>&#8211;no_pos:</strong> Option to turn off positivity constraint.</li>
-<li><strong>&#8211;grad_type:</strong> Option to specify the type of gradient [psf_known, psf_unknown, none]. <em>psf_known</em> implements deconvolution with PSFs provided, <em>psf_unknown</em> simultaneously improves the PSF while performing the deconvolution, <em>none</em> implements deconvolution without gradient descent (for testing purposes only). (default: psf_known)</li>
+<li><strong>&#8211;grad_type:</strong> Option to specify the type of gradient [psf_known,
+psf_unknown, none]. <em>psf_known</em> implements deconvolution with PSFs provided,
+<em>psf_unknown</em> simultaneously improves the PSF while performing the
+deconvolution, <em>none</em> implements deconvolution without gradient descent (for
+testing purposes only). (default: psf_known)</li>
 </ul>
 <p><em>Low-Rank Aproximation:</em></p>
 <ul class="simple">
 <li><strong>&#8211;lowr_thresh_factor:</strong> Low rank threshold factor. (default: 1)</li>
-<li><strong>&#8211;lowr_type:</strong> Type of low-rank regularisation [standard or ngole]. (default: standard)</li>
-<li><strong>&#8211;lowr_thresh_type:</strong> Low rank threshold type [soft or hard]. (default: hard)</li>
+<li><strong>&#8211;lowr_type:</strong> Type of low-rank regularisation [standard or ngole].
+(default: standard)</li>
+<li><strong>&#8211;lowr_thresh_type:</strong> Low rank threshold type [soft or hard]. (default:
+hard)</li>
 </ul>
 <p><em>Sparsity:</em></p>
 <ul class="simple">
 <li><strong>&#8211;wavelet_type:</strong> Type of Wavelet to be used (see <a href="http://www.cosmostat.org/wp-content/uploads/2014/12/doc_iSAP.pdf"
-target="_blank">iSAP Documentation</a>). (default: 1)</li>
-<li><strong>&#8211;wave_thresh_factor:</strong> Wavelet threshold factor. (default: [3.0, 3.0, 4.0])</li>
+target="_blank">iSAP Documentation</a>).
+(default: 1)</li>
+<li><strong>&#8211;wave_thresh_factor:</strong> Wavelet threshold factor. (default: [3.0, 3.0,
+4.0])</li>
 <li><strong>&#8211;n_reweights:</strong> Number of reweightings. (default: 1)</li>
 </ul>
 <p><em>PSF Estimation</em></p>
 <ul class="simple">
-<li><strong>&#8211;lambda_psf:</strong> Regularisation control parameter for PSF estimation. (default: 1.0)</li>
+<li><strong>&#8211;lambda_psf:</strong> Regularisation control parameter for PSF estimation.
+(default: 1.0)</li>
 <li><strong>&#8211;beta_psf:</strong> Gradient step for PSF estimation. (default: 1.0)</li>
 </ul>
 <p><em>Condat Algorithm:</em></p>
 <ul class="simple">
 <li><strong>&#8211;relax:</strong> Relaxation parameter (rho_n in Condat-Vu method). (default: 0.8)</li>
-<li><strong>&#8211;condat_sigma:</strong> Condat proximal dual parameter. If the option is provided without any value, an appropriate value is calculated automatically. (default: 0.5)</li>
-<li><strong>&#8211;condat_tau:</strong> Condat proximal primal parameter. If the option is provided without any value, an appropriate value is calculated automatically. (default: 0.5)</li>
+<li><strong>&#8211;condat_sigma:</strong> Condat proximal dual parameter. If the option is provided
+without any value, an appropriate value is calculated automatically.
+(default: 0.5)</li>
+<li><strong>&#8211;condat_tau:</strong> Condat proximal primal parameter. If the option is provided
+without any value, an appropriate value is calculated automatically.
+(default: 0.5)</li>
 </ul>
 <p><em>Testing:</em></p>
 <ul class="simple">
 <li><strong>-c, &#8211;clean_data:</strong> Clean data file name.</li>
-<li><strong>-r, &#8211;random_seed:</strong> Random seed. Use this option if the input data is a randomly selected subset (with known seed) of the full sample of clean data.</li>
+<li><strong>-r, &#8211;random_seed:</strong> Random seed. Use this option if the input data is a
+randomly selected subset (with known seed) of the full sample of clean data.</li>
 <li><strong>&#8211;true_psf:</strong> True PSFs file name.</li>
-<li><strong>&#8211;kernel:</strong> Standard deviation of pixels for Gaussian kernel. This option will multiply the deconvolution results by a Gaussian kernel.</li>
+<li><strong>&#8211;kernel:</strong> Standard deviation of pixels for Gaussian kernel. This option
+will multiply the deconvolution results by a Gaussian kernel.</li>
 <li><strong>&#8211;metric:</strong> Metric to average errors [median or mean]. (default: median)</li>
 </ul>
 </div>

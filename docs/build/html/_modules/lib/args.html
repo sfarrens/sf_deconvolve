@@ -163,9 +163,9 @@
 
 <span class="sd">:Author: Samuel Farrens &lt;samuel.farrens@gmail.com&gt;</span>
 
-<span class="sd">:Version: 2.3</span>
+<span class="sd">:Version: 2.4</span>
 
-<span class="sd">:Date: 22/10/2017</span>
+<span class="sd">:Date: 23/10/2017</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -248,7 +248,7 @@
                           <span class="n">help</span><span class="o">=</span><span class="s1">&#39;show this help message and exit&#39;</span><span class="p">)</span>
 
     <span class="n">optional</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-v&#39;</span><span class="p">,</span> <span class="s1">&#39;--version&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;version&#39;</span><span class="p">,</span>
-                          <span class="n">version</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(prog)s</span><span class="s1"> v4.2&#39;</span><span class="p">)</span>
+                          <span class="n">version</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(prog)s</span><span class="s1"> v4.3&#39;</span><span class="p">)</span>
 
     <span class="n">optional</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-q&#39;</span><span class="p">,</span> <span class="s1">&#39;--quiet&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
                           <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Suppress verbose.&#39;</span><span class="p">)</span>
@@ -296,6 +296,9 @@
 
     <span class="n">optimisation</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--no_pos&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
                               <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Option to turn off postivity constraint.&#39;</span><span class="p">)</span>
+
+    <span class="n">optimisation</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--no_plots&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                              <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Suppress plots.&#39;</span><span class="p">)</span>
 
     <span class="n">optimisation</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--grad_type&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;psf_known&#39;</span><span class="p">,</span>
                               <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;psf_known&#39;</span><span class="p">,</span> <span class="s1">&#39;psf_unknown&#39;</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">,</span>
