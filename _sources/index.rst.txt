@@ -45,7 +45,7 @@ Introduction
 
 This repository contains a Python code designed for PSF deconvolution and analysis.
 
-The directory ``lib`` contains several primary functions and classes, but the majority of the optimisation and analysis tools are provided in **|link-to-sf-tools|**.
+The directory ``lib`` contains several primary functions and classes, but the majority of the optimisation and analysis tools are provided in |link-to-sf-tools|.
 
 .. image:: ../images/example_image.png
    :height: 358px
