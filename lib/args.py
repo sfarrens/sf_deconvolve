@@ -14,6 +14,7 @@ This module sets the arguments for sf_deconvolve.py.
 
 import argparse as ap
 from argparse import ArgumentDefaultsHelpFormatter as formatter
+from . import __version__
 
 
 class ArgParser(ap.ArgumentParser):
@@ -91,7 +92,7 @@ def get_opts(args=None):
                           help='show this help message and exit')
 
     optional.add_argument('-v', '--version', action='version',
-                          version='%(prog)s v4.3')
+                          version='%(prog)s {}'.format(__version__))
 
     optional.add_argument('-q', '--quiet', action='store_true',
                           help='Suppress verbose.')
