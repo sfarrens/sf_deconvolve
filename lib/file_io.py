@@ -14,6 +14,7 @@ deconvolution_script.py.
 """
 
 import numpy as np
+from os.path import splitext
 from astropy.io import fits
 
 
@@ -105,8 +106,8 @@ def read_file(file_name):
         data = read_from_fits(file_name)
 
     else:
-        raise ValueError('Invalid file extension. Files must be FITS or numpy '
-                         'binary.')
+        raise ValueError(('Invalid file extension [{}]. Files must be FITS or '
+                          'numpy binary.').format(splitext(file_name)[-1]))
 
     check_data_format(data, [2, 3])
 
