@@ -13,6 +13,7 @@ gradients.
 
 """
 
+from __future__ import print_function
 import numpy as np
 from sf_tools.signal.gradient import GradBasic
 from sf_tools.math.matrix import PowerMethod
@@ -134,6 +135,25 @@ class GradKnownPSF(GradPSF):
         """
 
         self.grad = self._calc_grad(x)
+
+    def cost(self, *args, **kwargs):
+        """Calculate gradient component of the cost
+
+        This method returns the l2 norm error of the difference between the
+        original data and the data obtained after optimisation
+
+        Returns
+        -------
+        float gradient cost component
+
+        """
+
+        cost_val = 0.5 * np.linalg.norm(self._y - self.H_op(args[0])) ** 2
+
+        if 'verbose' in kwargs and kwargs['verbose']:
+            print(' - DATA FIDELITY (X):', cost_val)
+
+        return cost_val
 
 
 class GradUnknownPSF(GradPSF):

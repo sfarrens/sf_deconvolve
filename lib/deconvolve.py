@@ -15,14 +15,15 @@ This module deconvolves a set of galaxy images with a known object-variant PSF.
 from __future__ import print_function
 from builtins import range, zip
 from scipy.linalg import norm
-from sf_tools.signal.optimisation import *
-from sf_tools.math.stats import sigma_mad
-from sf_tools.signal.cost import costObj
-from sf_tools.signal.linear import *
-from sf_tools.signal.proximity import *
-from sf_tools.signal.reweight import cwbReweight
-from sf_tools.signal.wavelet import filter_convolve, filter_convolve_stack
+from modopt.signal.optimisation import *
+from modopt.math.stats import sigma_mad
+from modopt.signal.cost import costObj
+from modopt.signal.linear import *
+from modopt.signal.proximity import *
+from modopt.signal.reweight import cwbReweight
+from modopt.signal.wavelet import filter_convolve, filter_convolve_stack
 from gradient import *
+from sf_tools.signal.cost import costObj as costObj2
 from cost import sf_deconvolveCost
 
 
@@ -370,25 +371,19 @@ def set_prox_op_and_cost(data, **kwargs):
         kwargs['prox_op'].append(Positive())
 
     else:
-        kwargs['prox_op'].append(Identity())
+        kwargs['prox_op'].append(IdentityProx())
 
-    # Add a second proximity operator and set the corresponding cost function
+    # Add a second proximity operator
     if kwargs['mode'] == 'all':
 
         kwargs['prox_op'].append(ProximityCombo(
-                                 [Threshold(kwargs['reweight'].weights,),
+                                 [SparseThreshold(
+                                  kwargs['linear_op'].operators[0],
+                                  kwargs['reweight'].weights,),
                                   LowRankMatrix(kwargs['lambda'],
                                   thresh_type=kwargs['lowr_thresh_type'],
                                   lowr_type=kwargs['lowr_type'],
                                   operator=kwargs['grad_op'].Ht_op)]))
-
-        cost_instance = (sf_deconvolveCost(data, grad=kwargs['grad_op'],
-                         wavelet=kwargs['linear_op'].operators[0],
-                         weights=kwargs['reweight'].weights,
-                         lambda_lowr=kwargs['lambda'],
-                         mode=kwargs['mode'],
-                         positivity=not kwargs['no_pos'],
-                         verbose=not kwargs['quiet']))
 
     elif kwargs['mode'] == 'lowr':
 
@@ -397,35 +392,19 @@ def set_prox_op_and_cost(data, **kwargs):
                                  lowr_type=kwargs['lowr_type'],
                                  operator=kwargs['grad_op'].Ht_op))
 
-        cost_instance = (sf_deconvolveCost(data, grad=kwargs['grad_op'],
-                         wavelet=None, weights=None,
-                         lambda_lowr=kwargs['lambda'], mode=kwargs['mode'],
-                         positivity=not kwargs['no_pos'],
-                         verbose=not kwargs['quiet']))
+        operator_list = [kwargs['grad_op']] + kwargs['prox_op']
 
     elif kwargs['mode'] == 'sparse':
 
-        kwargs['prox_op'].append(Threshold(kwargs['reweight'].weights))
-
-        cost_instance = (sf_deconvolveCost(data, grad=kwargs['grad_op'],
-                         wavelet=kwargs['linear_op'],
-                         weights=kwargs['reweight'].weights,
-                         lambda_lowr=None,
-                         mode=kwargs['mode'],
-                         positivity=not kwargs['no_pos'],
-                         verbose=not kwargs['quiet']))
+        kwargs['prox_op'].append(SparseThreshold(kwargs['linear_op'],
+                                 kwargs['reweight'].weights))
 
     elif kwargs['mode'] == 'grad':
 
-        kwargs['prox_op'].append(Identity())
+        kwargs['prox_op'].append(IdentityProx())
 
-        cost_instance = (sf_deconvolveCost(data, grad=kwargs['grad_op'],
-                         wavelet=None, weights=None,
-                         lambda_lowr=None, mode=kwargs['mode'],
-                         positivity=not kwargs['no_pos'],
-                         verbose=not kwargs['quiet']))
-
-    kwargs['cost_op'] = (costObj(cost_instance,
+    # Set the cost function
+    kwargs['cost_op'] = (costObj([kwargs['grad_op']] + kwargs['prox_op'],
                          tolerance=kwargs['convergence'],
                          cost_interval=kwargs['cost_window'],
                          plot_output=kwargs['output'],
