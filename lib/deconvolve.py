@@ -383,14 +383,14 @@ def set_prox_op_and_cost(data, **kwargs):
                                   LowRankMatrix(kwargs['lambda'],
                                   thresh_type=kwargs['lowr_thresh_type'],
                                   lowr_type=kwargs['lowr_type'],
-                                  operator=kwargs['grad_op'].Ht_op)]))
+                                  operator=kwargs['grad_op'].trans_op)]))
 
     elif kwargs['mode'] == 'lowr':
 
         kwargs['prox_op'].append(LowRankMatrix(kwargs['lambda'],
                                  thresh_type=kwargs['lowr_thresh_type'],
                                  lowr_type=kwargs['lowr_type'],
-                                 operator=kwargs['grad_op'].Ht_op))
+                                 operator=kwargs['grad_op'].trans_op))
 
         operator_list = [kwargs['grad_op']] + kwargs['prox_op']
 

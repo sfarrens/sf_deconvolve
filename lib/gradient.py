@@ -15,14 +15,68 @@ gradients.
 
 from __future__ import print_function
 import numpy as np
-from sf_tools.signal.gradient import GradBasic
-from sf_tools.math.matrix import PowerMethod
-from sf_tools.base.transform import cube2matrix, matrix2cube
-from sf_tools.image.convolve import psf_convolve, convolve_stack
-from sf_tools.image.shape import shape_project
+from modopt.base.np_adjust import rotate, rotate_stack
+from modopt.base.transform import cube2matrix, matrix2cube
+from modopt.math.matrix import PowerMethod
+from modopt.math.convolve import convolve, convolve_stack
+from modopt.opt.gradient import GradParent
 
 
-class GradPSF(PowerMethod):
+def psf_convolve(data, psf, psf_rot=False, psf_type='fixed', method='astropy'):
+    """Convolve data with PSF
+
+    This method convolves an image with a PSF
+
+    Parameters
+    ----------
+    data : np.ndarray
+        Input data array, normally an array of 2D images
+    psf : np.ndarray
+        Input PSF array, normally either a single 2D PSF or an array of 2D
+        PSFs
+    psf_rot: bool
+        Option to rotate PSF by 180 degrees
+    psf_type : str {'fixed', 'obj_var'}, optional
+        PSF type (default is 'fixed')
+    method : str {'astropy', 'scipy'}, optional
+        Convolution method (default is 'astropy')
+
+        'fixed':
+            The PSF is fixed, i.e. it is the same for each image
+
+        'obj_var':
+            The PSF is object variant, i.e. it is different for each image
+
+    Returns
+    -------
+    np.ndarray convolved data
+
+    Raises
+    ------
+    ValueError
+        If `psf_type` is not 'fixed' or 'obj_var'
+
+    """
+
+    if psf_type not in ('fixed', 'obj_var'):
+        raise ValueError('Invalid PSF type. Options are "fixed" or "obj_var"')
+
+    if psf_rot and psf_type == 'fixed':
+        psf = rotate(psf)
+
+    elif psf_rot:
+        psf = rotate_stack(psf)
+
+    if psf_type == 'fixed':
+        return np.array([convolve(data_i, psf, method=method) for data_i in
+                        data])
+
+    elif psf_type == 'obj_var':
+
+        return convolve_stack(data, psf)
+
+
+class GradPSF(GradParent, PowerMethod):
     """Gradient class for PSF convolution
 
     This class defines the operators for a fixed or object variant PSF
@@ -30,7 +84,7 @@ class GradPSF(PowerMethod):
     Parameters
     ----------
     data : np.ndarray
-        Input data array, an array of 2D observed images (i.e. with noise)
+        Input data array, an array of 2D observed images (e.g. with noise)
     psf : np.ndarray
         PSF, a single 2D PSF or an array of 2D PSFs
     psf_type : str {'fixed', 'obj_var'}
@@ -44,14 +98,15 @@ class GradPSF(PowerMethod):
 
     def __init__(self, data, psf, psf_type='fixed'):
 
-        self._y = np.copy(data)
+        self.obs_data = data
+        self.op = self._H_op_method
+        self.trans_op = self._Ht_op_method
         self._psf = np.copy(psf)
         self._psf_type = psf_type
 
-        PowerMethod.__init__(self, lambda x: self.Ht_op(self.H_op(x)),
-                             self._y.shape)
+        PowerMethod.__init__(self, self.trans_op_op, self.obs_data.shape)
 
-    def H_op(self, x):
+    def _H_op_method(self, x):
         """H matrix operation
 
         This method calculates the action of the matrix H on the input data, in
@@ -71,7 +126,7 @@ class GradPSF(PowerMethod):
         return psf_convolve(x, self._psf, psf_rot=False,
                             psf_type=self._psf_type)
 
-    def Ht_op(self, x):
+    def _Ht_op_method(self, x):
         """Ht matrix operation
 
         This method calculates the action of the transpose of the matrix H on
@@ -94,7 +149,7 @@ class GradPSF(PowerMethod):
 
     def _calc_grad(self, x):
 
-        return self.Ht_op(self.H_op(x) - self._y)
+        return self.trans_op(self.op(x) - self.obs_data)
 
 
 class GradKnownPSF(GradPSF):
@@ -120,9 +175,11 @@ class GradKnownPSF(GradPSF):
     def __init__(self, data, psf, psf_type='fixed'):
 
         self.grad_type = 'psf_known'
+        self.get_grad = self._get_grad_method
+        self.cost = self._cost_method
         super(GradKnownPSF, self).__init__(data, psf, psf_type)
 
-    def get_grad(self, x):
+    def _get_grad_method(self, x):
         """Get the gradient at the given iteration
 
         This method calculates the gradient value from the input data
@@ -136,7 +193,7 @@ class GradKnownPSF(GradPSF):
 
         self.grad = self._calc_grad(x)
 
-    def cost(self, *args, **kwargs):
+    def _cost_method(self, *args, **kwargs):
         """Calculate gradient component of the cost
 
         This method returns the l2 norm error of the difference between the
@@ -148,7 +205,7 @@ class GradKnownPSF(GradPSF):
 
         """
 
-        cost_val = 0.5 * np.linalg.norm(self._y - self.H_op(args[0])) ** 2
+        cost_val = 0.5 * np.linalg.norm(self.obs_data - self.op(args[0])) ** 2
 
         if 'verbose' in kwargs and kwargs['verbose']:
             print(' - DATA FIDELITY (X):', cost_val)
@@ -189,6 +246,7 @@ class GradUnknownPSF(GradPSF):
             raise ValueError('prox must have "op()" method')
 
         self.grad_type = 'psf_unknown'
+        self.get_grad = self._get_grad_method
         self._prox = prox
         self._beta_reg = beta_reg
         self._lambda_reg = lambda_reg
@@ -219,13 +277,13 @@ class GradUnknownPSF(GradPSF):
 
         self._update_lambda()
 
-        psf_grad = (convolve_stack(self.H_op(x) - self._y, x,
+        psf_grad = (convolve_stack(self.op(x) - self.obs_data, x,
                     rot_kernel=True) + self._lambda_reg *
                     (self._psf - self._psf0))
 
         self._psf = self._prox.op(self._psf - self._beta_reg * psf_grad)
 
-    def get_grad(self, x):
+    def _get_grad_method(self, x):
         """Get the gradient at the given iteration
 
         This method calculates the gradient value from the input data
@@ -239,84 +297,6 @@ class GradUnknownPSF(GradPSF):
 
         self._update_psf(x)
         self.grad = self._calc_grad(x)
-
-
-class GradShape(GradPSF):
-    """Gradient class for shape constraint
-
-    This class calculates the gradient including shape constraint
-
-    Parameters
-    ----------
-    data : np.ndarray
-        Input data array, an array of 2D observed images (i.e. with noise)
-    psf : np.ndarray
-        PSF, a single 2D PSF or an array of 2D PSFs
-    psf_type : str {'fixed', 'obj_var'}
-        PSF type (defualt is 'fixed')
-    lambda_reg : float
-        Regularisation control parameter
-
-    Notes
-    -----
-    The properties of `GradPSF` are inherited in this class
-
-    """
-
-    def __init__(self, data, psf, psf_type='fixed', lambda_reg=1):
-
-        self.grad_type = 'shape'
-        self._y = np.copy(data)
-        self._psf = np.copy(psf)
-        self._psf_type = psf_type
-        self.lambda_reg = lambda_reg
-        self._St = cube2matrix(shape_project(data.shape[1:]))
-        self._S = self._St.T
-
-        def func(x):
-
-            HX = cube2matrix(self.H_op(x))
-
-            StSHX = self._St.dot(self._S.dot(HX))
-
-            return (self.Ht_op(self.H_op(x)) + self.lambda_reg *
-                    self.Ht_op(matrix2cube(StSHX, x[0].shape)))
-
-        PowerMethod.__init__(self, func, self._y.shape)
-
-    def _calc_shape_grad(self, x):
-        """Get the gradient of the shape constraint component
-
-        This method calculates the gradient value of the shape constraint
-        component
-
-        Parameters
-        ----------
-        x : np.ndarray
-            Input data array, an array of recovered 2D images
-
-        """
-
-        HXY = cube2matrix(self.H_op(x) - self._y)
-
-        StSHXY = self._St.dot(self._S.dot(HXY))
-
-        return self.Ht_op(matrix2cube(StSHXY, x[0].shape))
-
-    def get_grad(self, x):
-        """Get the gradient at the given iteration
-
-        This method calculates the gradient value from the input data
-
-        Parameters
-        ----------
-        x : np.ndarray
-            Input data array, an array of recovered 2D images
-
-        """
-
-        self.grad = (self._calc_grad(x) + self.lambda_reg *
-                     self._calc_shape_grad(x))
 
 
 class GradNone(GradPSF):
@@ -335,7 +315,13 @@ class GradNone(GradPSF):
 
     """
 
-    def get_grad(self, x):
+    def __init__(data, psf, psf_type):
+
+        self.grad_type = 'none'
+        self.get_grad = self._get_grad_method
+        super(GradNone, self).__init__(data, psf, psf_type)
+
+    def _get_grad_method(self, x):
         """Get the gradient step
 
         This method returns an array of zeroes
