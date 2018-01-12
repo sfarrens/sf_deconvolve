@@ -23,8 +23,6 @@ from modopt.signal.proximity import *
 from modopt.signal.reweight import cwbReweight
 from modopt.signal.wavelet import filter_convolve, filter_convolve_stack
 from gradient import *
-from sf_tools.signal.cost import costObj as costObj2
-from cost import sf_deconvolveCost
 
 
 def set_noise(data, **kwargs):

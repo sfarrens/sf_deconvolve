@@ -17,6 +17,7 @@ from __future__ import print_function
 import numpy as np
 from modopt.base.np_adjust import rotate, rotate_stack
 from modopt.base.transform import cube2matrix, matrix2cube
+from modopt.base.types import check_float, check_npndarray
 from modopt.math.matrix import PowerMethod
 from modopt.math.convolve import convolve, convolve_stack
 from modopt.opt.gradient import GradParent
@@ -101,7 +102,9 @@ class GradPSF(GradParent, PowerMethod):
         self.obs_data = data
         self.op = self._H_op_method
         self.trans_op = self._Ht_op_method
-        self._psf = np.copy(psf)
+        check_float(psf)
+        check_npndarray(psf, writeable=False)
+        self._psf = psf
         self._psf_type = psf_type
 
         PowerMethod.__init__(self, self.trans_op_op, self.obs_data.shape)
