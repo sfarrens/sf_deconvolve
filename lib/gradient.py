@@ -23,7 +23,7 @@ from modopt.math.convolve import convolve, convolve_stack
 from modopt.opt.gradient import GradParent
 
 
-def psf_convolve(data, psf, psf_rot=False, psf_type='fixed', method='astropy'):
+def psf_convolve(data, psf, psf_rot=False, psf_type='fixed', method='scipy'):
     """Convolve data with PSF
 
     This method convolves an image with a PSF

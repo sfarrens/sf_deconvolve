@@ -6,22 +6,18 @@ This module deconvolves a set of galaxy images with a known object-variant PSF.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 6.3
-
-:Date: 23/10/2017
-
 """
 
 from __future__ import print_function
 from builtins import range, zip
 from scipy.linalg import norm
-from modopt.signal.optimisation import *
 from modopt.math.stats import sigma_mad
-from modopt.signal.cost import costObj
-from modopt.signal.linear import *
-from modopt.signal.proximity import *
-from modopt.signal.reweight import cwbReweight
-from modopt.signal.wavelet import filter_convolve, filter_convolve_stack
+from modopt.opt.algorithms import *
+from modopt.opt.cost import costObj
+from modopt.opt.linear import *
+from modopt.opt.proximity import *
+from modopt.opt.reweight import cwbReweight
+from modopt.signal.wavelet import *
 from gradient import *
 
 
@@ -124,22 +120,24 @@ def set_linear_op(data, **kwargs):
     # Set the options for mr_transform (for sparsity)
     if kwargs['mode'] in ('all', 'sparse'):
         wavelet_opt = ['-t ' + kwargs['wavelet_type']]
+        kwargs['wavelet_filters'] = get_mr_filters(data.shape[-2:],
+                                                   wavelet_opt)
+        kwargs['linear_l1norm'] = (data.shape[0] * np.sqrt(sum((np.sum(np.abs
+                                   (filter_i)) ** 2 for filter_i in
+                                   kwargs['wavelet_filters']))))
 
     # Set the linear operator
     if kwargs['mode'] == 'all':
-        kwargs['linear_op'] = LinearCombo([Wavelet(data, wavelet_opt),
+        kwargs['linear_op'] = LinearCombo([WaveletConvolve(
+                                          kwargs['wavelet_filters']),
                                           Identity()])
-        kwargs['wavelet_filters'] = kwargs['linear_op'].operators[0].filters
-        kwargs['linear_l1norm'] = kwargs['linear_op'].operators[0].l1norm
 
     elif kwargs['mode'] in ('lowr', 'grad'):
         kwargs['linear_op'] = Identity()
-        kwargs['linear_l1norm'] = kwargs['linear_op'].l1norm
+        kwargs['linear_l1norm'] = 1.0
 
     elif kwargs['mode'] == 'sparse':
-        kwargs['linear_op'] = Wavelet(data, wavelet_opt)
-        kwargs['wavelet_filters'] = kwargs['linear_op'].filters
-        kwargs['linear_l1norm'] = kwargs['linear_op'].l1norm
+        kwargs['linear_op'] = WaveletConvolve(kwargs['wavelet_filters'])
 
     return kwargs
 
@@ -366,7 +364,7 @@ def set_prox_op_and_cost(data, **kwargs):
 
     # Set the first operator as positivity contraint or simply identity
     if not kwargs['no_pos']:
-        kwargs['prox_op'].append(Positive())
+        kwargs['prox_op'].append(Positivity())
 
     else:
         kwargs['prox_op'].append(IdentityProx())
@@ -466,7 +464,7 @@ def perform_reweighting(**kwargs):
 
         # Generate the new weights following reweighting persctiption
         kwargs['reweight'].reweight(kwargs['linear_op'].op(
-                                    kwargs['optimisation'].x_new)[0])
+                                    kwargs['optimisation'].x_final))
 
         # Perform optimisation with new weights
         kwargs['optimisation'].iterate(max_iter=kwargs['n_iter'])

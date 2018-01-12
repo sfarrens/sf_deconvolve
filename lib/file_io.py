@@ -16,6 +16,7 @@ deconvolution_script.py.
 import numpy as np
 from os.path import splitext
 from astropy.io import fits
+from modopt.base.types import check_npndarray
 
 
 def check_data_format(data, n_dim):
@@ -36,6 +37,8 @@ def check_data_format(data, n_dim):
         For invalid array dimensions
 
     """
+
+    check_npndarray(data, dtype=float, writeable=False, verbose=False)
 
     if data.ndim not in list(n_dim):
         raise ValueError('Input data array has an invalid number of '
