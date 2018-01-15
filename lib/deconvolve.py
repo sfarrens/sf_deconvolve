@@ -71,21 +71,25 @@ def set_grad_op(data, psf, **kwargs):
 
     # Set the gradient operator
     if kwargs['grad_type'] == 'psf_known':
-        kwargs['grad_op'] = GradKnownPSF(data, psf,
-                                         psf_type=kwargs['psf_type'])
+        kwargs['grad_op'] = (GradKnownPSF(data, psf,
+                             psf_type=kwargs['psf_type'],
+                             convolve_method=kwargs['convolve_method']))
 
     elif kwargs['grad_type'] == 'psf_unknown':
-        kwargs['grad_op'] = GradUnknownPSF(data, psf, Positive(),
-                                           psf_type=kwargs['psf_type'],
-                                           beta_reg=kwargs['beta_psf'],
-                                           lambda_reg=kwargs['lambda_psf'])
+        kwargs['grad_op'] = (GradUnknownPSF(data, psf, Positive(),
+                             psf_type=kwargs['psf_type'],
+                             convolve_method=kwargs['convolve_method'],
+                             beta_reg=kwargs['beta_psf'],
+                             lambda_reg=kwargs['lambda_psf']))
 
     elif kwargs['grad_type'] == 'shape':
-        kwargs['grad_op'] = GradShape(data, psf, psf_type=kwargs['psf_type'],
-                                      lambda_reg=kwargs['lambda_shape'])
+        kwargs['grad_op'] = (GradShape(data, psf, psf_type=kwargs['psf_type'],
+                             convolve_method=kwargs['convolve_method'],
+                             lambda_reg=kwargs['lambda_shape']))
 
     elif kwargs['grad_type'] == 'none':
-        kwargs['grad_op'] = GradNone(data, psf, psf_type=kwargs['psf_type'])
+        kwargs['grad_op'] = GradNone(data, psf, psf_type=kwargs['psf_type'],
+                                     convolve_method=kwargs['convolve_method'])
 
     print(' - Spectral Radius:', kwargs['grad_op'].spec_rad)
     if 'log' in kwargs:
@@ -129,7 +133,8 @@ def set_linear_op(data, **kwargs):
     # Set the linear operator
     if kwargs['mode'] == 'all':
         kwargs['linear_op'] = LinearCombo([WaveletConvolve(
-                                          kwargs['wavelet_filters']),
+                                          kwargs['wavelet_filters'],
+                                          method=kwargs['convolve_method'],),
                                           Identity()])
 
     elif kwargs['mode'] in ('lowr', 'grad'):
@@ -137,7 +142,9 @@ def set_linear_op(data, **kwargs):
         kwargs['linear_l1norm'] = 1.0
 
     elif kwargs['mode'] == 'sparse':
-        kwargs['linear_op'] = WaveletConvolve(kwargs['wavelet_filters'])
+        kwargs['linear_op'] = WaveletConvolve(kwargs['wavelet_filters'],
+                                              method=kwargs['convolve_method'],
+                                              )
 
     return kwargs
 
@@ -166,7 +173,8 @@ def set_sparse_weights(data_shape, psf, **kwargs):
     if kwargs['psf_type'] == 'fixed':
 
         filter_conv = (filter_convolve(np.rot90(psf, 2),
-                       kwargs['wavelet_filters']))
+                       kwargs['wavelet_filters'],
+                       method=kwargs['convolve_method']))
 
         filter_norm = np.array([norm(a) * b * np.ones(data_shape[1:])
                                 for a, b in zip(filter_conv,
@@ -178,7 +186,8 @@ def set_sparse_weights(data_shape, psf, **kwargs):
     else:
 
         filter_conv = (filter_convolve_stack(np.rot90(psf, 2),
-                       kwargs['wavelet_filters']))
+                       kwargs['wavelet_filters'],
+                       method=kwargs['convolve_method']))
 
         filter_norm = np.array([[norm(b) * c * np.ones(data_shape[1:])
                                 for b, c in zip(a,

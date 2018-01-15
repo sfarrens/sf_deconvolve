@@ -74,7 +74,7 @@ def psf_convolve(data, psf, psf_rot=False, psf_type='fixed', method='scipy'):
 
     elif psf_type == 'obj_var':
 
-        return convolve_stack(data, psf)
+        return convolve_stack(data, psf, method=method)
 
 
 class GradPSF(GradParent, PowerMethod):
@@ -90,6 +90,8 @@ class GradPSF(GradParent, PowerMethod):
         PSF, a single 2D PSF or an array of 2D PSFs
     psf_type : str {'fixed', 'obj_var'}
         PSF type (defualt is 'fixed')
+    convolve_method : str {'astropy', 'scipy'}, optional
+        Convolution method (default is 'astropy')
 
     Notes
     -----
@@ -97,7 +99,7 @@ class GradPSF(GradParent, PowerMethod):
 
     """
 
-    def __init__(self, data, psf, psf_type='fixed'):
+    def __init__(self, data, psf, psf_type='fixed', convolve_method='astropy'):
 
         self.obs_data = data
         self.op = self._H_op_method
@@ -106,6 +108,7 @@ class GradPSF(GradParent, PowerMethod):
         check_npndarray(psf, writeable=False)
         self._psf = psf
         self._psf_type = psf_type
+        self._convolve_method = convolve_method
 
         PowerMethod.__init__(self, self.trans_op_op, self.obs_data.shape)
 
@@ -127,7 +130,8 @@ class GradPSF(GradParent, PowerMethod):
         """
 
         return psf_convolve(x, self._psf, psf_rot=False,
-                            psf_type=self._psf_type)
+                            psf_type=self._psf_type,
+                            method=self._convolve_method)
 
     def _Ht_op_method(self, x):
         """Ht matrix operation
@@ -148,7 +152,8 @@ class GradPSF(GradParent, PowerMethod):
         """
 
         return psf_convolve(x, self._psf, psf_rot=True,
-                            psf_type=self._psf_type)
+                            psf_type=self._psf_type,
+                            method=self._convolve_method)
 
     def _calc_grad(self, x):
 
@@ -168,6 +173,8 @@ class GradKnownPSF(GradPSF):
         PSF, a single 2D PSF or an array of 2D PSFs
     psf_type : str {'fixed', 'obj_var'}
         PSF type (defualt is 'fixed')
+    convolve_method : str {'astropy', 'scipy'}, optional
+        Convolution method (default is 'astropy')
 
     Notes
     -----
@@ -175,12 +182,13 @@ class GradKnownPSF(GradPSF):
 
     """
 
-    def __init__(self, data, psf, psf_type='fixed'):
+    def __init__(self, data, psf, psf_type='fixed', convolve_method='astropy'):
 
         self.grad_type = 'psf_known'
         self.get_grad = self._get_grad_method
         self.cost = self._cost_method
-        super(GradKnownPSF, self).__init__(data, psf, psf_type)
+        super(GradKnownPSF, self).__init__(data, psf, psf_type,
+                                           convolve_method)
 
     def _get_grad_method(self, x):
         """Get the gradient at the given iteration
@@ -229,6 +237,8 @@ class GradUnknownPSF(GradPSF):
         PSF, a single 2D PSF or an array of 2D PSFs
     psf_type : str {'fixed', 'obj_var'}
         PSF type (defualt is 'fixed')
+    convolve_method : str {'astropy', 'scipy'}, optional
+        Convolution method (default is 'astropy')
     prox : class
         Proximity operator for PSF update
     beta_reg : float
@@ -242,8 +252,8 @@ class GradUnknownPSF(GradPSF):
 
     """
 
-    def __init__(self, data, psf, prox, psf_type='fixed', beta_reg=1,
-                 lambda_reg=1):
+    def __init__(self, data, psf, prox, psf_type='fixed',
+                 convolve_method='astropy', beta_reg=1, lambda_reg=1):
 
         if not hasattr(prox, 'op'):
             raise ValueError('prox must have "op()" method')
@@ -254,7 +264,9 @@ class GradUnknownPSF(GradPSF):
         self._beta_reg = beta_reg
         self._lambda_reg = lambda_reg
         self._psf0 = np.copy(psf)
-        super(GradUnknownPSF, self).__init__(data, psf, psf_type)
+        self._convolve_method = convolve_method
+        super(GradUnknownPSF, self).__init__(data, psf, psf_type,
+                                             convolve_method)
 
     def _update_lambda(self):
         """Update the regularisation parameter lambda_reg
@@ -281,8 +293,8 @@ class GradUnknownPSF(GradPSF):
         self._update_lambda()
 
         psf_grad = (convolve_stack(self.op(x) - self.obs_data, x,
-                    rot_kernel=True) + self._lambda_reg *
-                    (self._psf - self._psf0))
+                    rot_kernel=True, method=self._convolve_method) +
+                    self._lambda_reg * (self._psf - self._psf0))
 
         self._psf = self._prox.op(self._psf - self._beta_reg * psf_grad)
 
@@ -307,22 +319,13 @@ class GradNone(GradPSF):
 
     This is a dummy class that returns an array of zeroes for the gradient
 
-    Parameters
-    ----------
-    data : np.ndarray
-        Input data array, an array of 2D observed images (i.e. with noise)
-    psf : np.ndarray
-        PSF, a single 2D PSF or an array of 2D PSFs
-    psf_type : str {'fixed', 'obj_var'}
-        PSF type (defualt is 'fixed')
-
     """
 
-    def __init__(data, psf, psf_type):
+    def __init__(*args):
 
         self.grad_type = 'none'
         self.get_grad = self._get_grad_method
-        super(GradNone, self).__init__(data, psf, psf_type)
+        super(GradNone, self).__init__(*args)
 
     def _get_grad_method(self, x):
         """Get the gradient step
