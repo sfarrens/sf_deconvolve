@@ -76,7 +76,8 @@ def set_grad_op(data, psf, **kwargs):
                              convolve_method=kwargs['convolve_method']))
 
     elif kwargs['grad_type'] == 'psf_unknown':
-        kwargs['grad_op'] = (GradUnknownPSF(data, psf, Positive(),
+        kwargs['grad_op'] = (GradUnknownPSF(data, psf,
+                             prox=Positivity(),
                              psf_type=kwargs['psf_type'],
                              convolve_method=kwargs['convolve_method'],
                              beta_reg=kwargs['beta_psf'],

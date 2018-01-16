@@ -260,6 +260,7 @@ class GradUnknownPSF(GradPSF):
 
         self.grad_type = 'psf_unknown'
         self.get_grad = self._get_grad_method
+        self.cost = self._cost_method
         self._prox = prox
         self._beta_reg = beta_reg
         self._lambda_reg = lambda_reg
@@ -312,6 +313,26 @@ class GradUnknownPSF(GradPSF):
 
         self._update_psf(x)
         self.grad = self._calc_grad(x)
+
+    def _cost_method(self, *args, **kwargs):
+        """Calculate gradient component of the cost
+
+        This method returns the l2 norm error of the difference between the
+        original data and the data obtained after optimisation
+
+        Returns
+        -------
+        float gradient cost component
+
+        """
+
+        cost_val = (0.5 * np.linalg.norm(self.obs_data - self.op(args[0])) ** 2
+                    + np.linalg.norm(self._psf - self._psf0) ** 2)
+
+        if 'verbose' in kwargs and kwargs['verbose']:
+            print(' - DATA FIDELITY + PSF CONSTRAINT (X):', cost_val)
+
+        return cost_val
 
 
 class GradNone(GradPSF):
