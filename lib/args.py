@@ -172,16 +172,16 @@ def get_opts(args=None):
     sparsity.add_argument('--n_reweights', type=int, default=1,
                           help='Number of reweightings.')
 
-    psfest.add_argument('--lambda_psf', type=float, default=1.0,
-                        help='Regularisation control parameter for PSF '
-                        'estimation')
+    psfest.add_argument('--psf_weights', help='PSF weights file name.')
 
-    psfest.add_argument('--beta_psf', type=float, default=1.0,
-                        help='Gradient step for PSF estimation')
+    psfest.add_argument('--psf_sigma', type=float, nargs='?', const=None,
+                        default=0.5, help='Condat proximal dual parameter.')
 
-    shape.add_argument('--lambda_shape', type=float, default=1.0,
-                       help='Regularisation control parameter for shape '
-                       'constraint')
+    psfest.add_argument('--psf_tau', type=float, nargs='?', const=None,
+                        default=0.5, help='Condat proximal primal parameter')
+
+    psfest.add_argument('--psf_relax', type=float, default=0.8,
+                        help='Relaxation parameter (rho_n).')
 
     condat.add_argument('--relax', type=float, default=0.8,
                         help='Relaxation parameter (rho_n).')

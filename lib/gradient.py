@@ -225,114 +225,157 @@ class GradKnownPSF(GradPSF):
 
 
 class GradUnknownPSF(GradPSF):
-    """Gradient class for a unknown PSF
 
-    This class calculates the gradient when the PSF is not fully known
-
-    Parameters
-    ----------
-    data : np.ndarray
-        Input data array, an array of 2D observed images (i.e. with noise)
-    psf : np.ndarray
-        PSF, a single 2D PSF or an array of 2D PSFs
-    psf_type : str {'fixed', 'obj_var'}
-        PSF type (defualt is 'fixed')
-    convolve_method : str {'astropy', 'scipy'}, optional
-        Convolution method (default is 'astropy')
-    prox : class
-        Proximity operator for PSF update
-    beta_reg : float
-        Gradient step size
-    lambda_reg : float
-        Regularisation control parameter
-
-    Notes
-    -----
-    The properties of `GradPSF` are inherited in this class
-
-    """
-
-    def __init__(self, data, psf, prox, psf_type='fixed',
-                 convolve_method='astropy', beta_reg=1, lambda_reg=1):
-
-        if not hasattr(prox, 'op'):
-            raise ValueError('prox must have "op()" method')
+    def __init__(self, data, psf, psf_type='fixed',
+                 convolve_method='astropy'):
 
         self.grad_type = 'psf_unknown'
         self.get_grad = self._get_grad_method
         self.cost = self._cost_method
-        self._prox = prox
-        self._beta_reg = beta_reg
-        self._lambda_reg = lambda_reg
         self._psf0 = np.copy(psf)
-        self._convolve_method = convolve_method
+        self._set_initial_delta_psf()
         super(GradUnknownPSF, self).__init__(data, psf, psf_type,
                                              convolve_method)
 
-    def _update_lambda(self):
-        """Update the regularisation parameter lambda_reg
+    def _set_initial_delta_psf(self):
 
-        This method implements the update method for lambda_reg
+        self.delta_psf = np.zeros(self._psf0.shape)
 
-        """
+    def update_images(self, data):
 
-        self._lambda_reg = self._lambda_reg
+        self._x = data
 
-    def _update_psf(self, x):
-        """Update the current estimate of the PSF
+    def _update_psf(self):
 
-        This method calculates the gradient of the PSF and updates the current
-        estimate
+        self._psf = self._psf0 + self.delta_psf
 
-        Parameters
-        ----------
-        x : np.ndarray
-            Input data array, an array of recovered 2D images
+    def _get_grad_method(self, delta_psf):
 
-        """
-
-        self._update_lambda()
-
-        psf_grad = (convolve_stack(self.op(x) - self.obs_data, x,
-                    rot_kernel=True, method=self._convolve_method) +
-                    self._lambda_reg * (self._psf - self._psf0))
-
-        self._psf = self._prox.op(self._psf - self._beta_reg * psf_grad)
-
-    def _get_grad_method(self, x):
-        """Get the gradient at the given iteration
-
-        This method calculates the gradient value from the input data
-
-        Parameters
-        ----------
-        x : np.ndarray
-            Input data array, an array of recovered 2D images
-
-        """
-
-        self._update_psf(x)
-        self.grad = self._calc_grad(x)
+        self.delta_psf = delta_psf
+        self._update_psf()
+        self.grad = convolve_stack(self.op(self._x) - self.obs_data,
+                                   self._x, rot_kernel=True,
+                                   method=self._convolve_method)
 
     def _cost_method(self, *args, **kwargs):
-        """Calculate gradient component of the cost
 
-        This method returns the l2 norm error of the difference between the
-        original data and the data obtained after optimisation
-
-        Returns
-        -------
-        float gradient cost component
-
-        """
-
-        cost_val = (0.5 * np.linalg.norm(self.obs_data - self.op(args[0])) ** 2
-                    + np.linalg.norm(self._psf - self._psf0) ** 2)
+        cost_val = 0.5 * np.linalg.norm(self.obs_data - self.op(args[0])) ** 2
 
         if 'verbose' in kwargs and kwargs['verbose']:
-            print(' - DATA FIDELITY + PSF CONSTRAINT (X):', cost_val)
+            print(' - DATA FIDELITY (X):', cost_val)
 
         return cost_val
+
+
+# class GradUnknownPSF(GradPSF):
+#     """Gradient class for a unknown PSF
+#
+#     This class calculates the gradient when the PSF is not fully known
+#
+#     Parameters
+#     ----------
+#     data : np.ndarray
+#         Input data array, an array of 2D observed images (i.e. with noise)
+#     psf : np.ndarray
+#         PSF, a single 2D PSF or an array of 2D PSFs
+#     psf_type : str {'fixed', 'obj_var'}
+#         PSF type (defualt is 'fixed')
+#     convolve_method : str {'astropy', 'scipy'}, optional
+#         Convolution method (default is 'astropy')
+#     prox : class
+#         Proximity operator for PSF update
+#     beta_reg : float
+#         Gradient step size
+#     lambda_reg : float
+#         Regularisation control parameter
+#
+#     Notes
+#     -----
+#     The properties of `GradPSF` are inherited in this class
+#
+#     """
+#
+#     def __init__(self, data, psf, prox, psf_type='fixed',
+#                  convolve_method='astropy', beta_reg=1, lambda_reg=1):
+#
+#         if not hasattr(prox, 'op'):
+#             raise ValueError('prox must have "op()" method')
+#
+#         self.grad_type = 'psf_unknown'
+#         self.get_grad = self._get_grad_method
+#         self.cost = self._cost_method
+#         self._prox = prox
+#         self._beta_reg = beta_reg
+#         self._lambda_reg = lambda_reg
+#         self._psf0 = np.copy(psf)
+#         self._convolve_method = convolve_method
+#         super(GradUnknownPSF, self).__init__(data, psf, psf_type,
+#                                              convolve_method)
+#
+#     def _update_lambda(self):
+#         """Update the regularisation parameter lambda_reg
+#
+#         This method implements the update method for lambda_reg
+#
+#         """
+#
+#         self._lambda_reg = self._lambda_reg
+#
+#     def _update_psf(self, x):
+#         """Update the current estimate of the PSF
+#
+#         This method calculates the gradient of the PSF and updates the current
+#         estimate
+#
+#         Parameters
+#         ----------
+#         x : np.ndarray
+#             Input data array, an array of recovered 2D images
+#
+#         """
+#
+#         self._update_lambda()
+#
+#         psf_grad = (convolve_stack(self.op(x) - self.obs_data, x,
+#                     rot_kernel=True, method=self._convolve_method) +
+#                     self._lambda_reg * (self._psf - self._psf0))
+#
+#         self._psf = self._prox.op(self._psf - self._beta_reg * psf_grad)
+#
+#     def _get_grad_method(self, x):
+#         """Get the gradient at the given iteration
+#
+#         This method calculates the gradient value from the input data
+#
+#         Parameters
+#         ----------
+#         x : np.ndarray
+#             Input data array, an array of recovered 2D images
+#
+#         """
+#
+#         self._update_psf(x)
+#         self.grad = self._calc_grad(x)
+#
+#     def _cost_method(self, *args, **kwargs):
+#         """Calculate gradient component of the cost
+#
+#         This method returns the l2 norm error of the difference between the
+#         original data and the data obtained after optimisation
+#
+#         Returns
+#         -------
+#         float gradient cost component
+#
+#         """
+#
+#         cost_val = (0.5 * np.linalg.norm(self.obs_data - self.op(args[0])) ** 2
+#                     + np.linalg.norm(self._psf - self._psf0) ** 2)
+#
+#         if 'verbose' in kwargs and kwargs['verbose']:
+#             print(' - DATA FIDELITY + PSF CONSTRAINT (X):', cost_val)
+#
+#         return cost_val
 
 
 class GradNone(GradPSF):

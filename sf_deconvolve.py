@@ -149,18 +149,18 @@ def run_script(log):
         log.info(' - Low Rank Threshold Type: ' + str(opts.lowr_thresh_type))
         log.info(' - Low Rank Type: ' + str(opts.lowr_type))
 
-    # Log PSF estimation options
-    if opts.grad_type == 'psf_unknown':
-        print(' - PSF Estimation Control Parameter (Lambda):', opts.lambda_psf)
-        print(' - PSF Estimation Gradient Step Size (Beta):', opts.beta_psf)
-        log.info(' - PSF Estimation Lambda: ' + str(opts.lambda_psf))
-        log.info(' - PSF Estimation Beta: ' + str(opts.beta_psf))
-
-    # Log PSF estimation options
-    if opts.grad_type == 'shape':
-        print(' - Shape Constraint Control Parameter (Lambda):',
-              opts.lambda_shape)
-        log.info(' - Shape Constraint Lambda: ' + str(opts.lambda_shape))
+    # # Log PSF estimation options
+    # if opts.grad_type == 'psf_unknown':
+    #     print(' - PSF Estimation Control Parameter (Lambda):', opts.lambda_psf)
+    #     print(' - PSF Estimation Gradient Step Size (Beta):', opts.beta_psf)
+    #     log.info(' - PSF Estimation Lambda: ' + str(opts.lambda_psf))
+    #     log.info(' - PSF Estimation Beta: ' + str(opts.beta_psf))
+    #
+    # # Log PSF estimation options
+    # if opts.grad_type == 'shape':
+    #     print(' - Shape Constraint Control Parameter (Lambda):',
+    #           opts.lambda_shape)
+    #     log.info(' - Shape Constraint Lambda: ' + str(opts.lambda_shape))
 
     print(h_line)
 

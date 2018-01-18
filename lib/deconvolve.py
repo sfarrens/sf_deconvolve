@@ -70,23 +70,10 @@ def set_grad_op(data, psf, **kwargs):
     """
 
     # Set the gradient operator
-    if kwargs['grad_type'] == 'psf_known':
+    if kwargs['grad_type'] in ('psf_known', 'psf_unknown'):
         kwargs['grad_op'] = (GradKnownPSF(data, psf,
                              psf_type=kwargs['psf_type'],
                              convolve_method=kwargs['convolve_method']))
-
-    elif kwargs['grad_type'] == 'psf_unknown':
-        kwargs['grad_op'] = (GradUnknownPSF(data, psf,
-                             prox=Positivity(),
-                             psf_type=kwargs['psf_type'],
-                             convolve_method=kwargs['convolve_method'],
-                             beta_reg=kwargs['beta_psf'],
-                             lambda_reg=kwargs['lambda_psf']))
-
-    elif kwargs['grad_type'] == 'shape':
-        kwargs['grad_op'] = (GradShape(data, psf, psf_type=kwargs['psf_type'],
-                             convolve_method=kwargs['convolve_method'],
-                             lambda_reg=kwargs['lambda_shape']))
 
     elif kwargs['grad_type'] == 'none':
         kwargs['grad_op'] = GradNone(data, psf, psf_type=kwargs['psf_type'],
@@ -455,6 +442,58 @@ def set_optimisation(**kwargs):
     return kwargs
 
 
+def psf_update_setup(data, psf, **kwargs):
+
+    kwargs['grad_psf_op'] = (GradUnknownPSF(data, psf,
+                             psf_type=kwargs['psf_type'],
+                             convolve_method=kwargs['convolve_method']))
+
+    weights = np.ones(kwargs['dual_shape']) * 0.5
+    kwargs['psf_reweight'] = cwbReweight(weights)
+    # kwargs['psf_reweight'] = cwbReweight(np.load(kwargs['psf_weights']))
+
+    kwargs['optimisation_psf'] = (Condat(kwargs['grad_psf_op'].delta_psf,
+                                  np.zeros(kwargs['dual_shape']),
+                                  kwargs['grad_psf_op'],
+                                  kwargs['prox_op'][0],
+                                  SparseThreshold(kwargs['linear_op'],
+                                  kwargs['psf_reweight'].weights),
+                                  kwargs['linear_op'],
+                                  kwargs['cost_op'],
+                                  rho=kwargs['psf_relax'],
+                                  sigma=kwargs['psf_sigma'],
+                                  tau=kwargs['psf_tau'],
+                                  auto_iterate=False))
+
+    return kwargs
+
+
+def run_optimisation(**kwargs):
+
+    if kwargs['grad_type'] == 'psf_unknown':
+
+        n_blocks = 2
+
+        kwargs['block_size'] = 2
+
+        for i in range(n_blocks):
+
+            # Block update of images
+            print('Updating Images')
+            kwargs['optimisation'].iterate(max_iter=kwargs['block_size'])
+            # Pass new images to PSF gradient
+            kwargs['grad_psf_op']._x = kwargs['optimisation'].x_final
+            # Block update of PSFs
+            print('Updating PSF')
+            kwargs['optimisation_psf'].iterate(max_iter=kwargs['block_size'])
+            # Pass new PSF to image gradient
+            kwargs['grad_op']._psf = kwargs['grad_psf_op']._psf
+
+    else:
+
+        kwargs['optimisation'].iterate(max_iter=kwargs['n_iter'])
+
+
 def perform_reweighting(**kwargs):
     """Perform reweighting
 
@@ -477,7 +516,8 @@ def perform_reweighting(**kwargs):
                                     kwargs['optimisation'].x_final))
 
         # Perform optimisation with new weights
-        kwargs['optimisation'].iterate(max_iter=kwargs['n_iter'])
+        run_optimisation(**kwargs)
+        # kwargs['optimisation'].iterate(max_iter=kwargs['n_iter'])
 
         print('')
 
@@ -531,8 +571,12 @@ def run(data, psf, **kwargs):
     # SET THE OPTIMISATION METHOD
     kwargs = set_optimisation(**kwargs)
 
+    if kwargs['grad_type'] == 'psf_unknown':
+        kwargs = psf_update_setup(data, psf, **kwargs)
+
     # PERFORM OPTIMISATION
-    kwargs['optimisation'].iterate(max_iter=kwargs['n_iter'])
+    run_optimisation(**kwargs)
+    # kwargs['optimisation'].iterate(max_iter=kwargs['n_iter'])
 
     # PERFORM REWEIGHTING FOR SPARSITY
     if kwargs['mode'] in ('all', 'sparse'):
