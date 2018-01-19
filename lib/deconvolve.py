@@ -452,14 +452,27 @@ def psf_update_setup(data, psf, **kwargs):
     kwargs['psf_reweight'] = cwbReweight(weights)
     # kwargs['psf_reweight'] = cwbReweight(np.load(kwargs['psf_weights']))
 
+    from proximity import ProxPSF
+    psf_prox_primal = ProxPSF(kwargs['grad_psf_op']._psf0)
+    psf_prox_dual = SparseThreshold(kwargs['linear_op'],
+                                    kwargs['psf_reweight'].weights)
+
+    psf_cost = (costObj([kwargs['grad_psf_op'], psf_prox_primal,
+                psf_prox_dual],
+                tolerance=kwargs['convergence'],
+                cost_interval=kwargs['cost_window'],
+                plot_output=kwargs['output'],
+                verbose=not kwargs['quiet']))
+    psf_cost._check_cost = lambda: False
+    kwargs['cost_op']._check_cost = lambda: False
+
     kwargs['optimisation_psf'] = (Condat(kwargs['grad_psf_op'].delta_psf,
                                   np.zeros(kwargs['dual_shape']),
                                   kwargs['grad_psf_op'],
-                                  kwargs['prox_op'][0],
-                                  SparseThreshold(kwargs['linear_op'],
-                                  kwargs['psf_reweight'].weights),
+                                  psf_prox_primal,
+                                  psf_prox_dual,
                                   kwargs['linear_op'],
-                                  kwargs['cost_op'],
+                                  psf_cost,
                                   rho=kwargs['psf_relax'],
                                   sigma=kwargs['psf_sigma'],
                                   tau=kwargs['psf_tau'],
@@ -472,19 +485,20 @@ def run_optimisation(**kwargs):
 
     if kwargs['grad_type'] == 'psf_unknown':
 
-        n_blocks = 2
+        for i in range(kwargs['n_iter'] // kwargs['block_size']):
 
-        kwargs['block_size'] = 2
-
-        for i in range(n_blocks):
+            print(' - SET: ', i + 1)
+            print()
 
             # Block update of images
-            print('Updating Images')
+            print(' - Updating Images')
+            print()
             kwargs['optimisation'].iterate(max_iter=kwargs['block_size'])
             # Pass new images to PSF gradient
             kwargs['grad_psf_op']._x = kwargs['optimisation'].x_final
             # Block update of PSFs
-            print('Updating PSF')
+            print(' - Updating PSF')
+            print()
             kwargs['optimisation_psf'].iterate(max_iter=kwargs['block_size'])
             # Pass new PSF to image gradient
             kwargs['grad_op']._psf = kwargs['grad_psf_op']._psf
@@ -568,11 +582,11 @@ def run(data, psf, **kwargs):
     # SET THE PROXIMITY OPERATORS AND THE COST FUNCTION
     kwargs = set_prox_op_and_cost(data, **kwargs)
 
-    # SET THE OPTIMISATION METHOD
-    kwargs = set_optimisation(**kwargs)
-
     if kwargs['grad_type'] == 'psf_unknown':
         kwargs = psf_update_setup(data, psf, **kwargs)
+
+    # SET THE OPTIMISATION METHOD
+    kwargs = set_optimisation(**kwargs)
 
     # PERFORM OPTIMISATION
     run_optimisation(**kwargs)

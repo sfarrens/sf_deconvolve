@@ -174,6 +174,9 @@ def get_opts(args=None):
 
     psfest.add_argument('--psf_weights', help='PSF weights file name.')
 
+    psfest.add_argument('--block_size', type=int, default=100,
+                        help='Block size for alternating minimisation.')
+
     psfest.add_argument('--psf_sigma', type=float, nargs='?', const=None,
                         default=0.5, help='Condat proximal dual parameter.')
 

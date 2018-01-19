@@ -187,6 +187,7 @@ class GradKnownPSF(GradPSF):
         self.grad_type = 'psf_known'
         self.get_grad = self._get_grad_method
         self.cost = self._cost_method
+        self._x = np.ones(data.shape)
         super(GradKnownPSF, self).__init__(data, psf, psf_type,
                                            convolve_method)
 
@@ -202,6 +203,7 @@ class GradKnownPSF(GradPSF):
 
         """
 
+        self._x = x
         self.grad = self._calc_grad(x)
 
     def _cost_method(self, *args, **kwargs):
@@ -216,7 +218,10 @@ class GradKnownPSF(GradPSF):
 
         """
 
-        cost_val = 0.5 * np.linalg.norm(self.obs_data - self.op(args[0])) ** 2
+        print(' - x:', self._x[0, 0, :4])
+        print(' - H:', self._psf[0, 0, :4])
+
+        cost_val = 0.5 * np.linalg.norm(self.obs_data - self.op(self._x)) ** 2
 
         if 'verbose' in kwargs and kwargs['verbose']:
             print(' - DATA FIDELITY (X):', cost_val)
@@ -232,6 +237,7 @@ class GradUnknownPSF(GradPSF):
         self.grad_type = 'psf_unknown'
         self.get_grad = self._get_grad_method
         self.cost = self._cost_method
+        self._x = np.ones(data.shape)
         self._psf0 = np.copy(psf)
         self._set_initial_delta_psf()
         super(GradUnknownPSF, self).__init__(data, psf, psf_type,
@@ -240,10 +246,6 @@ class GradUnknownPSF(GradPSF):
     def _set_initial_delta_psf(self):
 
         self.delta_psf = np.zeros(self._psf0.shape)
-
-    def update_images(self, data):
-
-        self._x = data
 
     def _update_psf(self):
 
@@ -259,7 +261,10 @@ class GradUnknownPSF(GradPSF):
 
     def _cost_method(self, *args, **kwargs):
 
-        cost_val = 0.5 * np.linalg.norm(self.obs_data - self.op(args[0])) ** 2
+        print(' - x:', self._x[0, 0, :4])
+        print(' - H:', self._psf[0, 0, :4])
+
+        cost_val = 0.5 * np.linalg.norm(self.obs_data - self.op(self._x)) ** 2
 
         if 'verbose' in kwargs and kwargs['verbose']:
             print(' - DATA FIDELITY (X):', cost_val)
