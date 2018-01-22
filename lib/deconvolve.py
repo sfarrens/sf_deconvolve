@@ -443,22 +443,26 @@ def set_optimisation(**kwargs):
 
 
 def psf_update_setup(data, psf, **kwargs):
+    """!!!ADDED FOR DEVELOPMENT OF PSF ESTIMATE
+    """
 
     kwargs['grad_psf_op'] = (GradUnknownPSF(data, psf,
                              psf_type=kwargs['psf_type'],
                              convolve_method=kwargs['convolve_method']))
 
-    weights = np.ones(kwargs['dual_shape']) * 0.5
+    weights = np.load(kwargs['psf_weights'])
+    if list(weights.shape) != kwargs['dual_shape']:
+        raise ValueError('The shape of the input weights must match the dual '
+                         'shape.')
     kwargs['psf_reweight'] = cwbReweight(weights)
-    # kwargs['psf_reweight'] = cwbReweight(np.load(kwargs['psf_weights']))
 
     from proximity import ProxPSF
     psf_prox_primal = ProxPSF(kwargs['grad_psf_op']._psf0)
-    psf_prox_dual = SparseThreshold(kwargs['linear_op'],
-                                    kwargs['psf_reweight'].weights)
+    kwargs['psf_prox_dual'] = SparseThreshold(kwargs['linear_op'],
+                                              kwargs['psf_reweight'].weights)
 
     psf_cost = (costObj([kwargs['grad_psf_op'], psf_prox_primal,
-                psf_prox_dual],
+                kwargs['psf_prox_dual']],
                 tolerance=kwargs['convergence'],
                 cost_interval=kwargs['cost_window'],
                 plot_output=kwargs['output'],
@@ -470,7 +474,7 @@ def psf_update_setup(data, psf, **kwargs):
                                   np.zeros(kwargs['dual_shape']),
                                   kwargs['grad_psf_op'],
                                   psf_prox_primal,
-                                  psf_prox_dual,
+                                  kwargs['psf_prox_dual'],
                                   kwargs['linear_op'],
                                   psf_cost,
                                   rho=kwargs['psf_relax'],
@@ -481,7 +485,21 @@ def psf_update_setup(data, psf, **kwargs):
     return kwargs
 
 
+def print_full_cost(**kwargs):
+    """!!!ADDED FOR DEVELOPMENT OF PSF ESTIMATE
+    """
+
+    df = kwargs['grad_op'].cost(verbose=True)
+    l1x = kwargs['prox_op'][1].cost(kwargs['grad_op']._x, verbose=True)
+    l1H = kwargs['psf_prox_dual'].cost(kwargs['grad_psf_op'].delta_psf,
+                                       verbose=True)
+    print(' - Full Cost:', df + l1x + l1H)
+    print()
+
+
 def run_optimisation(**kwargs):
+    """!!!ADDED FOR DEVELOPMENT OF PSF ESTIMATE
+    """
 
     if kwargs['grad_type'] == 'psf_unknown':
 
@@ -502,6 +520,10 @@ def run_optimisation(**kwargs):
             kwargs['optimisation_psf'].iterate(max_iter=kwargs['block_size'])
             # Pass new PSF to image gradient
             kwargs['grad_op']._psf = kwargs['grad_psf_op']._psf
+            # Calcualte the full cost
+            print(' - Calculating full Cost')
+            print()
+            print_full_cost(**kwargs)
 
     else:
 
