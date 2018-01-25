@@ -101,6 +101,7 @@ class GradPSF(GradParent, PowerMethod):
 
     def __init__(self, data, psf, psf_type='fixed', convolve_method='astropy'):
 
+        self._grad_data_type = float
         self.obs_data = data
         self.op = self._H_op_method
         self.trans_op = self._Ht_op_method
@@ -184,12 +185,12 @@ class GradKnownPSF(GradPSF):
 
     def __init__(self, data, psf, psf_type='fixed', convolve_method='astropy'):
 
+        super(GradKnownPSF, self).__init__(data, psf, psf_type,
+                                           convolve_method)
         self.grad_type = 'psf_known'
         self.get_grad = self._get_grad_method
         self.cost = self._cost_method
         self._x = np.ones(data.shape)
-        super(GradKnownPSF, self).__init__(data, psf, psf_type,
-                                           convolve_method)
 
     def _get_grad_method(self, x):
         """Get the gradient at the given iteration
@@ -234,14 +235,14 @@ class GradUnknownPSF(GradPSF):
     def __init__(self, data, psf, psf_type='fixed',
                  convolve_method='astropy'):
 
+        super(GradUnknownPSF, self).__init__(data, psf, psf_type,
+                                             convolve_method)
         self.grad_type = 'psf_unknown'
         self.get_grad = self._get_grad_method
         self.cost = self._cost_method
         self._x = np.ones(data.shape)
         self._psf0 = np.copy(psf)
         self._set_initial_delta_psf()
-        super(GradUnknownPSF, self).__init__(data, psf, psf_type,
-                                             convolve_method)
 
     def _set_initial_delta_psf(self):
 
