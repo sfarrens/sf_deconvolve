@@ -248,9 +248,14 @@ class GradUnknownPSF(GradPSF):
 
         self.delta_psf = np.zeros(self._psf0.shape)
 
+    def _normalise_psf(self):
+
+        self._psf = np.array([psf / np.sum(psf) for psf in self._psf])
+
     def _update_psf(self):
 
         self._psf = self._psf0 + self.delta_psf
+        self._normalise_psf()
 
     def _get_grad_method(self, delta_psf):
 

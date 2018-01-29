@@ -450,11 +450,22 @@ def psf_update_setup(data, psf, **kwargs):
                              psf_type=kwargs['psf_type'],
                              convolve_method=kwargs['convolve_method']))
 
-    weights = np.load(kwargs['psf_weights'])
-    if list(weights.shape) != kwargs['dual_shape']:
+    filter_conv = (filter_convolve_stack(np.rot90(data, 2),
+                   kwargs['wavelet_filters'],
+                   method=kwargs['convolve_method']))
+
+    filter_norm = np.array([[norm(b) * c * np.ones(psf.shape[1:])
+                            for b, c in zip(a,
+                            kwargs['psf_wave_thresh_factor'])]
+                            for a in filter_conv])
+
+    noise_est = sigma_mad(psf)
+    print(' - PSF noise est:', noise_est)
+
+    kwargs['psf_reweight'] = cwbReweight(noise_est * filter_norm)
+    if list(kwargs['psf_reweight'].weights.shape) != kwargs['dual_shape']:
         raise ValueError('The shape of the input weights must match the dual '
                          'shape.')
-    kwargs['psf_reweight'] = cwbReweight(weights)
 
     from proximity import ProxPSF
     psf_prox_primal = ProxPSF(kwargs['grad_psf_op']._psf0)

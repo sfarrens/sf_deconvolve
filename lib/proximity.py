@@ -20,5 +20,5 @@ class ProxPSF(ProximityParent):
 
     def __init__(self, psf0):
 
-        self.op = lambda x: set_less_than(x, psf0)
+        self.op = lambda x: set_less_than(x, -1 * psf0)
         self.cost = lambda x: 0.0

@@ -172,7 +172,9 @@ def get_opts(args=None):
     sparsity.add_argument('--n_reweights', type=int, default=1,
                           help='Number of reweightings.')
 
-    psfest.add_argument('--psf_weights', help='PSF weights file name.')
+    psfest.add_argument('--psf_wave_thresh_factor', type=float, nargs='+',
+                        default=[3.0, 3.0, 4.0],
+                        help='Wavelet threshold factor.')
 
     psfest.add_argument('--block_size', type=int, default=100,
                         help='Block size for alternating minimisation.')
