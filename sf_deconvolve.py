@@ -21,13 +21,13 @@ This code implements equations 8 and 17 from [F2017]_.
 from __future__ import print_function
 import numpy as np
 from os.path import splitext
-from lib import __version__
-from lib.args import get_opts
-from lib.file_io import *
-from lib.deconvolve import run
-from lib.tests import test_deconvolution, test_psf_estimation
-from sf_tools.interface.errors import catch_error, warn
-from sf_tools.interface.log import set_up_log, close_log
+from sf_deconvolve_lib.info import __version__
+from sf_deconvolve_lib.args import get_opts
+from sf_deconvolve_lib.file_io import *
+from sf_deconvolve_lib.deconvolve import run
+from sf_deconvolve_lib.tests import test_deconvolution, test_psf_estimation
+from modopt.interface.errors import catch_error, warn
+from modopt.interface.log import set_up_log, close_log
 
 
 def set_out_string():
@@ -111,6 +111,7 @@ def run_script(log):
     print(' - Mode:', opts.mode)
     print(' - PSF Type:', opts.psf_type)
     print(' - Gradient Type: ', opts.grad_type)
+    print(' - Convolution Method:', opts.convolve_method)
     print(' - Optimisation:', opts.opt_type)
     print(' - Positivity:', not opts.no_pos)
     print(' - Number of Reweightings:', opts.n_reweights)
@@ -121,6 +122,7 @@ def run_script(log):
     log.info(' - Mode: ' + opts.mode)
     log.info(' - PSF Type: ' + opts.psf_type)
     log.info(' - Gradient Type: ' + opts.grad_type)
+    log.info(' - Convolution Method: ' + opts.convolve_method)
     log.info(' - Optimisation: ' + opts.opt_type)
     log.info(' - Positivity: ' + str(not opts.no_pos))
     log.info(' - Number of Reweightings: ' + str(opts.n_reweights))

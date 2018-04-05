@@ -149,6 +149,10 @@ def get_opts(args=None):
                                        'none'),
                               help='Option to specify the type of gradient.')
 
+    optimisation.add_argument('--convolve_method', default='astropy',
+                              choices=('astropy', 'scipy'),
+                              help='Option to specify the convolution method.')
+
     lowrank.add_argument('--lowr_thresh_factor', type=float, default=1,
                          help='Low rank threshold factor.')
 

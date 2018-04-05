@@ -13,9 +13,9 @@ a given stack of deconvolved images
 
 """
 
-from file_io import read_file
+from . file_io import read_file
 from sf_tools.image.quality import *
-from sf_tools.math.stats import gaussian_kernel, psnr_stack
+from modopt.math.stats import gaussian_kernel, psnr_stack
 
 
 def test_images(results, truth, kernel=None, metric='mean'):

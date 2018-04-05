@@ -4,11 +4,7 @@
 
 This module contains submodules for implementing sf_deconvolve.py.
 
-:Author: Samuel Farrens <samuel.farrens@gmail.com>
-
-:Version: 4.3
-
-:Date: 25/10/2017
+:Author: Samuel Farrens <samuel.farrens@cea.fr>
 
 References
 ----------
@@ -18,6 +14,3 @@ References
     [https://www.aanda.org/articles/aa/pdf/2017/05/aa29709-16.pdf]
 
 """
-
-version_info = (4, 3)
-__version__ = '.'.join(str(c) for c in version_info)

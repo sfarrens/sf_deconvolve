@@ -6,24 +6,19 @@ This module deconvolves a set of galaxy images with a known object-variant PSF.
 
 :Author: Samuel Farrens <samuel.farrens@gmail.com>
 
-:Version: 6.3
-
-:Date: 23/10/2017
-
 """
 
 from __future__ import print_function
 from builtins import range, zip
 from scipy.linalg import norm
-from sf_tools.signal.optimisation import *
-from sf_tools.math.stats import sigma_mad
-from sf_tools.signal.cost import costObj
-from sf_tools.signal.linear import *
-from sf_tools.signal.proximity import *
-from sf_tools.signal.reweight import cwbReweight
-from sf_tools.signal.wavelet import filter_convolve, filter_convolve_stack
-from gradient import *
-from cost import sf_deconvolveCost
+from modopt.math.stats import sigma_mad
+from modopt.opt.algorithms import *
+from modopt.opt.cost import costObj
+from modopt.opt.linear import *
+from modopt.opt.proximity import *
+from modopt.opt.reweight import cwbReweight
+from modopt.signal.wavelet import *
+from . gradient import *
 
 
 def set_noise(data, **kwargs):
@@ -76,21 +71,26 @@ def set_grad_op(data, psf, **kwargs):
 
     # Set the gradient operator
     if kwargs['grad_type'] == 'psf_known':
-        kwargs['grad_op'] = GradKnownPSF(data, psf,
-                                         psf_type=kwargs['psf_type'])
+        kwargs['grad_op'] = (GradKnownPSF(data, psf,
+                             psf_type=kwargs['psf_type'],
+                             convolve_method=kwargs['convolve_method']))
 
     elif kwargs['grad_type'] == 'psf_unknown':
-        kwargs['grad_op'] = GradUnknownPSF(data, psf, Positive(),
-                                           psf_type=kwargs['psf_type'],
-                                           beta_reg=kwargs['beta_psf'],
-                                           lambda_reg=kwargs['lambda_psf'])
+        kwargs['grad_op'] = (GradUnknownPSF(data, psf,
+                             prox=Positivity(),
+                             psf_type=kwargs['psf_type'],
+                             convolve_method=kwargs['convolve_method'],
+                             beta_reg=kwargs['beta_psf'],
+                             lambda_reg=kwargs['lambda_psf']))
 
     elif kwargs['grad_type'] == 'shape':
-        kwargs['grad_op'] = GradShape(data, psf, psf_type=kwargs['psf_type'],
-                                      lambda_reg=kwargs['lambda_shape'])
+        kwargs['grad_op'] = (GradShape(data, psf, psf_type=kwargs['psf_type'],
+                             convolve_method=kwargs['convolve_method'],
+                             lambda_reg=kwargs['lambda_shape']))
 
     elif kwargs['grad_type'] == 'none':
-        kwargs['grad_op'] = GradNone(data, psf, psf_type=kwargs['psf_type'])
+        kwargs['grad_op'] = GradNone(data, psf, psf_type=kwargs['psf_type'],
+                                     convolve_method=kwargs['convolve_method'])
 
     print(' - Spectral Radius:', kwargs['grad_op'].spec_rad)
     if 'log' in kwargs:
@@ -125,22 +125,27 @@ def set_linear_op(data, **kwargs):
     # Set the options for mr_transform (for sparsity)
     if kwargs['mode'] in ('all', 'sparse'):
         wavelet_opt = ['-t ' + kwargs['wavelet_type']]
+        kwargs['wavelet_filters'] = get_mr_filters(data.shape[-2:],
+                                                   wavelet_opt)
+        kwargs['linear_l1norm'] = (data.shape[0] * np.sqrt(sum((np.sum(np.abs
+                                   (filter_i)) ** 2 for filter_i in
+                                   kwargs['wavelet_filters']))))
 
     # Set the linear operator
     if kwargs['mode'] == 'all':
-        kwargs['linear_op'] = LinearCombo([Wavelet(data, wavelet_opt),
+        kwargs['linear_op'] = LinearCombo([WaveletConvolve(
+                                          kwargs['wavelet_filters'],
+                                          method=kwargs['convolve_method'],),
                                           Identity()])
-        kwargs['wavelet_filters'] = kwargs['linear_op'].operators[0].filters
-        kwargs['linear_l1norm'] = kwargs['linear_op'].operators[0].l1norm
 
     elif kwargs['mode'] in ('lowr', 'grad'):
         kwargs['linear_op'] = Identity()
-        kwargs['linear_l1norm'] = kwargs['linear_op'].l1norm
+        kwargs['linear_l1norm'] = 1.0
 
     elif kwargs['mode'] == 'sparse':
-        kwargs['linear_op'] = Wavelet(data, wavelet_opt)
-        kwargs['wavelet_filters'] = kwargs['linear_op'].filters
-        kwargs['linear_l1norm'] = kwargs['linear_op'].l1norm
+        kwargs['linear_op'] = WaveletConvolve(kwargs['wavelet_filters'],
+                                              method=kwargs['convolve_method'],
+                                              )
 
     return kwargs
 
@@ -169,7 +174,8 @@ def set_sparse_weights(data_shape, psf, **kwargs):
     if kwargs['psf_type'] == 'fixed':
 
         filter_conv = (filter_convolve(np.rot90(psf, 2),
-                       kwargs['wavelet_filters']))
+                       kwargs['wavelet_filters'],
+                       method=kwargs['convolve_method']))
 
         filter_norm = np.array([norm(a) * b * np.ones(data_shape[1:])
                                 for a, b in zip(filter_conv,
@@ -181,7 +187,8 @@ def set_sparse_weights(data_shape, psf, **kwargs):
     else:
 
         filter_conv = (filter_convolve_stack(np.rot90(psf, 2),
-                       kwargs['wavelet_filters']))
+                       kwargs['wavelet_filters'],
+                       method=kwargs['convolve_method']))
 
         filter_norm = np.array([[norm(b) * c * np.ones(data_shape[1:])
                                 for b, c in zip(a,
@@ -367,65 +374,43 @@ def set_prox_op_and_cost(data, **kwargs):
 
     # Set the first operator as positivity contraint or simply identity
     if not kwargs['no_pos']:
-        kwargs['prox_op'].append(Positive())
+        kwargs['prox_op'].append(Positivity())
 
     else:
-        kwargs['prox_op'].append(Identity())
+        kwargs['prox_op'].append(IdentityProx())
 
-    # Add a second proximity operator and set the corresponding cost function
+    # Add a second proximity operator
     if kwargs['mode'] == 'all':
 
         kwargs['prox_op'].append(ProximityCombo(
-                                 [Threshold(kwargs['reweight'].weights,),
+                                 [SparseThreshold(
+                                  kwargs['linear_op'].operators[0],
+                                  kwargs['reweight'].weights,),
                                   LowRankMatrix(kwargs['lambda'],
                                   thresh_type=kwargs['lowr_thresh_type'],
                                   lowr_type=kwargs['lowr_type'],
-                                  operator=kwargs['grad_op'].Ht_op)]))
-
-        cost_instance = (sf_deconvolveCost(data, grad=kwargs['grad_op'],
-                         wavelet=kwargs['linear_op'].operators[0],
-                         weights=kwargs['reweight'].weights,
-                         lambda_lowr=kwargs['lambda'],
-                         mode=kwargs['mode'],
-                         positivity=not kwargs['no_pos'],
-                         verbose=not kwargs['quiet']))
+                                  operator=kwargs['grad_op'].trans_op)]))
 
     elif kwargs['mode'] == 'lowr':
 
         kwargs['prox_op'].append(LowRankMatrix(kwargs['lambda'],
                                  thresh_type=kwargs['lowr_thresh_type'],
                                  lowr_type=kwargs['lowr_type'],
-                                 operator=kwargs['grad_op'].Ht_op))
+                                 operator=kwargs['grad_op'].trans_op))
 
-        cost_instance = (sf_deconvolveCost(data, grad=kwargs['grad_op'],
-                         wavelet=None, weights=None,
-                         lambda_lowr=kwargs['lambda'], mode=kwargs['mode'],
-                         positivity=not kwargs['no_pos'],
-                         verbose=not kwargs['quiet']))
+        operator_list = [kwargs['grad_op']] + kwargs['prox_op']
 
     elif kwargs['mode'] == 'sparse':
 
-        kwargs['prox_op'].append(Threshold(kwargs['reweight'].weights))
-
-        cost_instance = (sf_deconvolveCost(data, grad=kwargs['grad_op'],
-                         wavelet=kwargs['linear_op'],
-                         weights=kwargs['reweight'].weights,
-                         lambda_lowr=None,
-                         mode=kwargs['mode'],
-                         positivity=not kwargs['no_pos'],
-                         verbose=not kwargs['quiet']))
+        kwargs['prox_op'].append(SparseThreshold(kwargs['linear_op'],
+                                 kwargs['reweight'].weights))
 
     elif kwargs['mode'] == 'grad':
 
-        kwargs['prox_op'].append(Identity())
+        kwargs['prox_op'].append(IdentityProx())
 
-        cost_instance = (sf_deconvolveCost(data, grad=kwargs['grad_op'],
-                         wavelet=None, weights=None,
-                         lambda_lowr=None, mode=kwargs['mode'],
-                         positivity=not kwargs['no_pos'],
-                         verbose=not kwargs['quiet']))
-
-    kwargs['cost_op'] = (costObj(cost_instance,
+    # Set the cost function
+    kwargs['cost_op'] = (costObj([kwargs['grad_op']] + kwargs['prox_op'],
                          tolerance=kwargs['convergence'],
                          cost_interval=kwargs['cost_window'],
                          plot_output=kwargs['output'],
@@ -489,7 +474,7 @@ def perform_reweighting(**kwargs):
 
         # Generate the new weights following reweighting persctiption
         kwargs['reweight'].reweight(kwargs['linear_op'].op(
-                                    kwargs['optimisation'].x_new)[0])
+                                    kwargs['optimisation'].x_final))
 
         # Perform optimisation with new weights
         kwargs['optimisation'].iterate(max_iter=kwargs['n_iter'])
