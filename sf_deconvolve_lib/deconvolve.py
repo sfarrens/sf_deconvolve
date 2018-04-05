@@ -18,7 +18,7 @@ from modopt.opt.linear import *
 from modopt.opt.proximity import *
 from modopt.opt.reweight import cwbReweight
 from modopt.signal.wavelet import *
-from gradient import *
+from . gradient import *
 
 
 def set_noise(data, **kwargs):

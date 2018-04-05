@@ -13,7 +13,7 @@ a given stack of deconvolved images
 
 """
 
-from file_io import read_file
+from . file_io import read_file
 from sf_tools.image.quality import *
 from modopt.math.stats import gaussian_kernel, psnr_stack
 

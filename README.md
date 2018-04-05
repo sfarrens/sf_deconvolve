@@ -2,8 +2,8 @@ SF_DECONVOLVE
 =============
 
 > Author: **Samuel Farrens**  
-> Year: **2017**  
-> Version: **4.3**  
+> Year: **2018**  
+> Version: **5.0**  
 > Email: [samuel.farrens@gmail.com](mailto:samuel.farrens@gmail.com)  
 > Website: [sfarrens.github.io](https://sfarrens.github.io/)  
 > Reference Paper: [arXiv:1703.02305](https://arxiv.org/abs/1703.02305)
@@ -11,9 +11,8 @@ SF_DECONVOLVE
 Contents
 ------------
 1. [Introduction](#intro_anchor)
-1. [Dependencies](#depend_anchor)
+1. [Installation](#install_anchor)
     1. [Required Packages](#required_package)
-    1. [Optional Packages](#optional_package)
 1. [Execution](#exe_anchor)
     1. [Input Format](#in_format)
     1. [Running the executable script](#py_ex)
@@ -30,37 +29,28 @@ This repository contains a Python code designed for PSF deconvolution and analys
 The directory `lib` contains several primary functions and classes, but the majority of the optimisation and analysis tools are provided in **[sf_tools](https://sfarrens.github.io/sf_tools/)**.
 ![](docs/images/example_image.png)
 
-<a name="depend_anchor"></a>
-## Dependencies
+<a name="install_anchor"></a>
+## Installation
+
+After downloading or cloning the repository simply run:
+
+```bash
+$ python setup.py install
+```
 
 <a name="required_package"></a>
 ### Required Packages
 
-In order to run the code in this repository the following packages must be installed:
+In order to run sf_deconvolve the following packages must be installed:
 
 * **[Python](https://www.python.org/)</a>**
 [Tested with v 2.7.11 and 3.6.3]
 
-* **[Numpy](http://www.numpy.org/)** [Tested with v 1.13.3]
+* **[ModOpt](https://github.com/CEA-COSMIC/ModOpt)** [>=1.1.4]
 
-* **[Scipy](http://www.scipy.org/)** [Tested with v 0.18.1]
+* **[sf_tools](https://sfarrens.github.io/sf_tools/)** [>=2.0]
 
-* **[Future](http://python-future.org/quickstart.html)** [Tested with v 0.16.0]
-
-* **[Astropy](http://www.astropy.org/)** [Tested with v 1.3]
-
-* **[sf_tools](https://sfarrens.github.io/sf_tools/)** [Tested with v 1.0]
-
-* The current implementation of wavelet transformations additionally requires the `mr_transform.cc` C++ script from the Sparse2D library in the **[iSap](http://www.cosmostat.org/software/isap/)** package [Tested with v 3.1]. These C++ scripts will be need to be compiled in order to run (see [iSap Documentation](http://www.cosmostat.org/wp-content/uploads/2014/12/doc_iSAP.pdf) for details). *Note:* The low-rank approximation method can be run purely in Python without the Sparse2D binaries.
-
-<a name="optional_package"></a>
-### Optional Packages
-
-The following packages can optionally be installed to add extra functionality:
-
-* **[Matplotlib](http://matplotlib.org/)** [Tested with v 2.0.2]
-
-* **[Termcolor](https://pypi.python.org/pypi/termcolor)** [Tested with v 1.1.0]
+* The current implementation of wavelet transformations additionally requires the `mr_transform.cc` C++ script from the Sparse2D library **(https://github.com/CosmoStat/Sparse2D)**. These C++ scripts will be need to be compiled in order to run. *Note:* The low-rank approximation method can be run purely in Python without the Sparse2D binaries.
 
 <a name="exe_anchor"></a>
 ## Execution

@@ -1,0 +1,18 @@
+Metadata-Version: 1.1
+Name: sf-deconvolve-lib
+Version: 5.0.0
+Summary: Galaxy image deconvolution software.
+Home-page: https://github.com/sfarrens/sf_deconvolve
+Author: sfarrens
+Author-email: samuel.farrens@cea.fr
+License: MIT
+Download-URL: https://github.com/sfarrens/sf_deconvolve
+Description: sf_deconvolve 
+        
+         Author: Samuel Farrens 
+         Year: 2018 
+         Email: samuel.farrens@cea.fr 
+         Website: https://sfarrens.github.io 
+        
+         Galaxy image deconvolution software.
+Platform: UNKNOWN
