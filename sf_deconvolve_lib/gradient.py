@@ -99,8 +99,10 @@ class GradPSF(GradParent, PowerMethod):
 
     """
 
-    def __init__(self, data, psf, psf_type='fixed', convolve_method='astropy'):
+    def __init__(self, data, psf, psf_type='fixed', convolve_method='astropy',
+                 data_type=float):
 
+        self._grad_data_type = data_type
         self.obs_data = data
         self.op = self._H_op_method
         self.trans_op = self._Ht_op_method
