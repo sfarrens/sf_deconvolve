@@ -1,3 +1,5 @@
+<a href="https://ascl.net/2212.010"><img src="https://img.shields.io/badge/ascl-2212.010-blue.svg?colorB=262255" alt="ascl:2212.010" /></a>
+
 SF_DECONVOLVE
 =============
 
